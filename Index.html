@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeafSocial</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #0f1713;
+      --surface: #17231d;
+      --surface-2: #1f2f27;
+      --text: #eef5f1;
+      --muted: #9eb3a8;
+      --accent: #22c55e;
+      --accent-dark: #16a34a;
+      --border: #2b3e34;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
+    .container { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    h1 { font-size: 1.5rem; color: var(--accent); }
+    p.sub { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    input, textarea, select, button {
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); padding: 10px 12px; font-size: 0.95rem;
+    }
+    input, select { flex: 1 1 200px; }
+    textarea { width: 100%; min-height: 90px; resize: vertical; }
+    button { background: var(--accent); color: #07130c; font-weight: 700; border: none; cursor: pointer; }
+    button:hover { background: var(--accent-dark); color: #fff; }
+    button.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .post { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; display: grid; gap: 8px; }
+    .post:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .meta { font-size: 0.85rem; color: var(--muted); }
+    .post img, .post video { max-width: 100%; border-radius: 10px; margin-top: 6px; }
+    .post audio { width: 100%; margin-top: 6px; }
+    .status { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>LeafSocial</h1>
+      <p class="sub">Connected to Supabase &amp; ready for GitHub Pages</p>
+      <div class="row">
+        <button class="secondary" id="toggleConfigBtn" type="button">Supabase Settings</button>
+        <button class="secondary hidden" id="logoutBtn" type="button">Sign Out</button>
+      </div>
+      <div id="configPanel" class="hidden" style="margin-top: 14px;">
+        <div class="row">
+          <input id="supabaseUrlInput" type="url" value="https://hgqcflcebwulalpatdxk.supabase.co" placeholder="Supabase Project URL" />
+          <input id="supabaseKeyInput" type="password" placeholder="Paste your anon public key" />
+          <button id="saveConfigBtn" type="button">Save Keys</button>
+        </div>
+      </div>
+      <div class="status" id="statusText">Checking connection...</div>
+    </div>
+
+    <div class="card" id="authCard">
+      <h2>Sign In or Create Account</h2>
+      <div class="row">
+        <input id="fullNameInput" type="text" placeholder="Full name (for sign up)" />
+        <input id="emailInput" type="email" placeholder="Email address" />
+        <input id="passwordInput" type="password" placeholder="Password (6+ chars)" />
+      </div>
+      <div class="row">
+        <button id="signUpBtn" type="button">Sign Up</button>
+        <button class="secondary" id="signInBtn" type="button">Sign In</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="composerCard">
+      <h2>Create a Post</h2>
+      <div style="margin-top: 10px;">
+        <textarea id="postContentInput" placeholder="Share an update with LeafSocial..."></textarea>
+      </div>
+      <div class="row">
+        <select id="mediaTypeInput">
+          <option value="text">Text only</option>
+          <option value="photo">Photo</option>
+          <option value="music">Audio (MP3/WAV/OGG)</option>
+          <option value="video">Video (MP4/WebM)</option>
+        </select>
+        <input id="mediaFileInput" type="file" accept="image/*,audio/*,video/*" />
+      </div>
+      <div class="row">
+        <button id="publishPostBtn" type="button">Publish Post</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Community Feed</h2>
+      <div id="feedList" style="margin-top: 12px;">
+        <p class="sub">Loading posts...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
+    let sb = null;
+    let currentUser = null;
+
+    const statusText = document.getElementById("statusText");
+    const supabaseUrlInput = document.getElementById("supabaseUrlInput");
+    const supabaseKeyInput = document.getElementById("supabaseKeyInput");
+    const configPanel = document.getElementById("configPanel");
+    const authCard = document.getElementById("authCard");
+    const composerCard = document.getElementById("composerCard");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const feedList = document.getElementById("feedList");
+
+    function loadSavedConfig() {
+      const savedUrl = localStorage.getItem("leafsocial_sb_url") || DEFAULT_URL;
+      const savedKey = localStorage.getItem("leafsocial_sb_key") || "";
+      supabaseUrlInput.value = savedUrl;
+      supabaseKeyInput.value = savedKey;
+      initSupabase(savedUrl, savedKey);
+    }
+
+    function initSupabase(url, key) {
+      if (!url || !key || !window.supabase) {
+        statusText.textContent = "Enter your Supabase anon public key in Supabase Settings to enable live auth & posting.";
+        loadFeed();
+        return;
+      }
+      sb = window.supabase.createClient(url.trim(), key.trim());
+      statusText.textContent = "Connected to " + url.trim();
+      refreshSession();
+      loadFeed();
+    }
+
+    async function refreshSession() {
+      if (!sb) return;
+      const { data } = await sb.auth.getSession();
+      currentUser = data?.session?.user || null;
+      authCard.classList.toggle("hidden", Boolean(currentUser));
+      composerCard.classList.toggle("hidden", !currentUser);
+      logoutBtn.classList.toggle("hidden", !currentUser);
+      if (currentUser) {
+        statusText.textContent = "Signed in as " + currentUser.email;
+      }
+    }
+
+    async function loadFeed() {
+      if (!sb) {
+        feedList.innerHTML = '<p class="sub">Save your Supabase anon public key to load posts from public.posts.</p>';
+        return;
+      }
+      const { data, error } = await sb
+        .from("posts")
+        .select("id, content, media_type, media_url, created_at, profiles(full_name, handle)")
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+      if (error) {
+        feedList.innerHTML = `<p class="sub">Could not load feed: ${error.message}</p>`;
+        return;
+      }
+      if (!data || data.length === 0) {
+        feedList.innerHTML = '<p class="sub">No posts yet. Be the first to post!</p>';
+        return;
+      }
+
+      feedList.innerHTML = data.map((p) => {
+        const author = p.profiles?.full_name || "Member";
+        const handle = p.profiles?.handle ? "@" + p.profiles.handle : "";
+        let mediaHtml = "";
+        if (p.media_url && p.media_type === "photo") {
+          mediaHtml = `<img src="${p.media_url}" alt="Post image" />`;
+        } else if (p.media_url && p.media_type === "music") {
+          mediaHtml = `<audio controls src="${p.media_url}"></audio>`;
+        } else if (p.media_url && p.media_type === "video") {
+          mediaHtml = `<video controls src="${p.media_url}"></video>`;
+        }
+        return `
+          <div class="post">
+            <div class="meta"><strong>${author}</strong> ${handle} · ${new Date(p.created_at).toLocaleString()}</div>
+            <div>${p.content}</div>
+            ${mediaHtml}
+          </div>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("toggleConfigBtn").addEventListener("click", () => {
+      configPanel.classList.toggle("hidden");
+    });
+
+    document.getElementById("saveConfigBtn").addEventListener("click", () => {
+      const url = supabaseUrlInput.value.trim() || DEFAULT_URL;
+      const key = supabaseKeyInput.value.trim();
+      localStorage.setItem("leafsocial_sb_url", url);
+      localStorage.setItem("leafsocial_sb_key", key);
+      configPanel.classList.add("hidden");
+      initSupabase(url, key);
+    });
+
+    document.getElementById("signUpBtn").addEventListener("click", async () => {
+      if (!sb) return alert("Save your Supabase anon public key first.");
+      const fullName = document.getElementById("fullNameInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim();
+      const password = document.getElementById("passwordInput").value;
+      const { error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } }
+      });
+      if (error) return alert("Sign up error: " + error.message);
+      alert("Account created! Check your email if confirmation is enabled, then sign in.");
+      refreshSession();
+    });
+
+    document.getElementById("signInBtn").addEventListener("click", async () => {
+      if (!sb) return alert("Save your Supabase anon public key first.");
+      const email = document.getElementById("emailInput").value.trim();
+      const password = document.getElementById("passwordInput").value;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return alert("Sign in error: " + error.message);
+      refreshSession();
+      loadFeed();
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      if (!sb) return;
+      await sb.auth.signOut();
+      refreshSession();
+    });
+
+    document.getElementById("publishPostBtn").addEventListener("click", async () => {
+      if (!sb || !currentUser) return alert("Please sign in first.");
+      const content = document.getElementById("postContentInput").value.trim();
+      const mediaType = document.getElementById("mediaTypeInput").value;
+      const fileInput = document.getElementById("mediaFileInput");
+      if (!content) return alert("Write something before publishing.");
+
+      let mediaUrl = null;
+      if (mediaType !== "text" && fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const ext = file.name.split(".").pop();
+        const filePath = `${currentUser.id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await sb.storage
+          .from("posts-media")
+          .upload(filePath, file, { upsert: false });
+        if (uploadError) return alert("Media upload failed: " + uploadError.message);
+
+        const { data: publicUrlData } = sb.storage
+          .from("posts-media")
+          .getPublicUrl(filePath);
+        mediaUrl = publicUrlData.publicUrl;
+      }
+
+      const { error: insertError } = await sb.from("posts").insert({
+        author_id: currentUser.id,
+        content,
+        media_type: mediaType,
+        media_url: mediaUrl
+      });
+      if (insertError) return alert("Post failed: " + insertError.message);
+
+      document.getElementById("postContentInput").value = "";
+      fileInput.value = "";
+      loadFeed();
+    });
+
+    loadSavedConfig();
+  </script>
+</body>
+</html>
