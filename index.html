@@ -7,16 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #f3f6f4;
-      --surface: #ffffff;
-      --surface-soft: #eef5f0;
-      --green: #15803d;
-      --green-dark: #166534;
-      --green-light: #dcfce7;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --danger: #dc2626;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-soft: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #a7f3d0;
+      --danger: #ef4444;
       --radius: 16px;
     }
 
@@ -24,22 +24,21 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      overflow-x: hidden;
     }
 
-    /* Top Navigation */
     header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: var(--surface);
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 12px 16px;
     }
@@ -59,1086 +58,521 @@
       align-items: center;
       gap: 10px;
       font-weight: 800;
-      font-size: 1.15rem;
-      color: var(--text);
+      font-size: 1.25rem;
       cursor: pointer;
-      user-select: none;
     }
 
     .brand-badge {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--green);
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #fff;
       display: grid;
       place-items: center;
-      font-weight: 800;
     }
 
     .nav-tabs {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 2px;
     }
 
     .nav-tab {
       border: none;
       background: transparent;
-      padding: 7px 14px;
+      padding: 8px 16px;
       border-radius: 999px;
       font-weight: 600;
-      font-size: 0.9rem;
       color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.15s, color 0.15s;
+      transition: all 0.2s;
     }
 
     .nav-tab:hover {
+      color: var(--text);
       background: var(--surface-soft);
-      color: var(--green-dark);
     }
 
     .nav-tab.active {
-      background: var(--green);
-      color: #fff;
+      background: var(--primary);
+      color: #000;
     }
 
-    /* Responsive 3-Column Layout */
     .layout {
       max-width: 1180px;
-      margin: 18px auto;
-      padding: 0 14px 40px;
+      margin: 20px auto;
+      padding: 0 16px;
       display: grid;
       grid-template-columns: 260px minmax(0, 1fr) 280px;
-      gap: 18px;
+      gap: 20px;
       align-items: start;
     }
 
     @media (max-width: 960px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-      .sidebar-left {
-        order: 2;
-      }
-      .main-feed {
-        order: 1;
-      }
-      .sidebar-right {
-        order: 3;
-      }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-left { order: 2; }
+      .main-feed { order: 1; }
+      .sidebar-right { order: 3; }
     }
 
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    }
-
-    .card h3 {
-      font-size: 1rem;
-      margin-bottom: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .list-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 10px;
+      padding: 12px;
       border-radius: 10px;
-      font-size: 0.92rem;
       font-weight: 500;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
-    .list-item:hover {
-      background: var(--surface-soft);
-    }
-
+    .list-item:hover { background: var(--surface-soft); }
+    
     .pill {
-      background: var(--green-light);
-      color: var(--green-dark);
-      font-size: 0.75rem;
+      background: var(--surface-soft);
+      color: var(--primary-light);
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 3px 9px;
+      padding: 4px 10px;
       border-radius: 999px;
     }
 
-    /* Auth Card */
-    .auth-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .auth-mode-switch {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: var(--bg);
-      padding: 4px;
-      border-radius: 12px;
-      margin: 14px 0;
-    }
-
-    .mode-btn {
-      border: none;
-      padding: 9px;
-      border-radius: 9px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: transparent;
-      color: var(--muted);
-    }
-
-    .mode-btn.active {
-      background: var(--surface);
-      color: var(--green-dark);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 560px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #374151;
-    }
-
-    .field label span.req {
-      color: var(--danger);
-    }
-
-    input[type="text"],
-    input[type="password"],
-    input[type="date"],
-    textarea,
-    select {
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+    input, textarea, select {
       width: 100%;
-      padding: 11px 13px;
-      border: 1px solid #d1d5db;
-      border-radius: 11px;
-      font-size: 0.95rem;
-      background: #f9fafb;
-      color: var(--text);
-      outline: none;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--green);
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
-    }
-
-    /* Terms of Use Checkbox Box */
-    .terms-box {
-      grid-column: 1 / -1;
-      background: var(--surface-soft);
-      border: 1px solid #cce3d4;
-      border-radius: 12px;
       padding: 12px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .terms-box input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      accent-color: var(--green);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .terms-box label {
-      font-size: 0.84rem;
-      color: #1f2937;
-      line-height: 1.45;
-      cursor: pointer;
-    }
-
-    .terms-link {
-      color: var(--green-dark);
-      font-weight: 700;
-      text-decoration: underline;
-      background: none;
-      border: none;
-      padding: 0;
-      font-size: inherit;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 11px;
-      background: var(--green);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.96rem;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover {
-      background: var(--green-dark);
-    }
-
-    .btn-secondary {
-      padding: 8px 14px;
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px;
-      background: var(--surface);
-      font-weight: 600;
-      cursor: pointer;
+      color: var(--text);
+      font-size: 1rem;
     }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
 
-    .status-msg {
-      margin-top: 10px;
-      padding: 10px 12px;
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
       border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      display: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
-
-    .status-msg.error {
-      display: block;
-      background: #fef2f2;
-      color: var(--danger);
-      border: 1px solid #fecaca;
-    }
-
-    .status-msg.success {
-      display: block;
-      background: var(--green-light);
-      color: var(--green-dark);
-      border: 1px solid #bbf7d0;
-    }
-
-    /* Post Composer & Feed */
-    .profile-banner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .meta-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
+    .btn-primary { background: var(--primary); color: #000; }
+    .btn-secondary { background: var(--surface-soft); color: var(--text); }
+    .btn:hover { opacity: 0.9; }
 
     .post-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .post-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--green-light);
-      color: var(--green-dark);
-      font-weight: 800;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-
-    .post-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .chip-btn {
-      border: 1px solid var(--border);
-      background: #f9fafb;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .chip-btn.cheered {
-      background: var(--green-light);
-      color: var(--green-dark);
-      border-color: #86efac;
-    }
-
-    .highlight-box {
-      background: linear-gradient(135deg, #166534, #15803d);
-      color: #fff;
-      border-radius: var(--radius);
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 16px;
     }
 
-    /* Section Panels */
-    .space-item, .friend-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .post-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+    .user-info { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--surface-soft); display: grid; place-items: center; font-weight: bold; font-size: 1.2rem; }
+    
+    .actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .chip { background: var(--bg); border: 1px solid var(--border); padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--text); cursor: pointer; }
+    .chip.active { background: var(--primary-light); color: #000; border-color: var(--primary); }
 
-    .space-item:last-child, .friend-item:last-child {
-      border-bottom: none;
-    }
+    .chat-box { height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; background: var(--bg); border-radius: 10px; border: 1px solid var(--border); }
+    .msg { background: var(--surface-soft); padding: 10px 14px; border-radius: 12px; max-width: 80%; }
+    .msg.mine { align-self: flex-end; background: var(--primary); color: #000; }
 
-    .chat-box {
-      background: #f9fafb;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      max-height: 290px;
-      overflow-y: auto;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .chat-bubble {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 9px 12px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-    }
-
-    .chat-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Terms Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(17, 24, 39, 0.65);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 100;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      max-width: 540px;
-      width: 100%;
-      max-height: 82vh;
-      overflow-y: auto;
-      padding: 22px;
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-card h2 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--green-dark);
-    }
-
-    .modal-card h4 {
-      font-size: 0.95rem;
-      margin: 14px 0 4px;
-    }
-
-    .modal-card p {
-      font-size: 0.88rem;
-      color: #374151;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
+    .status { padding: 12px; border-radius: 10px; margin-top: 12px; display: none; font-weight: 600; font-size: 0.9rem; background: var(--surface-soft); color: var(--primary-light); }
   </style>
 </head>
 <body>
 
   <header>
     <div class="nav-inner">
-      <div class="brand" onclick="openSection('feed')" title="Go to LeafSocial Home Feed">
+      <div class="brand" onclick="switchView('feed')">
         <div class="brand-badge">L</div>
         <span>LeafSocial</span>
       </div>
       <div class="nav-tabs">
-        <button type="button" class="nav-tab active" id="nav-feed" onclick="openSection('feed')">Feed</button>
-        <button type="button" class="nav-tab" id="nav-spaces" onclick="openSection('spaces')">LeafSpaces</button>
-        <button type="button" class="nav-tab" id="nav-friends" onclick="openSection('friends')">Friends</button>
-        <button type="button" class="nav-tab" id="nav-chat" onclick="openSection('chat')">Chat</button>
+        <button class="nav-tab active" id="tab-feed" onclick="switchView('feed')">Feed</button>
+        <button class="nav-tab" id="tab-spaces" onclick="switchView('spaces')">LeafSpaces</button>
+        <button class="nav-tab" id="tab-friends" onclick="switchView('friends')">Friends</button>
+        <button class="nav-tab" id="tab-chat" onclick="switchView('chat')">Chat</button>
       </div>
     </div>
   </header>
 
   <main class="layout">
-    <!-- Left Sidebar -->
     <aside class="sidebar-left">
       <div class="card">
-        <h3>Your LeafCircles</h3>
-        <div class="list-item" onclick="openSection('feed')"><span>All Community</span><span class="pill">Live</span></div>
-        <div class="list-item" onclick="openSection('friends')"><span>Inner Circle</span><span class="pill">3</span></div>
-        <div class="list-item" onclick="openSection('spaces')"><span>LeafAudio Drops</span></div>
-        <div class="list-item" onclick="openSection('chat')"><span>Circle Lounge</span></div>
-      </div>
-
-      <div class="card">
-        <h3>Joined LeafSpaces</h3>
-        <div class="list-item" onclick="openSection('spaces')"><span># Afrobeats & Indie Creators</span></div>
-        <div class="list-item" onclick="openSection('spaces')"><span># Lagos Tech & Founders</span></div>
+        <h3 style="margin-bottom: 10px;">Circles</h3>
+        <div class="list-item" onclick="switchView('feed')"><span>🌐 All Community</span></div>
+        <div class="list-item" onclick="switchView('friends')"><span>👥 Inner Circle</span></div>
+        <div class="list-item" onclick="switchView('spaces')"><span>✨ Topic Spaces</span></div>
+        <div class="list-item" onclick="switchView('chat')"><span>💬 Circle Lounge</span></div>
       </div>
     </aside>
 
-    <!-- Center Column -->
     <section class="main-feed">
-      <!-- Authentication Card -->
-      <div class="card" id="authCard">
-        <div class="auth-header">
-          <div>
-            <h2 style="font-size: 1.25rem;">Welcome to LeafSocial</h2>
-            <p style="color: var(--muted); font-size: 0.9rem;">
-              Voice notes, inner circles, and topic spaces—without algorithm clutter.
-            </p>
+      
+      <!-- AUTH SECTION -->
+      <div class="card" id="auth-card">
+        <h2 id="auth-title">Join the Circle</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">Voice notes, inner circles, without algorithm clutter.</p>
+        
+        <form id="auth-form" onsubmit="handleAuth(event)">
+          <div class="form-group" id="name-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Emmanuel Agwaraonye">
           </div>
-          <span class="pill" id="modeBadge">Live Community</span>
-        </div>
-
-        <div class="auth-mode-switch">
-          <button type="button" class="mode-btn active" id="tabSignup" onclick="switchAuthMode('signup')">Create Account</button>
-          <button type="button" class="mode-btn" id="tabSignin" onclick="switchAuthMode('signin')">Sign In</button>
-        </div>
-
-        <!-- SIGN UP FORM -->
-        <form id="signupForm" onsubmit="handleSignUp(event)">
-          <div class="form-grid">
-            <div class="field full">
-              <label for="suName">Full Name <span class="req">*</span></label>
-              <input id="suName" type="text" placeholder="e.g. Samuel Emmanuel" required />
-            </div>
-
-            <div class="field full">
-              <label for="suContact">Email Address or Phone Number <span class="req">*</span></label>
-              <input id="suContact" type="text" placeholder="you@example.com or +2348012345678" required />
-            </div>
-
-            <div class="field">
-              <label for="suDob">Date of Birth <span class="req">*</span></label>
-              <input id="suDob" type="date" required />
-            </div>
-
-            <div class="field">
-              <label for="suLocation">Location (City, Country) <span class="req">*</span></label>
-              <input id="suLocation" type="text" placeholder="e.g. Lagos, Nigeria" required />
-            </div>
-
-            <div class="field full">
-              <label for="suPassword">Password (6+ characters) <span class="req">*</span></label>
-              <input id="suPassword" type="password" minlength="6" placeholder="Create a strong password" required />
-            </div>
-
-            <div class="terms-box">
-              <input id="suTerms" type="checkbox" required />
-              <label for="suTerms">
-                I confirm I am at least 13 years old and I agree to the
-                <button type="button" class="terms-link" onclick="openTermsModal()">LeafSocial Terms of Use &amp; Community Guidelines</button>
-                and Privacy Policy. <span style="color: var(--danger); font-weight: 700;">*</span>
-              </label>
-            </div>
+          <div class="form-group">
+            <label>Contact (Email or Phone)</label>
+            <input type="text" id="contact" required placeholder="user@example.com or +2348012345678">
           </div>
-
-          <button type="submit" class="btn-primary" id="signupBtn">Agree &amp; Create Account</button>
+          <div class="form-group" id="location-group">
+            <label>Location (City, Country)</label>
+            <input type="text" id="location" placeholder="Lagos, Nigeria">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" minlength="6" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary" id="auth-btn">Create Account</button>
         </form>
-
-        <!-- SIGN IN FORM -->
-        <form id="signinForm" style="display: none;" onsubmit="handleSignIn(event)">
-          <div class="field">
-            <label for="siContact">Email Address or Phone Number <span class="req">*</span></label>
-            <input id="siContact" type="text" placeholder="you@example.com or +2348012345678" required />
-          </div>
-
-          <div class="field">
-            <label for="siPassword">Password <span class="req">*</span></label>
-            <input id="siPassword" type="password" placeholder="Enter your password" required />
-          </div>
-
-          <button type="submit" class="btn-primary" id="signinBtn">Sign In</button>
-        </form>
-
-        <div id="authStatus" class="status-msg"></div>
+        
+        <button class="btn btn-secondary" style="margin-top: 10px;" id="toggle-Auth-btn" onclick="toggleAuthMode()">Switch to Sign In</button>
+        <div id="auth-status" class="status"></div>
       </div>
 
-      <!-- VIEW 1: FEED -->
-      <div id="view-feed">
-        <div class="card" id="composerCard" style="display: none;">
-          <div class="profile-banner">
+      <!-- COMPOSER -->
+      <div class="card" id="composer-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div class="user-info">
+            <div class="avatar" id="avatar-initial">M</div>
             <div>
-              <strong id="userDisplayName" style="font-size: 1.05rem;">Member</strong>
-              <div class="meta-tags" id="userMetaInfo"></div>
+              <strong id="user-display-name">Member</strong>
+              <div style="font-size: 0.8rem; color: var(--muted);" id="user-location">Community</div>
             </div>
-            <button type="button" class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
           </div>
-
-          <div class="field">
-            <label for="postBody">Share an update with your circle</label>
-            <textarea id="postBody" rows="3" placeholder="What's happening in your circle today?"></textarea>
-          </div>
-          <button type="button" class="btn-primary" id="publishBtn" onclick="publishPost()">Publish Post</button>
-          <div id="postStatus" class="status-msg"></div>
+          <button class="chip" onclick="signOut()">Sign Out</button>
         </div>
-
-        <div id="feedContainer"></div>
+        <textarea id="post-content" rows="3" placeholder="Share an update with your circle..."></textarea>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+          <select id="post-space" style="flex: 2; min-width: 180px;">
+            <option value="All Community">Post to: All Community</option>
+          </select>
+          <button class="btn btn-primary" style="flex: 1; min-width: 120px;" onclick="createPost()">Publish</button>
+        </div>
+        <div id="post-status" class="status"></div>
       </div>
 
-      <!-- VIEW 2: LEAFSPACES -->
+      <!-- MAIN VIEWS -->
+      <div id="view-feed"></div>
       <div id="view-spaces" style="display: none;">
-        <div class="card">
-          <h3>LeafSpaces — Topic Communities</h3>
-          <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">
-            Join focused rooms for creators, founders, and local hangouts.
-          </p>
-          <div class="space-item">
-            <div>
-              <strong># Afrobeats &amp; Indie Creators</strong>
-              <div style="font-size: 0.82rem; color: var(--muted);">142 members • Daily 15s voice drops</div>
-            </div>
-            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">Joined ✓</button>
-          </div>
-          <div class="space-item">
-            <div>
-              <strong># Lagos Tech &amp; Founders</strong>
-              <div style="font-size: 0.82rem; color: var(--muted);">98 members • Product launches &amp; builders</div>
-            </div>
-            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">Joined ✓</button>
-          </div>
-          <div class="space-item">
-            <div>
-              <strong># Faith, Purpose &amp; Encouragement</strong>
-              <div style="font-size: 0.82rem; color: var(--muted);">215 members • Morning reflections</div>
-            </div>
-            <button type="button" class="chip-btn" onclick="toggleJoin(this)">+ Join Space</button>
-          </div>
-          <div class="space-item">
-            <div>
-              <strong># Weekend Football &amp; Banter</strong>
-              <div style="font-size: 0.82rem; color: var(--muted);">176 members • Matchday live threads</div>
-            </div>
-            <button type="button" class="chip-btn" onclick="toggleJoin(this)">+ Join Space</button>
-          </div>
-        </div>
+        <h2>Explore Topic Spaces</h2>
+        <div id="spaces-list" style="margin-top: 15px;"></div>
       </div>
-
-      <!-- VIEW 3: FRIENDS -->
       <div id="view-friends" style="display: none;">
-        <div class="card">
-          <h3>LeafSocial Members &amp; Inner Circle</h3>
-          <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">
-            Connect with verified members in your community.
-          </p>
-          <div id="friendsList">
-            <p style="font-size: 0.88rem; color: var(--muted);">Loading members...</p>
-          </div>
+        <h2>Community Members</h2>
+        <div id="friends-list" style="margin-top: 15px;"></div>
+      </div>
+      <div id="view-chat" style="display: none;">
+        <h2>Circle Lounge</h2>
+        <div class="chat-box" id="chat-messages" style="margin-top: 15px;"></div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChat()">
+          <button class="btn btn-primary" style="width: auto; padding: 0 20px;" onclick="sendChat()">Send</button>
         </div>
       </div>
 
-      <!-- VIEW 4: CHAT -->
-      <div id="view-chat" style="display: none;">
-        <div class="card">
-          <h3>Circle Lounge — Live Group Chat</h3>
-          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 10px;">
-            Real-time community check-in with your LeafCircle.
-          </p>
-          <div class="chat-box" id="chatMessages">
-            <div class="chat-bubble">
-              <strong>Amaka Okafor</strong> <span style="font-size: 0.75rem; color: var(--muted);">• Lagos</span><br />
-              Welcome to the LeafSocial Circle Lounge! Drop a quick hello below 👋
-            </div>
-          </div>
-          <div class="chat-row">
-            <input id="chatInput" type="text" placeholder="Type a message to your circle..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-            <button type="button" class="btn-primary" style="width: auto; padding: 0 18px;" onclick="sendChatMessage()">Send</button>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Right Sidebar -->
     <aside class="sidebar-right">
-      <div class="highlight-box">
-        <span class="pill" style="background: rgba(255,255,255,0.2); color: #fff;">LeafAudio</span>
-        <h3 style="margin-top: 10px; font-size: 1.05rem;">Late-Night Acoustic Drops</h3>
-        <p style="font-size: 0.88rem; opacity: 0.92; margin-top: 6px;">
-          15-second voice clips from creators in your circles.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Why LeafSocial?</h3>
-        <p style="font-size: 0.88rem; color: var(--muted);">
-          • Verified member profiles with real locations<br />
-          • Chronological posts without noisy ads<br />
-          • Private inner circles for close friends
-        </p>
+      <div class="card" style="background: linear-gradient(135deg, var(--primary-dark), var(--surface));">
+        <h3>✨ LeafAudio</h3>
+        <p style="font-size: 0.9rem; opacity: 0.9; margin: 10px 0;">Late-Night Acoustic Drops. 15-second voice clips from creators in your circles.</p>
       </div>
     </aside>
   </main>
 
-  <!-- Terms of Use Modal -->
-  <div class="modal-backdrop" id="termsModal" onclick="if(event.target === this) closeTermsModal()">
-    <div class="modal-card">
-      <h2>LeafSocial Terms of Use &amp; Community Guidelines</h2>
-      <p>Effective Date: November 2026</p>
-
-      <h4>1. Eligibility &amp; Authentic Registration</h4>
-      <p>You must be at least 13 years old to register. You agree to provide accurate registration details—including your real full name, valid email address or phone number, date of birth, and location—and to keep your password secure.</p>
-
-      <h4>2. Respectful Community Conduct</h4>
-      <p>LeafSocial is built for positive conversations and creative circles. Hate speech, harassment, bullying, impersonation, spam, scams, and unlawful or sexually explicit content are strictly prohibited and will result in account removal.</p>
-
-      <h4>3. Your Content &amp; Ownership</h4>
-      <p>You retain full ownership of the posts, voice notes, and updates you share on LeafSocial. By posting, you grant LeafSocial permission to display your content to the circles and communities you choose to share it with.</p>
-
-      <h4>4. Privacy &amp; Data Protection</h4>
-      <p>Your registration information (contact details, date of birth, and location) is stored securely to verify your account and personalize your community experience. We never sell your personal data to third parties.</p>
-
-      <div class="modal-actions">
-        <button type="button" class="btn-primary" onclick="acceptTermsFromModal()">I Agree to Terms</button>
-        <button type="button" class="btn-secondary" onclick="closeTermsModal()">Close</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mzk5NjgsImV4cCI6MjExMTExNTk2OH0.irlsfi5a7FwWUTlqYg4zfdODsR1EJ997Wftwi8aJdM8";
-
+    
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let isSignUp = true;
     let currentUser = null;
+    let currentSpace = "All Community";
 
-    function openSection(sectionName) {
-      const sections = ["feed", "spaces", "friends", "chat"];
-      sections.forEach(sec => {
-        document.getElementById(`view-${sec}`).style.display = sec === sectionName ? "block" : "none";
-        document.getElementById(`nav-${sec}`).classList.toggle("active", sec === sectionName);
-      });
+    function normalizeEmail(raw) {
+      const cleaned = raw.trim();
+      if (cleaned.includes("@")) return cleaned.toLowerCase();
+      const digits = cleaned.replace(/[^0-9]/g, "");
+      return digits.length >= 7 ? `${digits}@phone.leafsocial.app` : null;
+    }
 
-      if (sectionName === "feed") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        loadPosts();
-      } else if (sectionName === "friends") {
-        loadMembers();
+    async function init() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        setupAuthedUI();
       }
+      loadSpaces();
+      loadPosts();
     }
 
-    function toggleJoin(btn) {
-      if (btn.classList.contains("cheered")) {
-        btn.classList.remove("cheered");
-        btn.textContent = "+ Join Space";
-      } else {
-        btn.classList.add("cheered");
-        btn.textContent = "Joined ✓";
-      }
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      document.getElementById("auth-title").innerText = isSignUp ? "Join the Circle" : "Welcome Back";
+      document.getElementById("auth-btn").innerText = isSignUp ? "Create Account" : "Sign In";
+      document.getElementById("toggle-Auth-btn").innerText = isSignUp ? "Switch to Sign In" : "Switch to Create Account";
+      document.getElementById("name-group").style.display = isSignUp ? "block" : "none";
+      document.getElementById("location-group").style.display = isSignUp ? "block" : "none";
     }
 
-    function sendChatMessage() {
-      const input = document.getElementById("chatInput");
-      const text = input.value.trim();
-      if (!text) return;
-
-      const sender = currentUser?.user_metadata?.full_name || "Guest Member";
-      const loc = currentUser?.user_metadata?.location || "Community";
-      const box = document.getElementById("chatMessages");
-
-      const bubble = document.createElement("div");
-      bubble.className = "chat-bubble";
-      bubble.innerHTML = `<strong>${escapeHtml(sender)}</strong> <span style="font-size: 0.75rem; color: var(--muted);">• ${escapeHtml(loc)}</span><br />${escapeHtml(text)}`;
-      box.appendChild(bubble);
-      box.scrollTop = box.scrollHeight;
-      input.value = "";
-    }
-
-    async function loadMembers() {
-      const list = document.getElementById("friendsList");
-      const { data, error } = await sb
-        .from("profiles")
-        .select("full_name, location")
-        .limit(20);
-
-      if (error || !data || data.length === 0) {
-        list.innerHTML = `
-          <div class="friend-item">
-            <div>
-              <strong>Amaka Okafor</strong>
-              <div style="font-size: 0.82rem; color: var(--muted);">📍 Lagos, Nigeria</div>
-            </div>
-            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">In Circle ✓</button>
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = data.map(member => `
-        <div class="friend-item">
-          <div>
-            <strong>${escapeHtml(member.full_name || "LeafSocial Member")}</strong>
-            <div style="font-size: 0.82rem; color: var(--muted);">📍 ${escapeHtml(member.location || "Community")}</div>
-          </div>
-          <button type="button" class="chip-btn" onclick="this.classList.toggle('cheered'); this.textContent = this.classList.contains('cheered') ? 'In Circle ✓' : '+ Add Friend'">+ Add Friend</button>
-        </div>
-      `).join("");
-    }
-
-    function openTermsModal() {
-      document.getElementById("termsModal").classList.add("open");
-    }
-
-    function closeTermsModal() {
-      document.getElementById("termsModal").classList.remove("open");
-    }
-
-    function acceptTermsFromModal() {
-      document.getElementById("suTerms").checked = true;
-      closeTermsModal();
-    }
-
-    function normalizeAuthCredential(rawInput) {
-      const cleaned = rawInput.trim();
-      if (cleaned.includes("@")) {
-        return { isPhone: false, authEmail: cleaned.toLowerCase(), displayContact: cleaned };
-      }
-      const digitsOnly = cleaned.replace(/[^0-9]/g, "");
-      if (digitsOnly.length < 7) {
-        return null;
-      }
-      return {
-        isPhone: true,
-        authEmail: `${digitsOnly}@phone.leafsocial.app`,
-        displayContact: cleaned
-      };
-    }
-
-    function switchAuthMode(mode) {
-      const signupForm = document.getElementById("signupForm");
-      const signinForm = document.getElementById("signinForm");
-      const tabSignup = document.getElementById("tabSignup");
-      const tabSignin = document.getElementById("tabSignin");
-      clearStatus("authStatus");
-
-      if (mode === "signup") {
-        signupForm.style.display = "block";
-        signinForm.style.display = "none";
-        tabSignup.classList.add("active");
-        tabSignin.classList.remove("active");
-      } else {
-        signupForm.style.display = "none";
-        signinForm.style.display = "block";
-        tabSignin.classList.add("active");
-        tabSignup.classList.remove("active");
-      }
-    }
-
-    function showStatus(id, message, type) {
-      const el = document.getElementById(id);
-      el.textContent = message;
-      el.className = `status-msg ${type}`;
-    }
-
-    function clearStatus(id) {
-      const el = document.getElementById(id);
-      el.textContent = "";
-      el.className = "status-msg";
-    }
-
-    async function handleSignUp(e) {
+    async function handleAuth(e) {
       e.preventDefault();
-      clearStatus("authStatus");
-
-      const fullName = document.getElementById("suName").value.trim();
-      const rawContact = document.getElementById("suContact").value.trim();
-      const dob = document.getElementById("suDob").value;
-      const location = document.getElementById("suLocation").value.trim();
-      const password = document.getElementById("suPassword").value;
-      const acceptedTerms = document.getElementById("suTerms").checked;
-
-      if (!fullName || !rawContact || !dob || !location || !password) {
-        showStatus("authStatus", "All fields are required to create your LeafSocial account.", "error");
+      const statusEl = document.getElementById("auth-status");
+      statusEl.style.display = "block";
+      statusEl.innerText = "Processing...";
+      
+      const rawContact = document.getElementById("contact").value.trim();
+      const email = normalizeEmail(rawContact);
+      if (!email) {
+        statusEl.innerText = "Please enter a valid email address or phone number.";
         return;
       }
 
-      if (!acceptedTerms) {
-        showStatus("authStatus", "You must agree to the LeafSocial Terms of Use & Community Guidelines before registering.", "error");
-        return;
-      }
+      const pass = document.getElementById("password").value;
+      const name = document.getElementById("name").value.trim() || "Member";
+      const loc = document.getElementById("location").value.trim() || "Community";
 
-      const birthDate = new Date(dob);
-      const ageDifMs = Date.now() - birthDate.getTime();
-      const ageDate = new Date(ageDifMs);
-      const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-      if (isNaN(age) || age < 13) {
-        showStatus("authStatus", "You must be at least 13 years old to create a LeafSocial account.", "error");
-        return;
-      }
-
-      const cred = normalizeAuthCredential(rawContact);
-      if (!cred) {
-        showStatus("authStatus", "Please enter a valid email address or phone number (at least 7 digits).", "error");
-        return;
-      }
-
-      const btn = document.getElementById("signupBtn");
-      btn.disabled = true;
-      btn.textContent = "Creating Account...";
-
-      const acceptedAt = new Date().toISOString();
-
-      const { data, error } = await sb.auth.signUp({
-        email: cred.authEmail,
-        password: password,
-        options: {
-          data: {
-            full_name: fullName,
-            contact_identifier: cred.displayContact,
-            date_of_birth: dob,
-            location: location,
-            terms_accepted_at: acceptedAt
-          }
-        }
-      });
-
-      btn.disabled = false;
-      btn.textContent = "Agree & Create Account";
-
-      if (error) {
-        showStatus("authStatus", error.message, "error");
-        return;
-      }
-
-      if (data.user) {
-        await sb.from("profiles").upsert({
-          id: data.user.id,
-          full_name: fullName,
-          contact_identifier: cred.displayContact,
-          date_of_birth: dob,
-          location: location,
-          terms_accepted_at: acceptedAt
+      let error = null;
+      if (isSignUp) {
+        const res = await sb.auth.signUp({
+          email,
+          password: pass,
+          options: { data: { full_name: name, location: loc, contact_identifier: rawContact } }
         });
-      }
-
-      if (data.session) {
-        renderUserSession(data.session.user);
+        error = res.error;
+        if (!error && res.data.user) {
+          await sb.from("profiles").upsert({
+            id: res.data.user.id,
+            full_name: name,
+            contact_identifier: rawContact,
+            location: loc
+          });
+        }
       } else {
-        showStatus("authStatus", "Account created! Tap Sign In above to enter your feed.", "success");
-        switchAuthMode("signin");
-        document.getElementById("siContact").value = rawContact;
+        const res = await sb.auth.signInWithPassword({ email, password: pass });
+        error = res.error;
       }
-    }
-
-    async function handleSignIn(e) {
-      e.preventDefault();
-      clearStatus("authStatus");
-
-      const rawContact = document.getElementById("siContact").value.trim();
-      const password = document.getElementById("siPassword").value;
-      const cred = normalizeAuthCredential(rawContact);
-
-      if (!cred) {
-        showStatus("authStatus", "Enter a valid email address or phone number.", "error");
-        return;
-      }
-
-      const btn = document.getElementById("signinBtn");
-      btn.disabled = true;
-      btn.textContent = "Signing In...";
-
-      const { data, error } = await sb.auth.signInWithPassword({
-        email: cred.authEmail,
-        password: password
-      });
-
-      btn.disabled = false;
-      btn.textContent = "Sign In";
 
       if (error) {
-        showStatus("authStatus", error.message, "error");
-        return;
+        statusEl.innerText = error.message;
+      } else {
+        statusEl.innerText = "Success! Loading...";
+        location.reload();
       }
-
-      renderUserSession(data.user);
     }
 
-    async function handleSignOut() {
+    async function signOut() {
       await sb.auth.signOut();
-      currentUser = null;
-      document.getElementById("authCard").style.display = "block";
-      document.getElementById("composerCard").style.display = "none";
+      location.reload();
     }
 
-    function renderUserSession(user) {
-      currentUser = user;
-      const meta = user.user_metadata || {};
-      const name = meta.full_name || "LeafSocial Member";
-      const location = meta.location ? `📍 ${meta.location}` : "";
-      const dob = meta.date_of_birth ? `🎂 ${meta.date_of_birth}` : "";
-      const contact = meta.contact_identifier ? `📱 ${meta.contact_identifier}` : "";
-
-      document.getElementById("authCard").style.display = "none";
-      document.getElementById("composerCard").style.display = "block";
-      document.getElementById("userDisplayName").textContent = name;
-      document.getElementById("userMetaInfo").innerHTML = [location, dob, contact]
-        .filter(Boolean)
-        .map(item => `<span>${item}</span>`)
-        .join(" • ");
-
-      loadPosts();
+    function setupAuthedUI() {
+      document.getElementById("auth-card").style.display = "none";
+      document.getElementById("composer-card").style.display = "block";
+      const meta = currentUser.user_metadata || {};
+      document.getElementById("user-display-name").innerText = meta.full_name || "Member";
+      document.getElementById("user-location").innerText = meta.location ? `📍 ${meta.location}` : "Community";
+      document.getElementById("avatar-initial").innerText = (meta.full_name || "M")[0].toUpperCase();
     }
 
-    async function publishPost() {
-      clearStatus("postStatus");
-      const content = document.getElementById("postBody").value.trim();
-      if (!content) {
-        showStatus("postStatus", "Write something before publishing.", "error");
-        return;
-      }
+    async function switchView(view) {
+      document.querySelectorAll("main > section > div[id^='view-']").forEach(el => el.style.display = "none");
+      document.getElementById(`view-${view}`).style.display = "block";
+      document.querySelectorAll(".nav-tab").forEach(el => el.classList.remove("active"));
+      document.getElementById(`tab-${view}`).classList.add("active");
 
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) {
-        showStatus("postStatus", "Please sign in first.", "error");
-        return;
-      }
-
-      const btn = document.getElementById("publishBtn");
-      btn.disabled = true;
-      btn.textContent = "Publishing...";
-
-      const authorName = user.user_metadata?.full_name || "Member";
-      const authorLocation = user.user_metadata?.location || "";
-
-      const { error } = await sb.from("posts").insert({
-        user_id: user.id,
-        author_name: authorName,
-        content: authorLocation ? `${content}\n— 📍 ${authorLocation}` : content
-      });
-
-      btn.disabled = false;
-      btn.textContent = "Publish Post";
-
-      if (error) {
-        showStatus("postStatus", error.message, "error");
-        return;
-      }
-
-      document.getElementById("postBody").value = "";
-      showStatus("postStatus", "Published to LeafSocial!", "success");
-      loadPosts();
+      if (view === "feed") { loadPosts(); }
+      if (view === "spaces") { loadSpacesList(); }
+      if (view === "friends") { loadFriends(); }
+      if (view === "chat") { loadChat(); }
     }
 
     async function loadPosts() {
-      const container = document.getElementById("feedContainer");
-      const { data, error } = await sb
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(25);
+      let query = sb.from("posts").select("*").order("created_at", { ascending: false });
+      if (currentSpace !== "All Community") query = query.eq("space_name", currentSpace);
+      const { data } = await query;
+      
+      const container = document.getElementById("view-feed");
+      container.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2>${escapeHtml(currentSpace)}</h2>
+        ${currentSpace !== "All Community" ? `<button class="chip" onclick="currentSpace='All Community'; loadPosts();">Show All</button>` : ""}
+      </div>`;
 
-      if (error || !data || data.length === 0) {
-        container.innerHTML = `
-          <div class="post-card">
-            <div class="post-head">
-              <div class="avatar">AO</div>
-              <div>
-                <strong>Amaka Okafor</strong>
-                <div style="font-size: 0.8rem; color: var(--muted);">Lagos, Nigeria • Sample Post</div>
-              </div>
-            </div>
-            <p>Welcome to LeafSocial! Share your first post above to see it appear live in the feed.</p>
-          </div>
-        `;
+      if (!data || data.length === 0) {
+        container.innerHTML += "<p style='color: var(--muted); margin-top: 15px;'>No posts yet. Be the first to share!</p>";
         return;
       }
 
-      container.innerHTML = data.map(post => {
-        const initials = (post.author_name || "LS").slice(0, 2).toUpperCase();
-        const time = post.created_at ? new Date(post.created_at).toLocaleString() : "Just now";
-        return `
+      data.forEach(post => {
+        container.innerHTML += `
           <div class="post-card">
-            <div class="post-head">
-              <div class="avatar">${initials}</div>
-              <div>
-                <strong>${escapeHtml(post.author_name || "Member")}</strong>
-                <div style="font-size: 0.8rem; color: var(--muted);">${time}</div>
+            <div class="post-header">
+              <div class="user-info">
+                <div class="avatar">${escapeHtml((post.author_name || "M")[0].toUpperCase())}</div>
+                <div>
+                  <strong>${escapeHtml(post.author_name || "Member")}</strong>
+                  <div style="font-size: 0.75rem; color: var(--muted);">${new Date(post.created_at).toLocaleString()}</div>
+                </div>
               </div>
+              <span class="pill" style="cursor:pointer;" onclick="currentSpace='${escapeAttr(post.space_name || "All Community")}'; loadPosts();"># ${escapeHtml(post.space_name || "All Community")}</span>
             </div>
             <p style="white-space: pre-line;">${escapeHtml(post.content || "")}</p>
-            <div class="post-actions">
-              <button class="chip-btn" type="button" onclick="this.classList.toggle('cheered'); this.textContent = this.classList.contains('cheered') ? '🌿 Cheered (1)' : '🌿 Cheer'">🌿 Cheer</button>
-              <button class="chip-btn" type="button" onclick="openSection('chat')">💬 Discuss in Chat</button>
+            <div class="actions">
+              <button class="chip" onclick="cheer('${post.id}')">🌿 Cheer (${post.cheers_count || 0})</button>
+              <button class="chip" onclick="switchView('chat')">💬 Chat</button>
             </div>
           </div>
         `;
-      }).join("");
+      });
+    }
+
+    async function createPost() {
+      const statusEl = document.getElementById("post-status");
+      if (!currentUser) {
+        statusEl.style.display = "block";
+        statusEl.innerText = "Sign in to post.";
+        return;
+      }
+      const content = document.getElementById("post-content").value.trim();
+      const space = document.getElementById("post-space").value;
+      if (!content) return;
+
+      const { error } = await sb.from("posts").insert({
+        user_id: currentUser.id,
+        author_name: currentUser.user_metadata?.full_name || "Member",
+        space_name: space,
+        content: content
+      });
+
+      if (error) {
+        statusEl.style.display = "block";
+        statusEl.innerText = error.message;
+        return;
+      }
+
+      statusEl.style.display = "none";
+      document.getElementById("post-content").value = "";
+      currentSpace = space;
+      loadPosts();
+    }
+
+    async function loadSpaces() {
+      const { data } = await sb.from("leaf_spaces").select("*");
+      const select = document.getElementById("post-space");
+      select.innerHTML = '<option value="All Community">Post to: All Community</option>';
+      if (data) {
+        data.forEach(s => select.innerHTML += `<option value="${escapeAttr(s.name)}">Post to: # ${escapeHtml(s.name)}</option>`);
+      }
+    }
+
+    async function loadSpacesList() {
+      const { data } = await sb.from("leaf_spaces").select("*");
+      const list = document.getElementById("spaces-list");
+      list.innerHTML = "";
+      if (data) {
+        data.forEach(s => {
+          list.innerHTML += `
+            <div class="card">
+              <h3># ${escapeHtml(s.name)}</h3>
+              <p style="color: var(--muted); margin: 10px 0;">${escapeHtml(s.description || "")}</p>
+              <button class="btn btn-secondary" onclick="currentSpace='${escapeAttr(s.name)}'; switchView('feed');">Open Space</button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    async function loadFriends() {
+      const { data } = await sb.from("profiles").select("*").limit(30);
+      const list = document.getElementById("friends-list");
+      list.innerHTML = "";
+      if (data && data.length > 0) {
+        data.forEach(p => {
+          list.innerHTML += `
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="user-info">
+                <div class="avatar">${escapeHtml((p.full_name || "M")[0].toUpperCase())}</div>
+                <div>
+                  <strong>${escapeHtml(p.full_name || "Member")}</strong>
+                  <div style="font-size: 0.8rem; color: var(--muted);">📍 ${escapeHtml(p.location || "Community")}</div>
+                </div>
+              </div>
+              <button class="chip active" onclick="this.innerText='Added ✓'">Add Friend</button>
+            </div>
+          `;
+        });
+      } else {
+        list.innerHTML = "<p style='color: var(--muted);'>No members found yet.</p>";
+      }
+    }
+
+    async function loadChat() {
+      const { data } = await sb.from("chat_messages").select("*").eq("room_name", "Circle Lounge").order("created_at", { ascending: true });
+      const box = document.getElementById("chat-messages");
+      box.innerHTML = "";
+      if (data && data.length > 0) {
+        data.forEach(m => {
+          const isMine = currentUser && m.user_id === currentUser.id;
+          box.innerHTML += `
+            <div class="msg ${isMine ? 'mine' : ''}">
+              <div style="font-size: 0.75rem; opacity: 0.8;">${escapeHtml(m.sender_name || "Member")}</div>
+              <div>${escapeHtml(m.message || "")}</div>
+            </div>
+          `;
+        });
+        box.scrollTop = box.scrollHeight;
+      } else {
+        box.innerHTML = "<p style='color: var(--muted);'>Welcome to Circle Lounge! Send the first message below.</p>";
+      }
+    }
+
+    async function sendChat() {
+      if (!currentUser) return alert("Sign in to chat");
+      const input = document.getElementById("chat-input");
+      if (!input.value.trim()) return;
+
+      await sb.from("chat_messages").insert({
+        user_id: currentUser.id,
+        sender_name: currentUser.user_metadata?.full_name || "Member",
+        message: input.value.trim()
+      });
+      input.value = "";
+      loadChat();
+    }
+
+    async function cheer(postId) {
+      const { data } = await sb.from("posts").select("cheers_count").eq("id", postId).single();
+      const newCount = (data?.cheers_count || 0) + 1;
+      await sb.from("posts").update({ cheers_count: newCount }).eq("id", postId);
+      loadPosts();
     }
 
     function escapeHtml(str) {
@@ -1149,14 +583,11 @@
         .replace(/"/g, "&quot;");
     }
 
-    (async () => {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session?.user) {
-        renderUserSession(session.user);
-      } else {
-        loadPosts();
-      }
-    })();
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+    }
+
+    init();
   </script>
 </body>
 </html>
