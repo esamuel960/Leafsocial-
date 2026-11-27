@@ -3,768 +3,382 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LeafSocial — Connect &amp; Share with Friends</title>
-  <meta name="description" content="LeafSocial is a clean community social platform to share updates, photos, audio, and videos with friends." />
+  <title>LeafSocial — LeafAudio, Inner Circles &amp; Communities</title>
+  <meta name="description" content="LeafSocial combines voice notes, inner circle privacy, hangout polls, and creator spaces in one fast green-and-white social network." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #0b120e;
-      --surface: #131e18;
-      --surface-hover: #192720;
-      --input-bg: #0e1712;
-      --text: #f3f7f5;
-      --muted: #8ea398;
-      --accent: #22c55e;
-      --accent-hover: #16a34a;
-      --border: #22332a;
-      --danger: #ef4444;
+      --bg: #f2f6f3;
+      --surface: #ffffff;
+      --surface-soft: #f7faf8;
+      --surface-hover: #ebf5ee;
+      --input-bg: #f4f7f5;
+      --text: #0f172a;
+      --muted: #526158;
+      --green: #16a34a;
+      --green-dark: #15803d;
+      --green-deeper: #14532d;
+      --green-light: #dcfce7;
+      --green-tint: #f0fdf4;
+      --border: #dbe5de;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --amber: #d97706;
+      --amber-bg: #fef3c7;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      line-height: 1.55;
+      line-height: 1.5;
       display: flex;
       flex-direction: column;
     }
 
-    /* Sticky Top Navigation */
+    /* Sticky Top Navbar */
     header {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: rgba(11, 18, 14, 0.88);
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
+      box-shadow: var(--shadow-sm);
     }
 
     .nav-inner {
-      max-width: 640px;
+      max-width: 1180px;
       margin: 0 auto;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.25rem;
-      font-weight: 800;
+      text-decoration: none;
       color: var(--text);
+      font-weight: 800;
+      font-size: 1.25rem;
       letter-spacing: -0.02em;
+      cursor: pointer;
     }
 
-    .brand-icon {
-      width: 32px;
-      height: 32px;
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #22c55e, #15803d);
-      border-radius: 10px;
+      color: #ffffff;
       display: grid;
       place-items: center;
-      color: #051009;
+      font-size: 1.2rem;
       font-weight: 900;
-      font-size: 1.1rem;
+      box-shadow: 0 3px 10px rgba(22, 163, 74, 0.28);
     }
 
-    .nav-user {
+    .nav-tabs {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .user-pill {
-      font-size: 0.85rem;
-      color: var(--muted);
-      background: var(--surface);
-      padding: 6px 12px;
-      border-radius: 999px;
+      gap: 4px;
+      background: var(--surface-soft);
+      padding: 4px;
+      border-radius: 12px;
       border: 1px solid var(--border);
+      overflow-x: auto;
     }
 
-    /* Main Layout */
-    main {
-      max-width: 640px;
+    .nav-tab {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .nav-tab:hover {
+      background: var(--surface-hover);
+      color: var(--green-dark);
+    }
+
+    .nav-tab.active {
+      background: var(--green);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+    }
+
+    .badge-count {
+      background: var(--danger);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-tint);
+      border: 1px solid #bbf7d0;
+      padding: 5px 11px 5px 6px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--green-deeper);
+      cursor: pointer;
+    }
+
+    /* 3-Column App Shell */
+    .app-shell {
+      max-width: 1180px;
       width: 100%;
-      margin: 24px auto;
-      padding: 0 16px 32px;
+      margin: 18px auto;
+      padding: 0 16px 36px;
       display: grid;
-      gap: 20px;
+      grid-template-columns: 245px minmax(0, 1fr) 285px;
+      gap: 18px;
       flex: 1;
+      align-items: start;
+    }
+
+    .sidebar-sticky {
+      position: sticky;
+      top: 72px;
+      display: grid;
+      gap: 14px;
     }
 
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
     }
 
     h2 {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 0.95rem;
       font-weight: 700;
-      margin-bottom: 4px;
+      color: var(--text);
     }
 
     .sub {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.86rem;
     }
 
-    /* Forms & Inputs */
-    .form-grid {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
+    /* Buttons & Inputs */
+    button.btn {
+      background: var(--green);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 15px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.08s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button.btn:hover {
+      background: var(--green-dark);
+    }
+
+    button.btn:active {
+      transform: scale(0.98);
+    }
+
+    button.btn-soft {
+      background: var(--green-light);
+      color: var(--green-deeper);
+    }
+
+    button.btn-soft:hover {
+      background: #bbf7d0;
+    }
+
+    button.btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    button.btn-ghost:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    button.btn-danger-soft {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    button.btn-sm {
+      padding: 6px 11px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+    }
+
+    button.link-btn {
+      background: none;
+      border: none;
+      color: var(--green-dark);
+      font-weight: 600;
+      font-size: 0.84rem;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
     }
 
     input, textarea, select {
       width: 100%;
       background: var(--input-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
+      border-radius: 10px;
+      padding: 10px 12px;
       color: var(--text);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, background 0.15s;
     }
 
     input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
+      border-color: var(--green);
+      background: #ffffff;
     }
 
     textarea {
-      min-height: 96px;
+      min-height: 82px;
       resize: vertical;
     }
 
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    button {
-      background: var(--accent);
-      color: #051109;
-      font-weight: 700;
-      font-size: 0.92rem;
-      border: none;
-      border-radius: 12px;
-      padding: 11px 18px;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-    }
-
-    button:hover {
-      background: var(--accent-hover);
-      color: #fff;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    button.secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    button.secondary:hover {
-      background: var(--surface-hover);
-    }
-
-    button.small {
-      padding: 7px 14px;
-      font-size: 0.85rem;
-      border-radius: 10px;
-    }
-
-    button.link-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      padding: 0;
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-decoration: underline;
-    }
-
-    button.link-btn:hover {
-      color: var(--accent);
-      background: none;
-    }
-
-    /* Composer Tools */
-    .composer-footer {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .media-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .media-controls select {
-      width: auto;
-      min-width: 120px;
-      padding: 8px 12px;
-      font-size: 0.88rem;
-    }
-
-    .media-controls input[type="file"] {
-      width: auto;
-      flex: 1;
-      min-width: 180px;
-      padding: 7px 10px;
-      font-size: 0.85rem;
-    }
-
-    /* Feed & Posts */
-    .feed-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .post-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .post-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .post-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    /* Avatars */
     .avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: #1d3528;
-      color: var(--accent);
-      font-weight: 700;
+      background: linear-gradient(135deg, #dcfce7, #86efac);
+      color: var(--green-deeper);
+      font-weight: 800;
+      font-size: 0.9rem;
       display: grid;
       place-items: center;
-      font-size: 0.95rem;
       flex-shrink: 0;
+      position: relative;
     }
 
-    .author-info {
-      display: grid;
+    .avatar.sm {
+      width: 28px;
+      height: 28px;
+      font-size: 0.75rem;
     }
 
-    .author-name {
-      font-weight: 700;
-      font-size: 0.96rem;
+    .avatar.lg {
+      width: 64px;
+      height: 64px;
+      font-size: 1.35rem;
     }
 
-    .post-time {
-      font-size: 0.8rem;
-      color: var(--muted);
+    .online-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #ffffff;
     }
 
-    .post-body {
-      font-size: 0.98rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .post-media img,
-    .post-media video {
-      width: 100%;
-      max-height: 420px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: block;
-    }
-
-    .post-media audio {
-      width: 100%;
-      margin-top: 4px;
-    }
-
-    .alert {
-      font-size: 0.88rem;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-      margin-top: 10px;
-    }
-
-    .alert.success {
-      background: rgba(34, 197, 94, 0.12);
-      border-color: rgba(34, 197, 94, 0.35);
-      color: #86efac;
-    }
-
-    /* Footer & Policy Modal */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 20px 16px 32px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .footer-links {
+    /* Left Rail Navigation & Spaces */
+    .rail-item {
       display: flex;
-      justify-content: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .policy-box {
-      max-width: 640px;
-      margin: 16px auto 0;
-      text-align: left;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      display: grid;
-      gap: 12px;
-      color: var(--text);
-    }
-
-    .policy-box h3 {
-      font-size: 1.05rem;
-      color: var(--accent);
-    }
-
-    .policy-box h4 {
-      font-size: 0.92rem;
-      margin-top: 6px;
-    }
-
-    .policy-box p, .policy-box li {
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .policy-box ul {
-      padding-left: 18px;
-      display: grid;
-      gap: 6px;
-    }
-
-    .policy-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 9px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: background 0.12s;
     }
 
-    .hidden {
-      display: none !important;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="nav-inner">
-      <div class="brand">
-        <div class="brand-icon">L</div>
-        <span>LeafSocial</span>
-      </div>
-      <div class="nav-user hidden" id="navUserArea">
-        <span class="user-pill" id="navUserEmail"></span>
-        <button class="secondary small" id="logoutBtn" type="button">Sign Out</button>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <!-- Auth Section -->
-    <section class="card" id="authCard">
-      <h2>Welcome to LeafSocial</h2>
-      <p class="sub">A simple social community to share updates, photos, music, and videos with friends.</p>
-      <div class="form-grid">
-        <input id="fullNameInput" type="text" placeholder="Full name (required for sign up)" />
-        <input id="emailInput" type="email" placeholder="Email address" />
-        <input id="passwordInput" type="password" placeholder="Password (6+ characters)" />
-        <div class="btn-row">
-          <button id="signInBtn" type="button">Sign In</button>
-          <button class="secondary" id="signUpBtn" type="button">Create Account</button>
-        </div>
-        <p class="sub" style="font-size: 0.8rem;">
-          By creating an account or signing in, you agree to our
-          <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button> and
-          <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>.
-        </p>
-      </div>
-      <div id="authMessage" class="alert hidden"></div>
-    </section>
-
-    <!-- Composer Section -->
-    <section class="card hidden" id="composerCard">
-      <textarea id="postContentInput" placeholder="What's on your mind?"></textarea>
-      <div class="composer-footer">
-        <div class="media-controls">
-          <select id="mediaTypeInput">
-            <option value="text">Text</option>
-            <option value="photo">Photo</option>
-            <option value="music">Audio</option>
-            <option value="video">Video</option>
-          </select>
-          <input id="mediaFileInput" type="file" accept="image/*,audio/*,video/*" class="hidden" />
-        </div>
-        <button id="publishPostBtn" type="button">Post</button>
-      </div>
-      <div id="composerMessage" class="alert hidden"></div>
-    </section>
-
-    <!-- Community Feed -->
-    <section>
-      <div class="feed-header">
-        <h2>Community Feed</h2>
-        <button class="secondary small" id="refreshFeedBtn" type="button">Refresh</button>
-      </div>
-      <div class="post-list" id="feedList">
-        <div class="card"><p class="sub">Loading feed...</p></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footer-links">
-      <button class="link-btn" type="button" onclick="openPolicy('about')">About LeafSocial</button>
-      <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button>
-      <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>
-    </div>
-    <p>&copy; 2026 LeafSocial. All rights reserved.</p>
-
-    <!-- Policy & Info Drawer -->
-    <div id="policyContainer" class="policy-box hidden">
-      <div class="policy-header">
-        <h3 id="policyTitle">Privacy Policy</h3>
-        <button class="secondary small" type="button" onclick="closePolicy()">Close</button>
-      </div>
-      <div id="policyContent"></div>
-    </div>
-  </footer>
-
-  <script>
-    // Replace PASTE_YOUR_ANON_PUBLIC_KEY_HERE with your Supabase anon public key
-    const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_PUBLIC_KEY_HERE";
-
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentUser = null;
-
-    const authCard = document.getElementById("authCard");
-    const composerCard = document.getElementById("composerCard");
-    const navUserArea = document.getElementById("navUserArea");
-    const navUserEmail = document.getElementById("navUserEmail");
-    const authMessage = document.getElementById("authMessage");
-    const composerMessage = document.getElementById("composerMessage");
-    const mediaTypeInput = document.getElementById("mediaTypeInput");
-    const mediaFileInput = document.getElementById("mediaFileInput");
-    const feedList = document.getElementById("feedList");
-
-    const POLICIES = {
-      privacy: {
-        title: "Privacy Policy (Effective November 2026)",
-        html: `
-          <p>LeafSocial respects your privacy and is committed to protecting the personal data you share when using our service.</p>
-          <h4>1. Information We Collect</h4>
-          <ul>
-            <li><strong>Account Information:</strong> Your full name, email address, and encrypted authentication credentials when you create an account.</li>
-            <li><strong>User Content:</strong> Text posts, photos, audio files, and videos you voluntarily publish to the community feed.</li>
-            <li><strong>Technical &amp; Cookie Data:</strong> Basic browser storage tokens used to keep you signed in, as well as standard analytics or advertising cookies (such as Google Ads or Google AdSense cookies) when enabled.</li>
-          </ul>
-          <h4>2. How We Use Your Information</h4>
-          <ul>
-            <li>To create and manage your LeafSocial account and authenticate sessions.</li>
-            <li>To display your posts and uploaded media to the community feed.</li>
-            <li>To maintain platform security, prevent abuse, and improve site performance.</li>
-          </ul>
-          <h4>3. Third-Party Services &amp; Advertising</h4>
-          <p>We use Supabase to securely host our database, authentication, and media storage. If third-party advertising partners (such as Google) serve ads on LeafSocial, they may use cookies to display relevant ads based on prior visits. You can manage ad personalization through your Google Ad Settings.</p>
-          <h4>4. Data Retention &amp; Deletion</h4>
-          <p>We do not sell your personal information. You may request account or content deletion at any time by contacting the site administrator via our GitHub repository (<code>github.com/esamuel960/Leafsocial-</code>).</p>
-        `
-      },
-      terms: {
-        title: "Terms of Service",
-        html: `
-          <p>By accessing or using LeafSocial, you agree to follow these community terms:</p>
-          <ul>
-            <li><strong>Respectful Content:</strong> You may not post illegal, abusive, infringing, or harmful material.</li>
-            <li><strong>Ownership:</strong> You retain ownership of the text, photos, audio, and videos you post, and grant LeafSocial permission to display them on the platform.</li>
-            <li><strong>Account Security:</strong> You are responsible for keeping your login password secure.</li>
-          </ul>
-        `
-      },
-      about: {
-        title: "About LeafSocial",
-        html: `
-          <p>LeafSocial is a lightweight, fast social community built for friends and creators to share text updates, photos, audio clips, and short videos in one clean feed.</p>
-          <p>Built with modern web standards and powered by Supabase.</p>
-        `
-      }
-    };
-
-    function openPolicy(type) {
-      const container = document.getElementById("policyContainer");
-      const titleEl = document.getElementById("policyTitle");
-      const contentEl = document.getElementById("policyContent");
-      const item = POLICIES[type];
-      if (!item) return;
-      titleEl.textContent = item.title;
-      contentEl.innerHTML = item.html;
-      container.classList.remove("hidden");
-      container.scrollIntoView({ behavior: "smooth" });
+    .rail-item:hover {
+      background: var(--surface-hover);
     }
 
-    function closePolicy() {
-      document.getElementById("policyContainer").classList.add("hidden");
+    .rail-item.active {
+      background: var(--green-tint);
+      color: var(--green-dark);
+      font-weight: 700;
     }
 
-    function showNotice(el, text, isSuccess = false) {
-      el.textContent = text;
-      el.classList.remove("hidden", "success");
-      if (isSuccess) el.classList.add("success");
+    .pill-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--green-light);
+      color: var(--green-deeper);
     }
 
-    function hideNotice(el) {
-      el.classList.add("hidden");
+    .pill-tag.circle {
+      background: var(--amber-bg);
+      color: #92400e;
     }
 
-    mediaTypeInput.addEventListener("change", () => {
-      mediaFileInput.classList.toggle("hidden", mediaTypeInput.value === "text");
-    });
-
-    async function refreshSession() {
-      const { data } = await sb.auth.getSession();
-      currentUser = data?.session?.user || null;
-
-      authCard.classList.toggle("hidden", Boolean(currentUser));
-      composerCard.classList.toggle("hidden", !currentUser);
-      navUserArea.classList.toggle("hidden", !currentUser);
-
-      if (currentUser) {
-        navUserEmail.textContent = currentUser.user_metadata?.full_name || currentUser.email;
-      }
+    /* Composer */
+    .composer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
-    function getInitials(name) {
-      return (name || "M")
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement("div");
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    async function loadFeed() {
-      if (SUPABASE_ANON_KEY === "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
-        feedList.innerHTML = `
-          <div class="card">
-            <p class="sub">Almost ready! Add your Supabase <strong>anon public</strong> key inside <code>index.html</code> to load posts.</p>
-          </div>`;
-        return;
-      }
-
-      const { data, error } = await sb
-        .from("posts")
-        .select("id, content, media_type, media_url, created_at, profiles(full_name, handle)")
-        .order("created_at", { ascending: false })
-        .limit(40);
-
-      if (error) {
-        feedList.innerHTML = `<div class="card"><p class="sub">Unable to load posts: ${escapeHtml(error.message)}</p></div>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        feedList.innerHTML = `<div class="card"><p class="sub">No posts yet. Be the first to share something!</p></div>`;
-        return;
-      }
-
-      feedList.innerHTML = data.map((post) => {
-        const author = post.profiles?.full_name || "Member";
-        const handle = post.profiles?.handle ? ` · @${post.profiles.handle}` : "";
-        const time = new Date(post.created_at).toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-
-        let mediaHtml = "";
-        if (post.media_url && post.media_type === "photo") {
-          mediaHtml = `<div class="post-media"><img src="${post.media_url}" alt="Shared photo" loading="lazy" /></div>`;
-        } else if (post.media_url && post.media_type === "music") {
-          mediaHtml = `<div class="post-media"><audio controls src="${post.media_url}"></audio></div>`;
-        } else if (post.media_url && post.media_type === "video") {
-          mediaHtml = `<div class="post-media"><video controls src="${post.media_url}"></video></div>`;
-        }
-
-        return `
-          <article class="post-card">
-            <div class="post-top">
-              <div class="avatar">${escapeHtml(getInitials(author))}</div>
-              <div class="author-info">
-                <span class="author-name">${escapeHtml(author)}</span>
-                <span class="post-time">${escapeHtml(time)}${escapeHtml(handle)}</span>
-              </div>
-            </div>
-            <div class="post-body">${escapeHtml(post.content)}</div>
-            ${mediaHtml}
-          </article>
-        `;
-      }).join("");
-    }
-
-    document.getElementById("signUpBtn").addEventListener("click", async () => {
-      hideNotice(authMessage);
-      const fullName = document.getElementById("fullNameInput").value.trim();
-      const email = document.getElementById("emailInput").value.trim();
-      const password = document.getElementById("passwordInput").value;
-
-      if (!fullName || !email || password.length < 6) {
-        return showNotice(authMessage, "Enter your full name, email, and a password (6+ characters).");
-      }
-
-      const { error } = await sb.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } }
-      });
-
-      if (error) return showNotice(authMessage, error.message);
-
-      showNotice(authMessage, "Account created! If email confirmation is off, click Sign In now.", true);
-      await refreshSession();
-      await loadFeed();
-    });
-
-    document.getElementById("signInBtn").addEventListener("click", async () => {
-      hideNotice(authMessage);
-      const email = document.getElementById("emailInput").value.trim();
-      const password = document.getElementById("passwordInput").value;
-
-      if (!email || !password) {
-        return showNotice(authMessage, "Enter your email and password.");
-      }
-
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) return showNotice(authMessage, error.message);
-
-      await refreshSession();
-      await loadFeed();
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await sb.auth.signOut();
-      await refreshSession();
-    });
-
-    document.getElementById("publishPostBtn").addEventListener("click", async () => {
-      hideNotice(composerMessage);
-      if (!currentUser) return;
-
-      const content = document.getElementById("postContentInput").value.trim();
-      const mediaType = mediaTypeInput.value;
-      const file = mediaFileInput.files?.[0];
-
-      if (!content) {
-        return showNotice(composerMessage, "Write a message before posting.");
-      }
-
-      const btn = document.getElementById("publishPostBtn");
-      btn.disabled = true;
-      btn.textContent = "Posting...";
-
-      try {
-        let mediaUrl = null;
-        if (mediaType !== "text" && file) {
-          const ext = file.name.split(".").pop();
-          const filePath = `${currentUser.id}/${Date.now()}.${ext}`;
-          const { error: uploadError } = await sb.storage
-            .from("posts-media")
-            .upload(filePath, file, { upsert: false });
-
-          if (uploadError) throw uploadError;
-
-          const { data: publicUrlData } = sb.storage
-            .from("posts-media")
-            .getPublicUrl(filePath);
-          mediaUrl = publicUrlData.publicUrl;
-        }
-
-        const { error: insertError } = await sb.from("posts").insert({
-          author_id: currentUser.id,
-          content,
-          media_type: mediaType,
-          media_url: mediaUrl
-        });
-
-        if (insertError) throw insertError;
-
-        document.getElementById("postContentInput").value = "";
-        mediaFileInput.value = "";
-        mediaTypeInput.value = "text";
-        mediaFileInput.classList.add("hidden");
-        await loadFeed();
-      } catch (err) {
-        showNotice(composerMessage, err.message || "Could not publish post.");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Post";
-      }
-    });
-
-    document.getElementById("refreshFeedBtn").addEventListener("click", loadFeed);
-
-    (async () => {
-      await refreshSession();
-      await loadFeed();
-    })();
-  </script>
-</body>
-</html>
+    .audience-select {
+      width: auto;
+      padding: 5px 10
