@@ -2,830 +2,465 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LeafSocial — LeafAudio, Inner Circles &amp; Communities</title>
-  <meta name="description" content="LeafSocial combines voice notes, inner circle privacy, hangout polls, and creator spaces in one fast green-and-white social network." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>LeafSocial — Voice Notes, Inner Circles & Topic Spaces</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #f2f6f3;
+      --bg: #f3f6f4;
       --surface: #ffffff;
-      --surface-soft: #f7faf8;
-      --surface-hover: #ebf5ee;
-      --input-bg: #f4f7f5;
-      --text: #0f172a;
-      --muted: #526158;
-      --green: #16a34a;
-      --green-dark: #15803d;
-      --green-deeper: #14532d;
+      --surface-soft: #eef5f0;
+      --green: #15803d;
+      --green-dark: #166534;
       --green-light: #dcfce7;
-      --green-tint: #f0fdf4;
-      --border: #dbe5de;
-      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
       --danger: #dc2626;
-      --danger-bg: #fef2f2;
-      --amber: #d97706;
-      --amber-bg: #fef3c7;
+      --radius: 16px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
       line-height: 1.5;
-      display: flex;
-      flex-direction: column;
+      overflow-x: hidden;
     }
 
+    /* Top Navigation */
     header {
       position: sticky;
       top: 0;
-      z-index: 40;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
+      z-index: 50;
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
+      padding: 12px 16px;
     }
 
     .nav-inner {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      text-decoration: none;
-      color: var(--text);
       font-weight: 800;
-      font-size: 1.25rem;
-      letter-spacing: -0.02em;
-      cursor: pointer;
+      font-size: 1.15rem;
+      color: var(--text);
     }
 
     .brand-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #22c55e, #15803d);
-      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--green);
+      color: #fff;
       display: grid;
       place-items: center;
-      font-size: 1.2rem;
-      font-weight: 900;
-      box-shadow: 0 3px 10px rgba(22, 163, 74, 0.28);
+      font-weight: 800;
     }
 
     .nav-tabs {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--surface-soft);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow-x: auto;
-    }
-
-    .nav-tab {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.88rem;
-      padding: 8px 14px;
-      border-radius: 9px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      transition: all 0.15s;
-    }
-
-    .nav-tab:hover {
-      background: var(--surface-hover);
-      color: var(--green-dark);
-    }
-
-    .nav-tab.active {
-      background: var(--green);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
-    }
-
-    .badge-count {
-      background: var(--danger);
-      color: #ffffff;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 1px 6px;
-      border-radius: 999px;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--green-tint);
-      border: 1px solid #bbf7d0;
-      padding: 5px 11px 5px 6px;
-      border-radius: 999px;
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--green-deeper);
-      cursor: pointer;
-    }
-
-    .app-shell {
-      max-width: 1180px;
-      width: 100%;
-      margin: 18px auto;
-      padding: 0 16px 36px;
-      display: grid;
-      grid-template-columns: 245px minmax(0, 1fr) 285px;
-      gap: 18px;
-      flex: 1;
-      align-items: start;
-    }
-
-    .sidebar-sticky {
-      position: sticky;
-      top: 72px;
-      display: grid;
-      gap: 14px;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    h2 {
-      font-size: 1.08rem;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .sub {
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-
-    button.btn {
-      background: var(--green);
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      padding: 9px 15px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.08s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    button.btn:hover {
-      background: var(--green-dark);
-    }
-
-    button.btn:active {
-      transform: scale(0.98);
-    }
-
-    button.btn-soft {
-      background: var(--green-light);
-      color: var(--green-deeper);
-    }
-
-    button.btn-soft:hover {
-      background: #bbf7d0;
-    }
-
-    button.btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    button.btn-ghost:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-    }
-
-    button.btn-sm {
-      padding: 6px 11px;
-      font-size: 0.8rem;
-      border-radius: 8px;
-    }
-
-    button.link-btn {
-      background: none;
-      border: none;
-      color: var(--green-dark);
-      font-weight: 600;
-      font-size: 0.84rem;
-      text-decoration: underline;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      color: var(--text);
-      font-size: 0.92rem;
-      outline: none;
-      transition: border-color 0.15s, background 0.15s;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--green);
-      background: #ffffff;
-    }
-
-    textarea {
-      min-height: 82px;
-      resize: vertical;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #dcfce7, #86efac);
-      color: var(--green-deeper);
-      font-weight: 800;
-      font-size: 0.9rem;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .avatar.sm {
-      width: 28px;
-      height: 28px;
-      font-size: 0.75rem;
-    }
-
-    .avatar.lg {
-      width: 64px;
-      height: 64px;
-      font-size: 1.35rem;
-    }
-
-    .online-dot {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: #22c55e;
-      border: 2px solid #ffffff;
-    }
-
-    .rail-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 11px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.88rem;
-      color: var(--text);
-      transition: background 0.12s;
-    }
-
-    .rail-item:hover {
-      background: var(--surface-hover);
-    }
-
-    .rail-item.active {
-      background: var(--green-tint);
-      color: var(--green-dark);
-      font-weight: 700;
-    }
-
-    .pill-tag {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--green-light);
-      color: var(--green-deeper);
-    }
-
-    .pill-tag.circle {
-      background: var(--amber-bg);
-      color: #92400e;
-    }
-
-    .composer-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .audience-select {
-      width: auto;
-      padding: 5px 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      border-radius: 999px;
-      background: var(--green-tint);
-      color: var(--green-deeper);
-      border-color: #bbf7d0;
-    }
-
-    .composer-tools {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .tool-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .tool-pill {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .tool-pill:hover, .tool-pill.active {
-      background: var(--green-light);
-      color: var(--green-deeper);
-      border-color: #86efac;
-    }
-
-    .tool-pill.recording {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border-color: #fecaca;
-      animation: pulse 1.2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .sub-panel {
-      margin-top: 10px;
-      padding: 12px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .filter-strip {
       display: flex;
       gap: 6px;
       overflow-x: auto;
       padding-bottom: 2px;
     }
 
-    .filter-chip {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
+    .nav-tab {
+      border: none;
+      background: transparent;
       padding: 7px 14px;
       border-radius: 999px;
-      font-size: 0.83rem;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
     }
 
-    .filter-chip.active {
+    .nav-tab.active {
       background: var(--green);
-      color: #ffffff;
-      border-color: var(--green);
+      color: #fff;
     }
 
-    .feed-stack {
+    /* Responsive 3-Column Layout */
+    .layout {
+      max-width: 1180px;
+      margin: 18px auto;
+      padding: 0 14px 40px;
       display: grid;
-      gap: 14px;
+      grid-template-columns: 260px minmax(0, 1fr) 280px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-left {
+        order: 2;
+      }
+      .main-feed {
+        order: 1;
+      }
+      .sidebar-right {
+        order: 3;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 10px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .list-item:hover {
+      background: var(--surface-soft);
+    }
+
+    .pill {
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    /* Auth Card */
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .auth-mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 12px;
+      margin: 14px 0;
+    }
+
+    .mode-btn {
+      border: none;
+      padding: 9px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .mode-btn.active {
+      background: var(--surface);
+      color: var(--green-dark);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 560px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .field label span.req {
+      color: var(--danger);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      background: #f9fafb;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--green);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
+
+    /* Terms of Use Checkbox Box */
+    .terms-box {
+      grid-column: 1 / -1;
+      background: var(--surface-soft);
+      border: 1px solid #cce3d4;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .terms-box input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .terms-box label {
+      font-size: 0.84rem;
+      color: #1f2937;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+
+    .terms-link {
+      color: var(--green-dark);
+      font-weight: 700;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 11px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn-secondary {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .status-msg {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .status-msg.error {
+      display: block;
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .status-msg.success {
+      display: block;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border: 1px solid #bbf7d0;
+    }
+
+    /* Post Composer & Feed */
+    .profile-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: var(--muted);
     }
 
     .post-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 16px;
-      box-shadow: var(--shadow-sm);
-      display: grid;
-      gap: 12px;
+      margin-bottom: 14px;
     }
 
-    .post-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .post-author-wrap {
+    .post-head {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 10px;
     }
 
-    .post-badges {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .post-text {
-      font-size: 0.96rem;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .audio-card {
-      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      border: 1px solid #86efac;
-      border-radius: 12px;
-      padding: 12px;
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-weight: 800;
       display: grid;
-      gap: 8px;
+      place-items: center;
+      flex-shrink: 0;
     }
 
-    .waveform-bars {
+    .post-actions {
       display: flex;
-      align-items: center;
-      gap: 3px;
-      height: 24px;
-    }
-
-    .waveform-bars span {
-      flex: 1;
-      background: var(--green);
-      border-radius: 99px;
-      opacity: 0.75;
-    }
-
-    .audio-card audio {
-      width: 100%;
-      height: 36px;
-    }
-
-    .poll-box {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .poll-option {
-      position: relative;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 9px 12px;
-      cursor: pointer;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-
-    .poll-option.voted {
-      border-color: var(--green);
-    }
-
-    .poll-fill {
-      position: absolute;
-      inset: 0 auto 0 0;
-      background: rgba(34, 197, 94, 0.16);
-      z-index: 0;
-      transition: width 0.25s ease;
-    }
-
-    .poll-label, .poll-pct {
-      position: relative;
-      z-index: 1;
-    }
-
-    .post-media img, .post-media video {
-      width: 100%;
-      max-height: 430px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: block;
-    }
-
-    .reactions-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
+      margin-top: 12px;
       padding-top: 10px;
       border-top: 1px solid var(--border);
     }
 
-    .emoji-group {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .emoji-btn {
-      background: var(--surface-soft);
+    .chip-btn {
       border: 1px solid var(--border);
+      background: #f9fafb;
+      padding: 6px 12px;
       border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .emoji-btn.active {
-      background: var(--green-light);
-      border-color: #86efac;
-      color: var(--green-deeper);
-    }
-
-    .comments-drawer {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .comment-row {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 7px 10px;
-      font-size: 0.86rem;
-    }
-
-    .lounge-card {
-      background: linear-gradient(160deg, #14532d, #16a34a);
-      color: #ffffff;
-      border-radius: 16px;
-      padding: 16px;
-      display: grid;
-      gap: 10px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .lounge-speakers {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .speaker-pill {
-      background: rgba(255, 255, 255, 0.16);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-      gap: 12px;
-    }
-
-    .person-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .chat-layout {
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      min-height: 470px;
-    }
-
-    .chat-list {
-      border-right: 1px solid var(--border);
-      background: var(--surface-soft);
-      padding: 10px;
-      display: grid;
-      align-content: start;
-      gap: 6px;
-    }
-
-    .chat-thread-item {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 9px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .chat-thread-item:hover, .chat-thread-item.active {
-      background: var(--green-light);
-    }
-
-    .chat-window {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .chat-header {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .chat-messages {
-      padding: 14px;
-      display: grid;
-      align-content: start;
-      gap: 9px;
-      max-height: 330px;
-      overflow-y: auto;
-    }
-
-    .msg-bubble {
-      max-width: 78%;
-      padding: 9px 13px;
-      border-radius: 14px;
-      font-size: 0.9rem;
-    }
-
-    .msg-bubble.them {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      justify-self: start;
-    }
-
-    .msg-bubble.me {
-      background: var(--green);
-      color: #ffffff;
-      justify-self: end;
-    }
-
-    .chat-input-bar {
-      padding: 10px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 18px 16px 28px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-
-    .policy-drawer {
-      max-width: 760px;
-      margin: 14px auto 0;
-      text-align: left;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      display: grid;
-      gap: 10px;
-      color: var(--text);
-    }
-
-    .alert {
-      padding: 9px 12px;
-      border-radius: 10px;
       font-size: 0.85rem;
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid #fecaca;
-      margin-top: 8px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    .alert.ok {
-      background: var(--green-tint);
-      color: var(--green-deeper);
-      border-color: #86efac;
+    .highlight-box {
+      background: linear-gradient(135deg, #166534, #15803d);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
     }
 
-    .hidden {
-      display: none !important;
+    /* Terms Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
     }
 
-    @media (max-width: 960px) {
-      .app-shell {
-        grid-template-columns: 1fr;
-      }
-      .sidebar-sticky {
-        position: static;
-      }
-      .hide-mobile {
-        display: none;
-      }
+    .modal-backdrop.open {
+      display: flex;
     }
 
-    @media (max-width: 640px) {
-      .chat-layout {
-        grid-template-columns: 1fr;
-      }
-      .chat-list {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 540px;
+      width: 100%;
+      max-height: 82vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--green-dark);
+    }
+
+    .modal-card h4 {
+      font-size: 0.95rem;
+      margin: 14px 0 4px;
+    }
+
+    .modal-card p {
+      font-size: 0.88rem;
+      color: #374151;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
     }
   </style>
 </head>
@@ -833,1028 +468,486 @@
 
   <header>
     <div class="nav-inner">
-      <div class="brand" onclick="switchView('feed')">
+      <div class="brand">
         <div class="brand-badge">L</div>
         <span>LeafSocial</span>
       </div>
-
-      <nav class="nav-tabs" aria-label="Primary Navigation">
-        <button class="nav-tab active" data-view="feed" onclick="switchView('feed')">Feed</button>
-        <button class="nav-tab" data-view="spaces" onclick="switchView('spaces')">LeafSpaces</button>
-        <button class="nav-tab" data-view="friends" onclick="switchView('friends')">
-          Friends <span class="badge-count" id="reqBadge">2</span>
-        </button>
-        <button class="nav-tab" data-view="chat" onclick="switchView('chat')">Chat</button>
-        <button class="nav-tab" data-view="profile" onclick="switchView('profile')">Profile</button>
-      </nav>
-
-      <div class="nav-right">
-        <div class="user-chip hidden" id="navUserChip" onclick="switchView('profile')">
-          <div class="avatar sm" id="navAvatar">ME</div>
-          <span id="navUserName">Member</span>
-        </div>
-        <button class="btn btn-ghost btn-sm hidden" id="signOutBtn" onclick="handleSignOut()">Sign Out</button>
+      <div class="nav-tabs">
+        <button class="nav-tab active">Feed</button>
+        <button class="nav-tab">LeafSpaces</button>
+        <button class="nav-tab">Friends</button>
+        <button class="nav-tab">Chat</button>
       </div>
     </div>
   </header>
 
-  <div class="app-shell">
-    <aside class="sidebar-sticky hide-mobile">
+  <main class="layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
       <div class="card">
-        <h3 style="margin-bottom: 8px;">Your LeafCircles</h3>
-        <div class="rail-item active" onclick="setFeedFilter('all')">
-          <span>🌍 All Community</span>
-          <span class="pill-tag">Live</span>
-        </div>
-        <div class="rail-item" onclick="setFeedFilter('circle')">
-          <span>🔒 Inner Circle</span>
-          <span class="pill-tag circle" id="innerCountPill">3</span>
-        </div>
-        <div class="rail-item" onclick="setFeedFilter('audio')">
-          <span>🎙️ LeafAudio Drops</span>
-        </div>
-        <div class="rail-item" onclick="setFeedFilter('poll')">
-          <span>📊 Hangout Polls</span>
-        </div>
+        <h3>Your LeafCircles</h3>
+        <div class="list-item"><span>All Community</span><span class="pill">Live</span></div>
+        <div class="list-item"><span>Inner Circle</span><span class="pill">3</span></div>
+        <div class="list-item"><span>LeafAudio Drops</span></div>
+        <div class="list-item"><span>Hangout Polls</span></div>
       </div>
 
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h3>Joined LeafSpaces</h3>
-          <button class="link-btn" onclick="switchView('spaces')">All</button>
-        </div>
-        <div id="leftSpacesList" style="display:grid; gap:4px;"></div>
+        <h3>Joined LeafSpaces</h3>
+        <div class="list-item"><span># Afrobeats & Indie Creators</span></div>
+        <div class="list-item"><span># Lagos Tech & Founders</span></div>
       </div>
     </aside>
 
-    <main style="display:grid; gap:16px;">
-      <section class="card" id="authCard">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+    <!-- Center Column -->
+    <section class="main-feed">
+      <!-- Authentication Card -->
+      <div class="card" id="authCard">
+        <div class="auth-header">
           <div>
-            <h2>Welcome to LeafSocial</h2>
-            <p class="sub">Voice notes, inner circles, hangout polls, and topic spaces—without ads or algorithm clutter.</p>
+            <h2 style="font-size: 1.25rem;">Welcome to LeafSocial</h2>
+            <p style="color: var(--muted); font-size: 0.9rem;">
+              Voice notes, inner circles, and topic spaces—without algorithm clutter.
+            </p>
           </div>
-          <button class="btn btn-soft btn-sm" type="button" onclick="enterDemoMode()">Preview Demo Mode</button>
-        </div>
-        <div style="display:grid; gap:10px; margin-top:14px;">
-          <input id="fullNameInput" type="text" placeholder="Full name (required when creating account)" />
-          <input id="emailInput" type="email" placeholder="Email address" />
-          <input id="passwordInput" type="password" placeholder="Password (6+ characters)" />
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" id="signInBtn" type="button">Sign In</button>
-            <button class="btn btn-soft" id="signUpBtn" type="button">Create Account</button>
-          </div>
-          <p class="sub" style="font-size:0.79rem;">
-            By signing in or creating an account, you agree to our
-            <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button> and
-            <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>.
-          </p>
-        </div>
-        <div id="authAlert" class="alert hidden"></div>
-      </section>
-
-      <div id="view-feed" style="display:grid; gap:16px;">
-        <section class="card hidden" id="composerCard">
-          <div class="composer-header">
-            <div style="display:flex; align-items:center; gap:9px;">
-              <div class="avatar sm" id="composerAvatar">ME</div>
-              <strong style="font-size:0.9rem;" id="composerAuthorLabel">Share with your circle</strong>
-            </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <select class="audience-select" id="postAudience">
-                <option value="public">🌍 Public Community</option>
-                <option value="circle">🔒 Inner Circle Only</option>
-              </select>
-              <select class="audience-select" id="postSpaceSelect">
-                <option value="">No Space</option>
-              </select>
-            </div>
-          </div>
-
-          <textarea id="postInput" placeholder="Drop a thought, record a 30s voice note, or start a hangout poll..."></textarea>
-
-          <div class="sub-panel hidden" id="voicePanel">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
-              <span style="font-size:0.84rem; font-weight:700;" id="voiceStatusText">Ready to record a LeafAudio voice note</span>
-              <div style="display:flex; gap:6px;">
-                <button class="btn btn-sm" type="button" id="startRecBtn" onclick="toggleVoiceRecording()">Start Mic</button>
-                <button class="btn btn-soft btn-sm" type="button" onclick="attachSampleVoice()">Use Sample Audio</button>
-                <button class="btn btn-ghost btn-sm" type="button" onclick="clearVoiceAttachment()">Clear</button>
-              </div>
-            </div>
-            <audio id="voicePreviewAudio" controls class="hidden" style="width:100%; height:36px;"></audio>
-          </div>
-
-          <div class="sub-panel hidden" id="pollPanel">
-            <strong style="font-size:0.84rem;">Hangout Poll Options</strong>
-            <input type="text" id="pollOpt1" placeholder="Option 1 (e.g., Friday hangout at Ikeja)" />
-            <input type="text" id="pollOpt2" placeholder="Option 2 (e.g., Saturday beach & music)" />
-            <input type="text" id="pollOpt3" placeholder="Option 3 (optional)" />
-          </div>
-
-          <div class="sub-panel hidden" id="filePanel">
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <select id="mediaKindSelect" style="width:auto;">
-                <option value="photo">Photo</option>
-                <option value="music">Audio File</option>
-                <option value="video">Video</option>
-              </select>
-              <input type="file" id="mediaFileInput" accept="image/*,audio/*,video/*" style="flex:1;" />
-            </div>
-          </div>
-
-          <div class="composer-tools">
-            <div class="tool-pills">
-              <button class="tool-pill" type="button" id="toggleVoiceBtn" onclick="toggleSubPanel('voicePanel')">🎙️ Voice Note</button>
-              <button class="tool-pill" type="button" id="togglePollBtn" onclick="toggleSubPanel('pollPanel')">📊 Poll</button>
-              <button class="tool-pill" type="button" id="toggleFileBtn" onclick="toggleSubPanel('filePanel')">📎 Media</button>
-            </div>
-            <button class="btn" type="button" id="publishBtn" onclick="publishPost()">Publish Post</button>
-          </div>
-          <div id="composerAlert" class="alert hidden"></div>
-        </section>
-
-        <div class="filter-strip">
-          <button class="filter-chip active" data-filter="all" onclick="setFeedFilter('all')">All Posts</button>
-          <button class="filter-chip" data-filter="circle" onclick="setFeedFilter('circle')">🔒 Inner Circle</button>
-          <button class="filter-chip" data-filter="audio" onclick="setFeedFilter('audio')">🎙️ LeafAudio</button>
-          <button class="filter-chip" data-filter="poll" onclick="setFeedFilter('poll')">📊 Polls</button>
-          <button class="filter-chip" data-filter="photo" onclick="setFeedFilter('photo')">Photos</button>
-          <button class="filter-chip" data-filter="video" onclick="setFeedFilter('video')">Video</button>
+          <span class="pill" id="modeBadge">Live Community</span>
         </div>
 
-        <div class="feed-stack" id="feedStream"></div>
+        <div class="auth-mode-switch">
+          <button type="button" class="mode-btn active" id="tabSignup" onclick="switchAuthMode('signup')">Create Account</button>
+          <button type="button" class="mode-btn" id="tabSignin" onclick="switchAuthMode('signin')">Sign In</button>
+        </div>
+
+        <!-- SIGN UP FORM -->
+        <form id="signupForm" onsubmit="handleSignUp(event)">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="suName">Full Name <span class="req">*</span></label>
+              <input id="suName" type="text" placeholder="e.g. Samuel Emmanuel" required />
+            </div>
+
+            <div class="field full">
+              <label for="suContact">Email Address or Phone Number <span class="req">*</span></label>
+              <input id="suContact" type="text" placeholder="you@example.com or +2348012345678" required />
+            </div>
+
+            <div class="field">
+              <label for="suDob">Date of Birth <span class="req">*</span></label>
+              <input id="suDob" type="date" required />
+            </div>
+
+            <div class="field">
+              <label for="suLocation">Location (City, Country) <span class="req">*</span></label>
+              <input id="suLocation" type="text" placeholder="e.g. Lagos, Nigeria" required />
+            </div>
+
+            <div class="field full">
+              <label for="suPassword">Password (6+ characters) <span class="req">*</span></label>
+              <input id="suPassword" type="password" minlength="6" placeholder="Create a strong password" required />
+            </div>
+
+            <!-- Mandatory Terms of Use Agreement -->
+            <div class="terms-box">
+              <input id="suTerms" type="checkbox" required />
+              <label for="suTerms">
+                I confirm I am at least 13 years old and I agree to the
+                <button type="button" class="terms-link" onclick="openTermsModal()">LeafSocial Terms of Use &amp; Community Guidelines</button>
+                and Privacy Policy. <span style="color: var(--danger); font-weight: 700;">*</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="signupBtn">Agree &amp; Create Account</button>
+        </form>
+
+        <!-- SIGN IN FORM -->
+        <form id="signinForm" style="display: none;" onsubmit="handleSignIn(event)">
+          <div class="field">
+            <label for="siContact">Email Address or Phone Number <span class="req">*</span></label>
+            <input id="siContact" type="text" placeholder="you@example.com or +2348012345678" required />
+          </div>
+
+          <div class="field">
+            <label for="siPassword">Password <span class="req">*</span></label>
+            <input id="siPassword" type="password" placeholder="Enter your password" required />
+          </div>
+
+          <button type="submit" class="btn-primary" id="signinBtn">Sign In</button>
+        </form>
+
+        <div id="authStatus" class="status-msg"></div>
       </div>
 
-      <div id="view-spaces" class="hidden" style="display:grid; gap:16px;">
-        <div class="card">
-          <h2>LeafSpaces — Topic &amp; Creator Communities</h2>
-          <p class="sub">Join focused spaces or launch a new space for your campus, music crew, or local group.</p>
-          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-            <input id="newSpaceName" type="text" placeholder="New Space name (e.g., UNILAG Creators)" style="flex:1; min-width:200px;" />
-            <input id="newSpaceDesc" type="text" placeholder="Short description" style="flex:1; min-width:200px;" />
-            <button class="btn" type="button" onclick="createSpace()">Create Space</button>
+      <!-- Signed-In Composer Card -->
+      <div class="card" id="composerCard" style="display: none;">
+        <div class="profile-banner">
+          <div>
+            <strong id="userDisplayName" style="font-size: 1.05rem;">Member</strong>
+            <div class="meta-tags" id="userMetaInfo"></div>
           </div>
+          <button type="button" class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
         </div>
-        <div class="grid-2" id="spacesGrid"></div>
+
+        <div class="field">
+          <label for="postBody">Share an update with your circle</label>
+          <textarea id="postBody" rows="3" placeholder="What's happening in your circle today?"></textarea>
+        </div>
+        <button type="button" class="btn-primary" onclick="publishPost()">Publish Post</button>
+        <div id="postStatus" class="status-msg"></div>
       </div>
 
-      <div id="view-friends" class="hidden" style="display:grid; gap:16px;">
-        <div class="card">
-          <h2>Friend Requests</h2>
-          <p class="sub">Approve people you know and choose who enters your 🔒 Inner Circle.</p>
-          <div class="grid-2" id="requestsGrid" style="margin-top:12px;"></div>
-        </div>
+      <!-- Community Feed -->
+      <div id="feedContainer"></div>
+    </section>
 
-        <div class="card">
-          <h2>Your Friends &amp; Inner Circle</h2>
-          <p class="sub">Toggle 🔒 Inner Circle access for close friends.</p>
-          <div class="grid-2" id="friendsGrid" style="margin-top:12px;"></div>
-        </div>
-
-        <div class="card">
-          <h2>People You May Know</h2>
-          <div class="grid-2" id="suggestionsGrid" style="margin-top:12px;"></div>
-        </div>
-      </div>
-
-      <div id="view-chat" class="hidden">
-        <div class="chat-layout">
-          <div class="chat-list" id="chatThreadsList"></div>
-          <div class="chat-window">
-            <div class="chat-header">
-              <div>
-                <strong id="activeChatName">Select a friend</strong>
-                <div class="sub" id="activeChatStatus" style="font-size:0.78rem;">Online</div>
-              </div>
-              <button class="btn btn-soft btn-sm" type="button" onclick="sendChatVoiceNote()">🎙️ Send Voice Note</button>
-            </div>
-            <div class="chat-messages" id="chatMessagesBox"></div>
-            <div class="chat-input-bar">
-              <input id="chatMessageInput" type="text" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-              <button class="btn btn-sm" type="button" onclick="sendChatMessage()">Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-profile" class="hidden" style="display:grid; gap:16px;">
-        <div class="card">
-          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-            <div class="avatar lg" id="profileAvatar">ME</div>
-            <div style="flex:1;">
-              <h2 id="profileDisplayName">Member</h2>
-              <p class="sub" id="profileBioText">Building clean connections on LeafSocial.</p>
-              <div style="display:flex; gap:14px; margin-top:8px; font-size:0.84rem; font-weight:700;">
-                <span id="statPosts">0 Posts</span>
-                <span id="statFriends">0 Friends</span>
-                <span id="statInner">0 Inner Circle</span>
-              </div>
-            </div>
-          </div>
-          <div style="display:grid; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
-            <input id="editBioInput" type="text" placeholder="Update your bio..." />
-            <div>
-              <button class="btn btn-sm" type="button" onclick="saveProfileBio()">Save Profile</button>
-            </div>
-          </div>
-        </div>
-        <div class="feed-stack" id="profilePostsList"></div>
-      </div>
-    </main>
-
-    <aside class="sidebar-sticky hide-mobile">
-      <div class="lounge-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="font-size:0.96rem;">🎙️ LeafAudio Live Lounge</strong>
-          <span style="font-size:0.74rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:999px;">LIVE</span>
-        </div>
-        <p style="font-size:0.83rem; opacity:0.92;">Late-night beats, campus gist &amp; 30s voice drops.</p>
-        <div class="lounge-speakers" id="loungeSpeakers">
-          <span class="speaker-pill">🟢 Tunde (Host)</span>
-          <span class="speaker-pill">🎵 Amaka</span>
-          <span class="speaker-pill">🎧 Chidi</span>
-        </div>
-        <button class="btn btn-sm" style="background:#ffffff; color:#14532d;" id="joinLoungeBtn" onclick="toggleLounge()">
-          Join Audio Lounge
-        </button>
+    <!-- Right Sidebar -->
+    <aside class="sidebar-right">
+      <div class="highlight-box">
+        <span class="pill" style="background: rgba(255,255,255,0.2); color: #fff;">LeafAudio</span>
+        <h3 style="margin-top: 10px; font-size: 1.05rem;">Late-Night Acoustic Drops</h3>
+        <p style="font-size: 0.88rem; opacity: 0.92; margin-top: 6px;">
+          15-second voice clips from creators in your circles.
+        </p>
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom:6px;">Why LeafSocial?</h3>
-        <ul style="padding-left:16px; color:var(--muted); font-size:0.83rem; display:grid; gap:5px;">
-          <li><strong>Chronological Feed:</strong> No hidden algorithm hiding friends' posts.</li>
-          <li><strong>Inner Circle Lock:</strong> Share private moments with close friends only.</li>
-          <li><strong>LeafAudio First:</strong> Drop voice notes in posts and chat.</li>
-        </ul>
+        <h3>Why LeafSocial?</h3>
+        <p style="font-size: 0.88rem; color: var(--muted);">
+          • Verified member profiles with real locations<br />
+          • Chronological posts without noisy ads<br />
+          • Private inner circles for close friends
+        </p>
       </div>
     </aside>
-  </div>
+  </main>
 
-  <footer>
-    <div class="footer-links">
-      <button class="link-btn" type="button" onclick="openPolicy('about')">About LeafSocial</button>
-      <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button>
-      <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>
-    </div>
-    <p>&copy; 2026 LeafSocial. Built for real friends &amp; creators.</p>
+  <!-- Terms of Use Modal -->
+  <div class="modal-backdrop" id="termsModal" onclick="if(event.target === this) closeTermsModal()">
+    <div class="modal-card">
+      <h2>LeafSocial Terms of Use &amp; Community Guidelines</h2>
+      <p>Effective Date: November 2026</p>
 
-    <div id="policyDrawer" class="policy-drawer hidden">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 id="policyTitle" style="color:var(--green-dark);">Privacy Policy</h3>
-        <button class="btn btn-ghost btn-sm" type="button" onclick="closePolicy()">Close</button>
+      <h4>1. Eligibility &amp; Authentic Registration</h4>
+      <p>You must be at least 13 years old to register. You agree to provide accurate registration details—including your real full name, valid email address or phone number, date of birth, and location—and to keep your password secure.</p>
+
+      <h4>2. Respectful Community Conduct</h4>
+      <p>LeafSocial is built for positive conversations and creative circles. Hate speech, harassment, bullying, impersonation, spam, scams, and unlawful or sexually explicit content are strictly prohibited and will result in account removal.</p>
+
+      <h4>3. Your Content &amp; Ownership</h4>
+      <p>You retain full ownership of the posts, voice notes, and updates you share on LeafSocial. By posting, you grant LeafSocial permission to display your content to the circles and communities you choose to share it with.</p>
+
+      <h4>4. Privacy &amp; Data Protection</h4>
+      <p>Your registration information (contact details, date of birth, and location) is stored securely to verify your account and personalize your community experience. We never sell your personal data to third parties.</p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="acceptTermsFromModal()">I Agree to Terms</button>
+        <button type="button" class="btn-secondary" onclick="closeTermsModal()">Close</button>
       </div>
-      <div id="policyBody" style="font-size:0.86rem; color:var(--muted); display:grid; gap:8px;"></div>
     </div>
-  </footer>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mzk5NjgsImV4cCI6MjExMTExNTk2OH0.irlsfi5a7FwWUTlqYg4zfdODsR1EJ997Wftwi8aJdM8";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NzY4MTUsImV4cCI6MjA5MDE1MjgxNX0.U5a2eM4sV89M7s4Z6bN-v8i9I_rE-V-7fH_kY-X1-E0";
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentUser = null;
-    let isDemoMode = false;
-    let activeView = "feed";
-    let feedFilter = "all";
-    let activeSpaceFilter = "";
-    let inLounge = false;
-    let mediaRecorder = null;
-    let recordedChunks = [];
-    let pendingVoiceUrl = "";
+    function openTermsModal() {
+      document.getElementById("termsModal").classList.add("open");
+    }
 
-    const DEFAULT_SPACES = [
-      { id: "afrobeats", name: "Afrobeats & Indie Creators", desc: "Share 30s beats, freestyles & studio sessions.", members: 148, joined: true },
-      { id: "lagos-tech", name: "Lagos Tech & Founders", desc: "Shipping apps, startups, and product feedback.", members: 94, joined: true },
-      { id: "campus-hangouts", name: "Campus & Weekend Hangouts", desc: "Polls and plans for Friday nights & meetups.", members: 212, joined: false },
-      { id: "green-lens", name: "Green Living & Photography", desc: "Clean street shots, nature, and daily aesthetics.", members: 76, joined: false }
-    ];
+    function closeTermsModal() {
+      document.getElementById("termsModal").classList.remove("open");
+    }
 
-    const DEFAULT_FRIENDS = [
-      { id: "f1", name: "Amaka Okafor", handle: "amaka", bio: "Singer-songwriter & voice note queen", inner: true, online: true },
-      { id: "f2", name: "Tunde Bakare", handle: "tunde_dev", bio: "Building web tools in Lagos", inner: true, online: true },
-      { id: "f3", name: "Zainab Bello", handle: "zainab", bio: "Food spots & weekend hangout planner", inner: true, online: false },
-      { id: "f4", name: "Chidi Nwosu", handle: "chidi_beats", bio: "Producer & vinyl collector", inner: false, online: true }
-    ];
+    function acceptTermsFromModal() {
+      document.getElementById("suTerms").checked = true;
+      closeTermsModal();
+    }
 
-    const DEFAULT_REQUESTS = [
-      { id: "r1", name: "Kemi Adeyemi", handle: "kemi_a", mutual: "4 mutual friends" },
-      { id: "r2", name: "David Mensah", handle: "dmensah", mutual: "2 mutual friends" }
-    ];
-
-    const DEFAULT_SUGGESTIONS = [
-      { id: "s1", name: "Sola Williams", handle: "sola_w", role: "Product Designer" },
-      { id: "s2", name: "Ibrahim Musa", handle: "ibrahim_m", role: "Afrobeats Guitarist" }
-    ];
-
-    let spaces = [...DEFAULT_SPACES];
-    let friends = [...DEFAULT_FRIENDS];
-    let requests = [...DEFAULT_REQUESTS];
-    let suggestions = [...DEFAULT_SUGGESTIONS];
-    let activeChatFriendId = "f1";
-    let chatHistory = {
-      f1: [
-        { from: "them", text: "Yo! Just heard your voice note on LeafAudio, that beat is clean 🔥" },
-        { from: "me", text: "Appreciate you Amaka! Are you free for the Friday hangout poll?" }
-      ],
-      f2: [{ from: "them", text: "LeafSocial loads super fast on mobile data." }],
-      f3: [{ from: "them", text: "Vote on where we're meeting this weekend!" }],
-      f4: [{ from: "them", text: "Dropping a 30s guitar loop in Afrobeats space tonight." }]
-    };
-
-    let posts = [
-      {
-        id: "p1",
-        author: "Amaka Okafor",
-        handle: "amaka",
-        time: "14 mins ago",
-        audience: "public",
-        spaceId: "afrobeats",
-        content: "Recorded a quick 15-second chorus idea straight on LeafAudio before studio! What do you think?",
-        media_type: "audio",
-        audioLabel: "Voice Note · 0:15",
-        reactions: { "🌿": 12, "🔥": 9, "👏": 5 },
-        userReacted: "🔥",
-        comments: [{ author: "Chidi Nwosu", text: "Send the stems, let's layer drums on this!" }]
-      },
-      {
-        id: "p2",
-        author: "Zainab Bello",
-        handle: "zainab",
-        time: "48 mins ago",
-        audience: "circle",
-        spaceId: "campus-hangouts",
-        content: "Inner Circle only: Where are we linking up this Friday evening?",
-        media_type: "poll",
-        poll: {
-          options: [
-            { label: "Ikeja Grill & Games", votes: 7 },
-            { label: "Lekki Beach Sunset Session", votes: 11 },
-            { label: "Virtual LeafAudio Listening Party", votes: 4 }
-          ],
-          userChoice: null
-        },
-        reactions: { "🌿": 6, "🔥": 4, "👏": 3 },
-        userReacted: null,
-        comments: [{ author: "Tunde Bakare", text: "Lekki sunset wins easily if traffic behaves." }]
+    function normalizeAuthCredential(rawInput) {
+      const cleaned = rawInput.trim();
+      if (cleaned.includes("@")) {
+        return { isPhone: false, authEmail: cleaned.toLowerCase(), displayContact: cleaned };
       }
-    ];
-
-    const POLICIES = {
-      privacy: `
-        <p><strong>Effective November 2026.</strong> LeafSocial respects your privacy and gives you direct control over who sees your posts.</p>
-        <p><strong>1. Information Collected:</strong> Account credentials (name, email), posts, polls, voice notes, and uploaded media stored via Supabase.</p>
-        <p><strong>2. Audience Controls:</strong> Posts marked <em>Inner Circle Only</em> are restricted to friends you designate in your Inner Circle.</p>
-        <p><strong>3. Advertising &amp; Cookies:</strong> We do not sell personal data. Essential browser storage keeps your session active; third-party ad partners (such as Google Ads/AdSense) may use cookies only if enabled.</p>
-      `,
-      terms: `
-        <p>By using LeafSocial, you agree to respect community members, avoid spam or unlawful uploads, and keep your login credentials secure. You retain ownership of all audio, photos, and text you publish.</p>
-      `,
-      about: `
-        <p><strong>LeafSocial</strong> unites LeafAudio voice notes, Inner Circle privacy, hangout polls, and topic LeafSpaces in a clean, chronological green-and-white web experience.</p>
-      `
-    };
-
-    function openPolicy(key) {
-      const titles = { privacy: "Privacy Policy", terms: "Terms of Service", about: "About LeafSocial" };
-      document.getElementById("policyTitle").textContent = titles[key];
-      document.getElementById("policyBody").innerHTML = POLICIES[key];
-      const drawer = document.getElementById("policyDrawer");
-      drawer.classList.remove("hidden");
-      drawer.scrollIntoView({ behavior: "smooth" });
-    }
-
-    function closePolicy() {
-      document.getElementById("policyDrawer").classList.add("hidden");
-    }
-
-    function initials(name) {
-      return (name || "M").split(" ").filter(Boolean).map(w => w[0]).join("").toUpperCase().slice(0, 2) || "M";
-    }
-
-    function esc(str) {
-      const d = document.createElement("div");
-      d.textContent = str ?? "";
-      return d.innerHTML;
-    }
-
-    function switchView(view) {
-      activeView = view;
-      ["feed", "spaces", "friends", "chat", "profile"].forEach(v => {
-        document.getElementById(`view-${v}`).classList.toggle("hidden", v !== view);
-      });
-      document.querySelectorAll(".nav-tab").forEach(tab => {
-        tab.classList.toggle("active", tab.dataset.view === view);
-      });
-      if (view === "spaces") renderSpaces();
-      if (view === "friends") renderFriends();
-      if (view === "chat") renderChat();
-      if (view === "profile") renderProfile();
-    }
-
-    function updateAuthUI() {
-      const signedIn = Boolean(currentUser || isDemoMode);
-      document.getElementById("authCard").classList.toggle("hidden", signedIn);
-      document.getElementById("composerCard").classList.toggle("hidden", !signedIn);
-      document.getElementById("navUserChip").classList.toggle("hidden", !signedIn);
-      document.getElementById("signOutBtn").classList.toggle("hidden", !signedIn);
-
-      if (signedIn) {
-        const displayName = currentUser?.user_metadata?.full_name || currentUser?.email || "Samuel (Demo)";
-        document.getElementById("navUserName").textContent = displayName;
-        document.getElementById("navAvatar").textContent = initials(displayName);
-        document.getElementById("composerAvatar").textContent = initials(displayName);
-        document.getElementById("composerAuthorLabel").textContent = displayName;
+      const digitsOnly = cleaned.replace(/[^0-9]/g, "");
+      if (digitsOnly.length < 7) {
+        return null;
       }
-      populateSpaceDropdown();
-      renderLeftRail();
+      return {
+        isPhone: true,
+        authEmail: `${digitsOnly}@phone.leafsocial.app`,
+        displayContact: cleaned
+      };
     }
 
-    function enterDemoMode() {
-      isDemoMode = true;
-      updateAuthUI();
-      renderFeed();
+    function switchAuthMode(mode) {
+      const signupForm = document.getElementById("signupForm");
+      const signinForm = document.getElementById("signinForm");
+      const tabSignup = document.getElementById("tabSignup");
+      const tabSignin = document.getElementById("tabSignin");
+      clearStatus("authStatus");
+
+      if (mode === "signup") {
+        signupForm.style.display = "block";
+        signinForm.style.display = "none";
+        tabSignup.classList.add("active");
+        tabSignin.classList.remove("active");
+      } else {
+        signupForm.style.display = "none";
+        signinForm.style.display = "block";
+        tabSignin.classList.add("active");
+        tabSignup.classList.remove("active");
+      }
     }
 
-    async function handleSignOut() {
-      isDemoMode = false;
-      currentUser = null;
-      await sb.auth.signOut();
-      updateAuthUI();
+    function showStatus(id, message, type) {
+      const el = document.getElementById(id);
+      el.textContent = message;
+      el.className = `status-msg ${type}`;
     }
 
-    function renderLeftRail() {
-      const innerCount = friends.filter(f => f.inner).length;
-      document.getElementById("innerCountPill").textContent = innerCount;
-      const joined = spaces.filter(s => s.joined);
-      document.getElementById("leftSpacesList").innerHTML = joined.map(s => `
-        <div class="rail-item ${activeSpaceFilter === s.id ? "active" : ""}" onclick="filterBySpace('${esc(s.id)}')">
-          <span># ${esc(s.name)}</span>
-        </div>
-      `).join("") || `<p class="sub">No spaces joined yet.</p>`;
+    function clearStatus(id) {
+      const el = document.getElementById(id);
+      el.textContent = "";
+      el.className = "status-msg";
     }
 
-    function populateSpaceDropdown() {
-      const sel = document.getElementById("postSpaceSelect");
-      sel.innerHTML = `<option value="">No Space</option>` + spaces.map(s =>
-        `<option value="${esc(s.id)}"># ${esc(s.name)}</option>`
-      ).join("");
-    }
+    async function handleSignUp(e) {
+      e.preventDefault();
+      clearStatus("authStatus");
 
-    function setFeedFilter(filter) {
-      feedFilter = filter;
-      activeSpaceFilter = "";
-      switchView("feed");
-      document.querySelectorAll(".filter-chip").forEach(c => {
-        c.classList.toggle("active", c.dataset.filter === filter);
-      });
-      renderLeftRail();
-      renderFeed();
-    }
+      const fullName = document.getElementById("suName").value.trim();
+      const rawContact = document.getElementById("suContact").value.trim();
+      const dob = document.getElementById("suDob").value;
+      const location = document.getElementById("suLocation").value.trim();
+      const password = document.getElementById("suPassword").value;
+      const acceptedTerms = document.getElementById("suTerms").checked;
 
-    function filterBySpace(spaceId) {
-      activeSpaceFilter = activeSpaceFilter === spaceId ? "" : spaceId;
-      switchView("feed");
-      renderLeftRail();
-      renderFeed();
-    }
-
-    function toggleSubPanel(panelId) {
-      ["voicePanel", "pollPanel", "filePanel"].forEach(id => {
-        const el = document.getElementById(id);
-        if (id === panelId) el.classList.toggle("hidden");
-        else el.classList.add("hidden");
-      });
-    }
-
-    async function toggleVoiceRecording() {
-      const btn = document.getElementById("startRecBtn");
-      const status = document.getElementById("voiceStatusText");
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        btn.textContent = "Start Mic";
-        btn.classList.remove("recording");
+      if (!fullName || !rawContact || !dob || !location || !password) {
+        showStatus("authStatus", "All fields are required to create your LeafSocial account.", "error");
         return;
       }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordedChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: "audio/webm" });
-          pendingVoiceUrl = URL.createObjectURL(blob);
-          const audioEl = document.getElementById("voicePreviewAudio");
-          audioEl.src = pendingVoiceUrl;
-          audioEl.classList.remove("hidden");
-          status.textContent = "Voice note ready to publish!";
-          stream.getTracks().forEach(t => t.stop());
-        };
-        mediaRecorder.start();
-        btn.textContent = "Stop Recording";
-        btn.classList.add("recording");
-        status.textContent = "Recording live audio...";
-      } catch {
-        attachSampleVoice();
-      }
-    }
 
-    function attachSampleVoice() {
-      pendingVoiceUrl = "sample-voice";
-      document.getElementById("voiceStatusText").textContent = "Sample LeafAudio Voice Drop attached (0:18)";
-    }
-
-    function clearVoiceAttachment() {
-      pendingVoiceUrl = "";
-      document.getElementById("voicePreviewAudio").classList.add("hidden");
-      document.getElementById("voiceStatusText").textContent = "Ready to record a LeafAudio voice note";
-    }
-
-    async function publishPost() {
-      const content = document.getElementById("postInput").value.trim();
-      const audience = document.getElementById("postAudience").value;
-      const spaceId = document.getElementById("postSpaceSelect").value;
-      const opt1 = document.getElementById("pollOpt1").value.trim();
-      const opt2 = document.getElementById("pollOpt2").value.trim();
-      const opt3 = document.getElementById("pollOpt3").value.trim();
-      const file = document.getElementById("mediaFileInput").files?.[0];
-      const mediaKind = document.getElementById("mediaKindSelect").value;
-
-      if (!content && !pendingVoiceUrl && (!opt1 || !opt2) && !file) {
-        const al = document.getElementById("composerAlert");
-        al.textContent = "Write a message, record a voice note, or add two poll options first.";
-        al.classList.remove("hidden");
+      if (!acceptedTerms) {
+        showStatus("authStatus", "You must agree to the LeafSocial Terms of Use & Community Guidelines before registering.", "error");
         return;
       }
-      document.getElementById("composerAlert").classList.add("hidden");
 
-      const authorName = currentUser?.user_metadata?.full_name || currentUser?.email || "Samuel (You)";
-      let mediaType = "text";
-      let mediaUrl = null;
-      let pollData = null;
-
-      if (pendingVoiceUrl) {
-        mediaType = "audio";
-        mediaUrl = pendingVoiceUrl === "sample-voice" ? null : pendingVoiceUrl;
-      } else if (opt1 && opt2) {
-        mediaType = "poll";
-        pollData = {
-          options: [opt1, opt2, opt3].filter(Boolean).map(label => ({ label, votes: 0 })),
-          userChoice: null
-        };
-      } else if (file) {
-        mediaType = mediaKind;
-        mediaUrl = URL.createObjectURL(file);
+      const birthDate = new Date(dob);
+      const ageDifMs = Date.now() - birthDate.getTime();
+      const ageDate = new Date(ageDifMs);
+      const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+      if (isNaN(age) || age < 13) {
+        showStatus("authStatus", "You must be at least 13 years old to create a LeafSocial account.", "error");
+        return;
       }
 
-      if (currentUser) {
-        await sb.from("posts").insert({
-          author_id: currentUser.id,
-          content: content || (mediaType === "poll" ? "Vote on my hangout poll:" : "Shared a LeafAudio drop"),
-          media_type: mediaType === "poll" ? "text" : mediaType,
-          media_url: mediaUrl
+      const cred = normalizeAuthCredential(rawContact);
+      if (!cred) {
+        showStatus("authStatus", "Please enter a valid email address or phone number (at least 7 digits).", "error");
+        return;
+      }
+
+      const btn = document.getElementById("signupBtn");
+      btn.disabled = true;
+      btn.textContent = "Creating Account...";
+
+      const acceptedAt = new Date().toISOString();
+
+      const { data, error } = await sb.auth.signUp({
+        email: cred.authEmail,
+        password: password,
+        options: {
+          data: {
+            full_name: fullName,
+            contact_identifier: cred.displayContact,
+            date_of_birth: dob,
+            location: location,
+            terms_accepted_at: acceptedAt
+          }
+        }
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Agree & Create Account";
+
+      if (error) {
+        showStatus("authStatus", error.message, "error");
+        return;
+      }
+
+      if (data.user) {
+        await sb.from("profiles").upsert({
+          id: data.user.id,
+          full_name: fullName,
+          contact_identifier: cred.displayContact,
+          date_of_birth: dob,
+          location: location,
+          terms_accepted_at: acceptedAt
         });
       }
 
-      posts.unshift({
-        id: "p-" + Date.now(),
-        author: authorName,
-        handle: "you",
-        time: "Just now",
-        audience,
-        spaceId,
-        content: content || (mediaType === "poll" ? "Quick hangout poll — cast your vote:" : "Dropped a new LeafAudio note:"),
-        media_type: mediaType,
-        media_url: mediaUrl,
-        audioLabel: "LeafAudio Voice Drop · Just recorded",
-        poll: pollData,
-        reactions: { "🌿": 1, "🔥": 0, "👏": 0 },
-        userReacted: "🌿",
-        comments: []
-      });
-
-      document.getElementById("postInput").value = "";
-      document.getElementById("pollOpt1").value = "";
-      document.getElementById("pollOpt2").value = "";
-      document.getElementById("pollOpt3").value = "";
-      document.getElementById("mediaFileInput").value = "";
-      clearVoiceAttachment();
-      ["voicePanel", "pollPanel", "filePanel"].forEach(id => document.getElementById(id).classList.add("hidden"));
-      renderFeed();
+      if (data.session) {
+        renderUserSession(data.session.user);
+      } else {
+        showStatus("authStatus", "Account created! Tap Sign In above to enter your feed.", "success");
+        switchAuthMode("signin");
+        document.getElementById("siContact").value = rawContact;
+      }
     }
 
-    function renderFeed() {
-      let visible = [...posts];
-      if (activeSpaceFilter) {
-        visible = visible.filter(p => p.spaceId === activeSpaceFilter);
-      } else if (feedFilter === "circle") {
-        visible = visible.filter(p => p.audience === "circle");
-      } else if (feedFilter !== "all") {
-        visible = visible.filter(p => p.media_type === feedFilter);
-      }
+    async function handleSignIn(e) {
+      e.preventDefault();
+      clearStatus("authStatus");
 
-      const stream = document.getElementById("feedStream");
-      if (!visible.length) {
-        stream.innerHTML = `<div class="card"><p class="sub">No posts match this filter yet. Be the first to post!</p></div>`;
+      const rawContact = document.getElementById("siContact").value.trim();
+      const password = document.getElementById("siPassword").value;
+      const cred = normalizeAuthCredential(rawContact);
+
+      if (!cred) {
+        showStatus("authStatus", "Enter a valid email address or phone number.", "error");
         return;
       }
 
-      stream.innerHTML = visible.map(post => {
-        const spaceObj = spaces.find(s => s.id === post.spaceId);
-        let mediaBlock = "";
+      const btn = document.getElementById("signinBtn");
+      btn.disabled = true;
+      btn.textContent = "Signing In...";
 
-        if (post.media_type === "audio") {
-          const bars = [35, 70, 50, 90, 60, 80, 40, 95, 65, 50, 85, 45, 75, 55, 65, 40]
-            .map(h => `<span style="height:${h}%"></span>`).join("");
-          mediaBlock = `
-            <div class="audio-card">
-              <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700; color:var(--green-deeper);">
-                <span>🎙️ ${esc(post.audioLabel || "LeafAudio Voice Note")}</span>
-                <span>100% Pure Audio</span>
+      const { data, error } = await sb.auth.signInWithPassword({
+        email: cred.authEmail,
+        password: password
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Sign In";
+
+      if (error) {
+        showStatus("authStatus", error.message, "error");
+        return;
+      }
+
+      renderUserSession(data.user);
+    }
+
+    async function handleSignOut() {
+      await sb.auth.signOut();
+      document.getElementById("authCard").style.display = "block";
+      document.getElementById("composerCard").style.display = "none";
+    }
+
+    function renderUserSession(user) {
+      const meta = user.user_metadata || {};
+      const name = meta.full_name || "LeafSocial Member";
+      const location = meta.location ? `📍 ${meta.location}` : "";
+      const dob = meta.date_of_birth ? `🎂 ${meta.date_of_birth}` : "";
+      const contact = meta.contact_identifier ? `📱 ${meta.contact_identifier}` : "";
+
+      document.getElementById("authCard").style.display = "none";
+      document.getElementById("composerCard").style.display = "block";
+      document.getElementById("userDisplayName").textContent = name;
+      document.getElementById("userMetaInfo").innerHTML = [location, dob, contact]
+        .filter(Boolean)
+        .map(item => `<span>${item}</span>`)
+        .join(" • ");
+
+      loadPosts();
+    }
+
+    async function publishPost() {
+      clearStatus("postStatus");
+      const content = document.getElementById("postBody").value.trim();
+      if (!content) {
+        showStatus("postStatus", "Write something before publishing.", "error");
+        return;
+      }
+
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        showStatus("postStatus", "Please sign in first.", "error");
+        return;
+      }
+
+      const authorName = user.user_metadata?.full_name || "Member";
+      const authorLocation = user.user_metadata?.location || "";
+
+      const { error } = await sb.from("posts").insert({
+        user_id: user.id,
+        author_name: authorName,
+        content: authorLocation ? `${content}\n— 📍 ${authorLocation}` : content
+      });
+
+      if (error) {
+        showStatus("postStatus", error.message, "error");
+        return;
+      }
+
+      document.getElementById("postBody").value = "";
+      showStatus("postStatus", "Published to LeafSocial!", "success");
+      loadPosts();
+    }
+
+    async function loadPosts() {
+      const container = document.getElementById("feedContainer");
+      const { data, error } = await sb
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(25);
+
+      if (error || !data || data.length === 0) {
+        container.innerHTML = `
+          <div class="post-card">
+            <div class="post-head">
+              <div class="avatar">AO</div>
+              <div>
+                <strong>Amaka Okafor</strong>
+                <div style="font-size: 0.8rem; color: var(--muted);">Lagos, Nigeria • Sample Post</div>
               </div>
-              <div class="waveform-bars">${bars}</div>
-              ${post.media_url ? `<audio controls src="${esc(post.media_url)}"></audio>` : `<button class="btn btn-sm" type="button" onclick="alert('Playing LeafAudio clip!')">▶ Play Voice Clip</button>`}
-            </div>`;
-        } else if (post.media_type === "poll" && post.poll) {
-          const totalVotes = post.poll.options.reduce((sum, o) => sum + o.votes, 0);
-          mediaBlock = `
-            <div class="poll-box">
-              ${post.poll.options.map((opt, idx) => {
-                const pct = totalVotes ? Math.round((opt.votes / totalVotes) * 100) : 0;
-                const voted = post.poll.userChoice === idx;
-                return `
-                  <div class="poll-option ${voted ? "voted" : ""}" onclick="votePoll('${esc(post.id)}', ${idx})">
-                    <div class="poll-fill" style="width:${pct}%"></div>
-                    <span class="poll-label">${voted ? "✓ " : ""}${esc(opt.label)}</span>
-                    <span class="poll-pct">${pct}% (${opt.votes})</span>
-                  </div>`;
-              }).join("")}
-              <span class="sub" style="font-size:0.78rem;">${totalVotes} total votes · Tap an option to vote</span>
-            </div>`;
-        } else if (post.media_type === "photo" && post.media_url) {
-          mediaBlock = `<div class="post-media"><img src="${esc(post.media_url)}" alt="Shared photo" /></div>`;
-        } else if (post.media_type === "video" && post.media_url) {
-          mediaBlock = `<div class="post-media"><video controls src="${esc(post.media_url)}"></video></div>`;
-        }
+            </div>
+            <p>Welcome to LeafSocial! Agree to the Terms of Use and create your account above to share your first post.</p>
+          </div>
+        `;
+        return;
+      }
 
-        const emojis = ["🌿", "🔥", "👏"].map(em => {
-          const count = post.reactions?.[em] || 0;
-          const active = post.userReacted === em;
-          return `<button class="emoji-btn ${active ? "active" : ""}" onclick="reactPost('${esc(post.id)}', '${em}')">${em} ${count}</button>`;
-        }).join("");
-
+      container.innerHTML = data.map(post => {
+        const initials = (post.author_name || "LS").slice(0, 2).toUpperCase();
+        const time = new Date(post.created_at).toLocaleString();
         return `
-          <article class="post-card">
-            <div class="post-meta">
-              <div class="post-author-wrap">
-                <div class="avatar">${esc(initials(post.author))}</div>
-                <div>
-                  <strong style="font-size:0.95rem;">${esc(post.author)}</strong>
-                  <div class="sub" style="font-size:0.78rem;">${esc(post.time)} · @${esc(post.handle)}</div>
-                </div>
-              </div>
-              <div class="post-badges">
-                ${post.audience === "circle" ? `<span class="pill-tag circle">🔒 Inner Circle</span>` : ""}
-                ${spaceObj ? `<span class="pill-tag"># ${esc(spaceObj.name)}</span>` : ""}
+          <div class="post-card">
+            <div class="post-head">
+              <div class="avatar">${initials}</div>
+              <div>
+                <strong>${escapeHtml(post.author_name || "Member")}</strong>
+                <div style="font-size: 0.8rem; color: var(--muted);">${time}</div>
               </div>
             </div>
-
-            <div class="post-text">${esc(post.content)}</div>
-            ${mediaBlock}
-
-            <div class="reactions-bar">
-              <div class="emoji-group">${emojis}</div>
-              <button class="emoji-btn" onclick="toggleComments('${esc(post.id)}')">💬 Reply (${post.comments.length})</button>
+            <p style="white-space: pre-line;">${escapeHtml(post.content)}</p>
+            <div class="post-actions">
+              <button class="chip-btn" type="button">🌿 Cheer</button>
+              <button class="chip-btn" type="button">💬 Reply</button>
             </div>
-
-            <div class="comments-drawer hidden" id="drawer-${esc(post.id)}">
-              ${post.comments.map(c => `<div class="comment-row"><strong>${esc(c.author)}:</strong> ${esc(c.text)}</div>`).join("") || `<p class="sub">No replies yet.</p>`}
-              <div style="display:flex; gap:6px;">
-                <input type="text" id="reply-${esc(post.id)}" placeholder="Write a reply..." style="padding:7px 10px; font-size:0.85rem;" />
-                <button class="btn btn-sm" type="button" onclick="addReply('${esc(post.id)}')">Send</button>
-              </div>
-            </div>
-          </article>`;
+          </div>
+        `;
       }).join("");
     }
 
-    function votePoll(postId, idx) {
-      const post = posts.find(p => p.id === postId);
-      if (!post || !post.poll) return;
-      if (post.poll.userChoice !== null) {
-        post.poll.options[post.poll.userChoice].votes--;
-      }
-      post.poll.userChoice = idx;
-      post.poll.options[idx].votes++;
-      renderFeed();
-    }
-
-    function reactPost(postId, emoji) {
-      const post = posts.find(p => p.id === postId);
-      if (!post) return;
-      if (post.userReacted === emoji) {
-        post.reactions[emoji] = Math.max(0, (post.reactions[emoji] || 1) - 1);
-        post.userReacted = null;
-      } else {
-        if (post.userReacted) post.reactions[post.userReacted] = Math.max(0, (post.reactions[post.userReacted] || 1) - 1);
-        post.reactions[emoji] = (post.reactions[emoji] || 0) + 1;
-        post.userReacted = emoji;
-      }
-      renderFeed();
-    }
-
-    function toggleComments(postId) {
-      document.getElementById(`drawer-${postId}`)?.classList.toggle("hidden");
-    }
-
-    function addReply(postId) {
-      const input = document.getElementById(`reply-${postId}`);
-      const text = input?.value.trim();
-      if (!text) return;
-      const post = posts.find(p => p.id === postId);
-      const author = currentUser?.user_metadata?.full_name || "You";
-      post.comments.push({ author, text });
-      renderFeed();
-      document.getElementById(`drawer-${postId}`)?.classList.remove("hidden");
-    }
-
-    function renderSpaces() {
-      document.getElementById("spacesGrid").innerHTML = spaces.map(s => `
-        <div class="person-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <h3># ${esc(s.name)}</h3>
-            <span class="pill-tag">${s.members} members</span>
-          </div>
-          <p class="sub">${esc(s.desc)}</p>
-          <div style="display:flex; gap:8px;">
-            <button class="btn ${s.joined ? "btn-soft" : ""} btn-sm" onclick="toggleJoinSpace('${esc(s.id)}')">
-              ${s.joined ? "✓ Joined" : "Join Space"}
-            </button>
-            <button class="btn btn-ghost btn-sm" onclick="filterBySpace('${esc(s.id)}')">View Feed</button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function toggleJoinSpace(id) {
-      const sp = spaces.find(s => s.id === id);
-      if (!sp) return;
-      sp.joined = !sp.joined;
-      sp.members += sp.joined ? 1 : -1;
-      renderSpaces();
-      renderLeftRail();
-    }
-
-    function createSpace() {
-      const name = document.getElementById("newSpaceName").value.trim();
-      const desc = document.getElementById("newSpaceDesc").value.trim() || "Community discussion & audio drops.";
-      if (!name) return;
-      spaces.unshift({ id: "sp-" + Date.now(), name, desc, members: 1, joined: true });
-      document.getElementById("newSpaceName").value = "";
-      document.getElementById("newSpaceDesc").value = "";
-      populateSpaceDropdown();
-      renderSpaces();
-      renderLeftRail();
-    }
-
-    function renderFriends() {
-      document.getElementById("reqBadge").textContent = requests.length;
-      document.getElementById("reqBadge").classList.toggle("hidden", requests.length === 0);
-
-      document.getElementById("requestsGrid").innerHTML = requests.map(r => `
-        <div class="person-card">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div class="avatar">${esc(initials(r.name))}</div>
-            <div>
-              <strong>${esc(r.name)}</strong>
-              <div class="sub" style="font-size:0.78rem;">${esc(r.mutual)}</div>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-sm" onclick="acceptRequest('${esc(r.id)}')">Accept</button>
-            <button class="btn btn-ghost btn-sm" onclick="declineRequest('${esc(r.id)}')">Ignore</button>
-          </div>
-        </div>
-      `).join("") || `<p class="sub">No pending friend requests.</p>`;
-
-      document.getElementById("friendsGrid").innerHTML = friends.map(f => `
-        <div class="person-card">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div class="avatar">${esc(initials(f.name))}${f.online ? `<span class="online-dot"></span>` : ""}</div>
-            <div>
-              <strong>${esc(f.name)}</strong>
-              <div class="sub" style="font-size:0.78rem;">${esc(f.bio)}</div>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn ${f.inner ? "btn-soft" : "btn-ghost"} btn-sm" onclick="toggleInnerCircle('${esc(f.id)}')">
-              ${f.inner ? "🔒 In Inner Circle" : "+ Add Inner Circle"}
-            </button>
-            <button class="btn btn-sm" onclick="openChatWith('${esc(f.id)}')">Message</button>
-          </div>
-        </div>
-      `).join("");
-
-      document.getElementById("suggestionsGrid").innerHTML = suggestions.map(s => `
-        <div class="person-card">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div class="avatar">${esc(initials(s.name))}</div>
-            <div>
-              <strong>${esc(s.name)}</strong>
-              <div class="sub" style="font-size:0.78rem;">${esc(s.role)}</div>
-            </div>
-          </div>
-          <button class="btn btn-soft btn-sm" onclick="addSuggestedFriend('${esc(s.id)}')">+ Add Friend</button>
-        </div>
-      `).join("") || `<p class="sub">You've connected with everyone suggested!</p>`;
-    }
-
-    function acceptRequest(id) {
-      const idx = requests.findIndex(r => r.id === id);
-      if (idx === -1) return;
-      const [req] = requests.splice(idx, 1);
-      friends.unshift({ id: req.id, name: req.name, handle: req.handle, bio: "New friend on LeafSocial", inner: false, online: true });
-      chatHistory[req.id] = [{ from: "them", text: `Thanks for accepting my request on LeafSocial!` }];
-      renderFriends();
-      renderLeftRail();
-    }
-
-    function declineRequest(id) {
-      requests = requests.filter(r => r.id !== id);
-      renderFriends();
-    }
-
-    function toggleInnerCircle(id) {
-      const f = friends.find(x => x.id === id);
-      if (f) f.inner = !f.inner;
-      renderFriends();
-      renderLeftRail();
-    }
-
-    function addSuggestedFriend(id) {
-      const idx = suggestions.findIndex(s => s.id === id);
-      if (idx === -1) return;
-      const [s] = suggestions.splice(idx, 1);
-      friends.push({ id: s.id, name: s.name, handle: s.handle, bio: s.role, inner: false, online: true });
-      chatHistory[s.id] = [{ from: "them", text: `Hey! Glad to connect here.` }];
-      renderFriends();
-    }
-
-    function openChatWith(friendId) {
-      activeChatFriendId = friendId;
-      switchView("chat");
-    }
-
-    function renderChat() {
-      document.getElementById("chatThreadsList").innerHTML = friends.map(f => `
-        <div class="chat-thread-item ${f.id === activeChatFriendId ? "active" : ""}" onclick="selectChatThread('${esc(f.id)}')">
-          <div class="avatar sm">${esc(initials(f.name))}${f.online ? `<span class="online-dot"></span>` : ""}</div>
-          <div style="overflow:hidden;">
-            <strong style="font-size:0.86rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(f.name)}</strong>
-            <span class="sub" style="font-size:0.75rem;">${f.online ? "Active now" : "Offline"}</span>
-          </div>
-        </div>
-      `).join("");
-
-      const activeFriend = friends.find(f => f.id === activeChatFriendId) || friends[0];
-      if (!activeFriend) return;
-      activeChatFriendId = activeFriend.id;
-      document.getElementById("activeChatName").textContent = activeFriend.name;
-      document.getElementById("activeChatStatus").textContent = activeFriend.online ? "● Online now" : "Last seen recently";
-
-      const msgs = chatHistory[activeFriend.id] || [];
-      const box = document.getElementById("chatMessagesBox");
-      box.innerHTML = msgs.map(m => `
-        <div class="msg-bubble ${m.from === "me" ? "me" : "them"}">${esc(m.text)}</div>
-      `).join("");
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function selectChatThread(id) {
-      activeChatFriendId = id;
-      renderChat();
-    }
-
-    function sendChatMessage() {
-      const input = document.getElementById("chatMessageInput");
-      const text = input.value.trim();
-      if (!text || !activeChatFriendId) return;
-      chatHistory[activeChatFriendId] = chatHistory[activeChatFriendId] || [];
-      chatHistory[activeChatFriendId].push({ from: "me", text });
-      input.value = "";
-      renderChat();
-
-      setTimeout(() => {
-        chatHistory[activeChatFriendId].push({ from: "them", text: "Got it! Let's link up soon 🌿" });
-        if (activeView === "chat") renderChat();
-      }, 700);
-    }
-
-    function sendChatVoiceNote() {
-      if (!activeChatFriendId) return;
-      chatHistory[activeChatFriendId] = chatHistory[activeChatFriendId] || [];
-      chatHistory[activeChatFriendId].push({ from: "me", text: "🎙️ Voice Note (0:12) ▶ ılılıllıılı" });
-      renderChat();
-    }
-
-    function toggleLounge() {
-      inLounge = !inLounge;
-      const btn = document.getElementById("joinLoungeBtn");
-      const speakers = document.getElementById("loungeSpeakers");
-      if (inLounge) {
-        btn.textContent = "Leave Lounge (Mic On)";
-        speakers.innerHTML += `<span class="speaker-pill" id="meSpeakerPill">🎙️ You (Speaking)</span>`;
-      } else {
-        btn.textContent = "Join Audio Lounge";
-        document.getElementById("meSpeakerPill")?.remove();
-      }
-    }
-
-    function renderProfile() {
-      const name = currentUser?.user_metadata?.full_name || currentUser?.email || "Samuel (Demo)";
-      document.getElementById("profileDisplayName").textContent = name;
-      document.getElementById("profileAvatar").textContent = initials(name);
-      document.getElementById("statPosts").textContent = `${posts.length} Posts`;
-      document.getElementById("statFriends").textContent = `${friends.length} Friends`;
-      document.getElementById("statInner").textContent = `${friends.filter(f => f.inner).length} Inner Circle`;
-    }
-
-    function saveProfileBio() {
-      const val = document.getElementById("editBioInput").value.trim();
-      if (val) document.getElementById("profileBioText").textContent = val;
-    }
-
-    document.getElementById("signUpBtn").addEventListener("click", async () => {
-      const al = document.getElementById("authAlert");
-      al.classList.add("hidden");
-      const fullName = document.getElementById("fullNameInput").value.trim();
-      const email = document.getElementById("emailInput").value.trim();
-      const password = document.getElementById("passwordInput").value;
-      if (!fullName || !email || password.length < 6) {
-        al.textContent = "Enter your full name, email, and a password (6+ characters).";
-        al.classList.remove("hidden");
-        return;
-      }
-      const { error } = await sb.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
-      if (error) {
-        al.textContent = error.message;
-        al.classList.remove("hidden");
-        return;
-      }
-      al.textContent = "Account created! Click Sign In now.";
-      al.classList.remove("hidden");
-      al.classList.add("ok");
-    });
-
-    document.getElementById("signInBtn").addEventListener("click", async () => {
-      const al = document.getElementById("authAlert");
-      al.classList.add("hidden");
-      const email = document.getElementById("emailInput").value.trim();
-      const password = document.getElementById("passwordInput").value;
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) {
-        al.textContent = error.message;
-        al.classList.remove("hidden");
-        return;
-      }
-      currentUser = data.user;
-      updateAuthUI();
-      await loadLiveSupabasePosts();
-    });
-
-    async function loadLiveSupabasePosts() {
-      const { data } = await sb
-        .from("posts")
-        .select("id, content, media_type, media_url, created_at, profiles(full_name, handle)")
-        .order("created_at", { ascending: false })
-        .limit(30);
-
-      if (data && data.length) {
-        posts = data.map(row => ({
-          id: row.id,
-          author: row.profiles?.full_name || "Member",
-          handle: row.profiles?.handle || "member",
-          time: new Date(row.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-          audience: "public",
-          spaceId: "",
-          content: row.content,
-          media_type: row.media_type === "music" ? "audio" : (row.media_type || "text"),
-          media_url: row.media_url,
-          reactions: { "🌿": 1, "🔥": 0, "👏": 0 },
-          userReacted: null,
-          comments: []
-        }));
-        renderFeed();
-      }
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     }
 
     (async () => {
-      const { data } = await sb.auth.getSession();
-      currentUser = data?.session?.user || null;
-      await loadLiveSupabasePosts();
-      updateAuthUI();
-      renderFeed();
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user) {
+        renderUserSession(session.user);
+      } else {
+        loadPosts();
+      }
     })();
   </script>
 </body>
