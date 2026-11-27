@@ -7,16 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface-soft: #334155;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --border: #334155;
-      --primary: #10b981;
-      --primary-dark: #059669;
-      --primary-light: #a7f3d0;
-      --danger: #ef4444;
+      --bg: #f3f6f4;
+      --surface: #ffffff;
+      --surface-soft: #eef5f0;
+      --green: #15803d;
+      --green-dark: #166534;
+      --green-light: #dcfce7;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --danger: #dc2626;
       --radius: 16px;
     }
 
@@ -24,21 +24,21 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(30, 41, 59, 0.9);
-      backdrop-filter: blur(12px);
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 12px 16px;
     }
@@ -58,18 +58,21 @@
       align-items: center;
       gap: 10px;
       font-weight: 800;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
+      color: var(--text);
       cursor: pointer;
+      user-select: none;
     }
 
     .brand-badge {
       width: 36px;
       height: 36px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 11px;
+      background: var(--green);
       color: #fff;
       display: grid;
       place-items: center;
+      font-weight: 800;
     }
 
     .nav-tabs {
@@ -81,32 +84,33 @@
     .nav-tab {
       border: none;
       background: transparent;
-      padding: 8px 16px;
+      padding: 8px 15px;
       border-radius: 999px;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.9rem;
       color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      transition: 0.15s ease;
     }
 
     .nav-tab:hover {
-      color: var(--text);
       background: var(--surface-soft);
+      color: var(--green-dark);
     }
 
     .nav-tab.active {
-      background: var(--primary);
-      color: #000;
+      background: var(--green);
+      color: #fff;
     }
 
     .layout {
       max-width: 1180px;
-      margin: 20px auto;
-      padding: 0 16px;
+      margin: 18px auto;
+      padding: 0 14px 48px;
       display: grid;
       grid-template-columns: 260px minmax(0, 1fr) 280px;
-      gap: 20px;
+      gap: 18px;
       align-items: start;
     }
 
@@ -121,80 +125,159 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
     }
 
     .list-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      color: var(--text);
     }
 
-    .list-item:hover { background: var(--surface-soft); }
-    
-    .pill {
+    .list-item:hover {
       background: var(--surface-soft);
-      color: var(--primary-light);
-      font-size: 0.8rem;
+      color: var(--green-dark);
+    }
+
+    .pill {
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 999px;
     }
 
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 5px; color: #374151; }
     input, textarea, select {
       width: 100%;
-      padding: 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      padding: 11px 13px;
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
       color: var(--text);
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--green);
+      background: #fff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
 
     .btn {
       width: 100%;
       padding: 12px;
       border: none;
-      border-radius: 10px;
+      border-radius: 11px;
       font-weight: 700;
+      font-size: 0.95rem;
       cursor: pointer;
-      transition: opacity 0.2s;
     }
-    .btn-primary { background: var(--primary); color: #000; }
-    .btn-secondary { background: var(--surface-soft); color: var(--text); }
-    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-secondary { background: var(--surface-soft); color: var(--green-dark); }
 
     .post-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .post-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .user-info { display: flex; align-items: center; gap: 11px; }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: var(--green-dark);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+    }
+
+    .actions { display: flex; gap: 8px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .chip {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .chip.active {
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-color: #86efac;
+    }
+
+    .chat-box {
+      height: 330px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .msg {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 10px 13px;
+      border-radius: 12px;
+      max-width: 82%;
+    }
+    .msg.mine {
+      align-self: flex-end;
+      background: var(--green-light);
+      border-color: #86efac;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 18px;
       margin-bottom: 16px;
     }
 
-    .post-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
-    .user-info { display: flex; align-items: center; gap: 12px; }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--surface-soft); display: grid; place-items: center; font-weight: bold; font-size: 1.2rem; }
-    
-    .actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
-    .chip { background: var(--bg); border: 1px solid var(--border); padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--text); cursor: pointer; }
-    .chip.active { background: var(--primary-light); color: #000; border-color: var(--primary); }
-
-    .chat-box { height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; background: var(--bg); border-radius: 10px; border: 1px solid var(--border); }
-    .msg { background: var(--surface-soft); padding: 10px 14px; border-radius: 12px; max-width: 80%; }
-    .msg.mine { align-self: flex-end; background: var(--primary); color: #000; }
-
-    .status { padding: 12px; border-radius: 10px; margin-top: 12px; display: none; font-weight: 600; font-size: 0.9rem; background: var(--surface-soft); color: var(--primary-light); }
+    .status {
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+    .status.err {
+      background: #fef2f2;
+      color: var(--danger);
+    }
   </style>
 </head>
 <body>
@@ -210,6 +293,7 @@
         <button class="nav-tab" id="tab-spaces" onclick="switchView('spaces')">LeafSpaces</button>
         <button class="nav-tab" id="tab-friends" onclick="switchView('friends')">Friends</button>
         <button class="nav-tab" id="tab-chat" onclick="switchView('chat')">Chat</button>
+        <button class="nav-tab" id="tab-profile" onclick="switchView('profile')">Profile</button>
       </div>
     </div>
   </header>
@@ -217,93 +301,155 @@
   <main class="layout">
     <aside class="sidebar-left">
       <div class="card">
-        <h3 style="margin-bottom: 10px;">Circles</h3>
-        <div class="list-item" onclick="switchView('feed')"><span>🌐 All Community</span></div>
-        <div class="list-item" onclick="switchView('friends')"><span>👥 Inner Circle</span></div>
-        <div class="list-item" onclick="switchView('spaces')"><span>✨ Topic Spaces</span></div>
-        <div class="list-item" onclick="switchView('chat')"><span>💬 Circle Lounge</span></div>
+        <h3>Your LeafCircles</h3>
+        <div class="list-item" onclick="switchView('feed')"><span>All Community</span><span class="pill">Live</span></div>
+        <div class="list-item" onclick="switchView('friends')"><span>Inner Circle</span><span class="pill" id="circle-count">0</span></div>
+        <div class="list-item" onclick="switchView('spaces')"><span>Topic Spaces</span><span class="pill">Explore</span></div>
+        <div class="list-item" onclick="switchView('chat')"><span>Circle Lounge</span><span class="pill">Chat</span></div>
       </div>
     </aside>
 
     <section class="main-feed">
-      
-      <!-- AUTH SECTION -->
+      <!-- AUTH CARD -->
       <div class="card" id="auth-card">
-        <h2 id="auth-title">Join the Circle</h2>
-        <p style="color: var(--muted); margin-bottom: 20px;">Voice notes, inner circles, without algorithm clutter.</p>
-        
+        <h2 id="auth-title" style="margin-bottom: 6px;">Welcome to LeafSocial</h2>
+        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">Voice notes, inner circles, and topic spaces—without algorithm clutter.</p>
+
         <form id="auth-form" onsubmit="handleAuth(event)">
           <div class="form-group" id="name-group">
             <label>Full Name</label>
             <input type="text" id="name" placeholder="Emmanuel Agwaraonye">
           </div>
           <div class="form-group">
-            <label>Contact (Email or Phone)</label>
-            <input type="text" id="contact" required placeholder="user@example.com or +2348012345678">
+            <label>Email Address or Phone Number</label>
+            <input type="text" id="contact" required placeholder="you@example.com or +2348012345678">
           </div>
           <div class="form-group" id="location-group">
             <label>Location (City, Country)</label>
             <input type="text" id="location" placeholder="Lagos, Nigeria">
           </div>
           <div class="form-group">
-            <label>Password</label>
+            <label>Password (6+ characters)</label>
             <input type="password" id="password" minlength="6" required placeholder="••••••••">
           </div>
           <button type="submit" class="btn btn-primary" id="auth-btn">Create Account</button>
         </form>
-        
-        <button class="btn btn-secondary" style="margin-top: 10px;" id="toggle-Auth-btn" onclick="toggleAuthMode()">Switch to Sign In</button>
+
+        <button class="btn btn-secondary" style="margin-top: 10px;" id="toggle-Auth-btn" onclick="toggleAuthMode()">Already have an account? Sign In</button>
         <div id="auth-status" class="status"></div>
       </div>
 
       <!-- COMPOSER -->
       <div class="card" id="composer-card" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <div class="user-info">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px;">
+          <div class="user-info" style="cursor: pointer;" onclick="switchView('profile')">
             <div class="avatar" id="avatar-initial">M</div>
             <div>
               <strong id="user-display-name">Member</strong>
-              <div style="font-size: 0.8rem; color: var(--muted);" id="user-location">Community</div>
+              <div style="font-size: 0.82rem; color: var(--muted);" id="user-location">📍 Lagos, Nigeria</div>
             </div>
           </div>
           <button class="chip" onclick="signOut()">Sign Out</button>
         </div>
         <textarea id="post-content" rows="3" placeholder="Share an update with your circle..."></textarea>
-        
+
         <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-          <select id="post-space" style="flex: 2; min-width: 180px;">
+          <select id="post-space" style="flex: 2; min-width: 170px;">
             <option value="All Community">Post to: All Community</option>
           </select>
-          <button class="btn btn-primary" style="flex: 1; min-width: 120px;" onclick="createPost()">Publish</button>
+          <button class="btn btn-primary" style="flex: 1; min-width: 130px;" onclick="createPost()">Publish Post</button>
         </div>
         <div id="post-status" class="status"></div>
       </div>
 
-      <!-- MAIN VIEWS -->
+      <!-- VIEW 1: FEED -->
       <div id="view-feed"></div>
+
+      <!-- VIEW 2: LEAFSPACES -->
       <div id="view-spaces" style="display: none;">
-        <h2>Explore Topic Spaces</h2>
-        <div id="spaces-list" style="margin-top: 15px;"></div>
+        <div class="card">
+          <h3>Create a New LeafSpace</h3>
+          <div class="form-group">
+            <label>Space Name</label>
+            <input type="text" id="new-space-name" placeholder="e.g. Lagos Creators Hub">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="new-space-desc" placeholder="What is this community about?">
+          </div>
+          <button class="btn btn-primary" onclick="createSpace()">+ Create Space</button>
+          <div id="space-status" class="status"></div>
+        </div>
+        <div id="spaces-list"></div>
       </div>
+
+      <!-- VIEW 3: FRIENDS -->
       <div id="view-friends" style="display: none;">
-        <h2>Community Members</h2>
-        <div id="friends-list" style="margin-top: 15px;"></div>
-      </div>
-      <div id="view-chat" style="display: none;">
-        <h2>Circle Lounge</h2>
-        <div class="chat-box" id="chat-messages" style="margin-top: 15px;"></div>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChat()">
-          <button class="btn btn-primary" style="width: auto; padding: 0 20px;" onclick="sendChat()">Send</button>
+        <div class="card">
+          <h3>LeafSocial Members &amp; Inner Circle</h3>
+          <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">Add members to your Inner Circle.</p>
+          <div id="friends-list"></div>
         </div>
       </div>
 
+      <!-- VIEW 4: CHAT -->
+      <div id="view-chat" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="margin: 0;">Circle Lounge</h3>
+            <div style="display: flex; gap: 6px;">
+              <button class="chip active" onclick="switchRoom('Circle Lounge', this)">Lounge</button>
+              <button class="chip" onclick="switchRoom('Creators', this)">Creators</button>
+              <button class="chip" onclick="switchRoom('Founders', this)">Founders</button>
+            </div>
+          </div>
+          <div class="chat-box" id="chat-messages"></div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <input type="text" id="chat-input" placeholder="Write a message..." onkeydown="if(event.key==='Enter') sendChat()">
+            <button class="btn btn-primary" style="width: auto; padding: 0 20px;" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: PROFILE -->
+      <div id="view-profile" style="display: none;">
+        <div class="card">
+          <h3>Your LeafSocial Profile</h3>
+          <div id="profile-guest-msg" style="color: var(--muted);">Sign in above to view and edit your profile.</div>
+          <form id="profile-form" style="display: none;" onsubmit="saveProfile(event)">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="prof-name" required>
+            </div>
+            <div class="form-group">
+              <label>Location (City, Country)</label>
+              <input type="text" id="prof-location" placeholder="Lagos, Nigeria">
+            </div>
+            <div class="form-group">
+              <label>Contact Identifier</label>
+              <input type="text" id="prof-contact" readonly style="opacity: 0.75;">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+            <div id="profile-status" class="status"></div>
+          </form>
+        </div>
+      </div>
     </section>
 
     <aside class="sidebar-right">
-      <div class="card" style="background: linear-gradient(135deg, var(--primary-dark), var(--surface));">
-        <h3>✨ LeafAudio</h3>
-        <p style="font-size: 0.9rem; opacity: 0.9; margin: 10px 0;">Late-Night Acoustic Drops. 15-second voice clips from creators in your circles.</p>
+      <div class="highlight-box">
+        <span class="pill" style="background: rgba(255,255,255,0.2); color: #fff;">LeafAudio</span>
+        <h3 style="margin-top: 10px;">Late-Night Acoustic Drops</h3>
+        <p style="font-size: 0.88rem; opacity: 0.92; margin-top: 6px;">15-second voice clips and updates from creators in your circles.</p>
+      </div>
+
+      <div class="card">
+        <h3>Why LeafSocial?</h3>
+        <p style="font-size: 0.88rem; color: var(--muted);">
+          • Verified member profiles with real locations<br />
+          • Chronological posts without noisy ads<br />
+          • Private inner circles &amp; live chat
+        </p>
       </div>
     </aside>
   </main>
@@ -311,11 +457,14 @@
   <script>
     const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mzk5NjgsImV4cCI6MjExMTExNTk2OH0.irlsfi5a7FwWUTlqYg4zfdODsR1EJ997Wftwi8aJdM8";
-    
+
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let isSignUp = true;
     let currentUser = null;
+    let currentProfile = null;
     let currentSpace = "All Community";
+    let currentRoom = "Circle Lounge";
+    let myFriends = new Set();
 
     function normalizeEmail(raw) {
       const cleaned = raw.trim();
@@ -326,19 +475,43 @@
 
     async function init() {
       const { data: { session } } = await sb.auth.getSession();
-      if (session) {
+      if (session?.user) {
         currentUser = session.user;
+        await loadOrSyncProfile();
         setupAuthedUI();
       }
-      loadSpaces();
-      loadPosts();
+      await loadSpaces();
+      await loadPosts();
+    }
+
+    async function loadOrSyncProfile() {
+      if (!currentUser) return;
+      const { data } = await sb.from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
+      const meta = currentUser.user_metadata || {};
+
+      if (data) {
+        currentProfile = data;
+      } else {
+        const fresh = {
+          id: currentUser.id,
+          full_name: meta.full_name || "Member",
+          contact_identifier: meta.contact_identifier || currentUser.email,
+          location: meta.location || "Lagos, Nigeria"
+        };
+        await sb.from("profiles").upsert(fresh);
+        currentProfile = fresh;
+      }
+
+      const { data: fRows } = await sb.from("friendships").select("friend_id").eq("user_id", currentUser.id);
+      myFriends = new Set((fRows || []).map(r => r.friend_id));
+      document.getElementById("circle-count").innerText = myFriends.size;
     }
 
     function toggleAuthMode() {
       isSignUp = !isSignUp;
-      document.getElementById("auth-title").innerText = isSignUp ? "Join the Circle" : "Welcome Back";
+      document.getElementById("auth-title").innerText = isSignUp ? "Welcome to LeafSocial" : "Welcome Back";
       document.getElementById("auth-btn").innerText = isSignUp ? "Create Account" : "Sign In";
-      document.getElementById("toggle-Auth-btn").innerText = isSignUp ? "Switch to Sign In" : "Switch to Create Account";
+      document.getElementById("toggle-Auth-btn").innerText = isSignUp ? "Already have an account? Sign In" : "Need an account? Create Account";
       document.getElementById("name-group").style.display = isSignUp ? "block" : "none";
       document.getElementById("location-group").style.display = isSignUp ? "block" : "none";
     }
@@ -346,19 +519,21 @@
     async function handleAuth(e) {
       e.preventDefault();
       const statusEl = document.getElementById("auth-status");
+      statusEl.className = "status";
       statusEl.style.display = "block";
       statusEl.innerText = "Processing...";
-      
+
       const rawContact = document.getElementById("contact").value.trim();
       const email = normalizeEmail(rawContact);
       if (!email) {
-        statusEl.innerText = "Please enter a valid email address or phone number.";
+        statusEl.className = "status err";
+        statusEl.innerText = "Enter a valid email address or phone number.";
         return;
       }
 
       const pass = document.getElementById("password").value;
       const name = document.getElementById("name").value.trim() || "Member";
-      const loc = document.getElementById("location").value.trim() || "Community";
+      const loc = document.getElementById("location").value.trim() || "Lagos, Nigeria";
 
       let error = null;
       if (isSignUp) {
@@ -382,6 +557,7 @@
       }
 
       if (error) {
+        statusEl.className = "status err";
         statusEl.innerText = error.message;
       } else {
         statusEl.innerText = "Success! Loading...";
@@ -397,49 +573,85 @@
     function setupAuthedUI() {
       document.getElementById("auth-card").style.display = "none";
       document.getElementById("composer-card").style.display = "block";
-      const meta = currentUser.user_metadata || {};
-      document.getElementById("user-display-name").innerText = meta.full_name || "Member";
-      document.getElementById("user-location").innerText = meta.location ? `📍 ${meta.location}` : "Community";
-      document.getElementById("avatar-initial").innerText = (meta.full_name || "M")[0].toUpperCase();
+      const displayName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
+      const displayLoc = currentProfile?.location || currentUser.user_metadata?.location || "Lagos, Nigeria";
+      document.getElementById("user-display-name").innerText = displayName;
+      document.getElementById("user-location").innerText = `📍 ${displayLoc}`;
+      document.getElementById("avatar-initial").innerText = displayName[0].toUpperCase();
+
+      document.getElementById("profile-guest-msg").style.display = "none";
+      document.getElementById("profile-form").style.display = "block";
+      document.getElementById("prof-name").value = displayName;
+      document.getElementById("prof-location").value = displayLoc;
+      document.getElementById("prof-contact").value = currentProfile?.contact_identifier || currentUser.email || "";
+    }
+
+    async function saveProfile(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+      const statusEl = document.getElementById("profile-status");
+      const fullName = document.getElementById("prof-name").value.trim();
+      const locationVal = document.getElementById("prof-location").value.trim();
+
+      const { error } = await sb.from("profiles").upsert({
+        id: currentUser.id,
+        full_name: fullName,
+        location: locationVal,
+        contact_identifier: document.getElementById("prof-contact").value
+      });
+
+      await sb.auth.updateUser({ data: { full_name: fullName, location: locationVal } });
+
+      statusEl.style.display = "block";
+      if (error) {
+        statusEl.className = "status err";
+        statusEl.innerText = error.message;
+      } else {
+        statusEl.className = "status";
+        statusEl.innerText = "Profile saved!";
+        currentProfile = { ...currentProfile, full_name: fullName, location: locationVal };
+        setupAuthedUI();
+      }
     }
 
     async function switchView(view) {
-      document.querySelectorAll("main > section > div[id^='view-']").forEach(el => el.style.display = "none");
-      document.getElementById(`view-${view}`).style.display = "block";
-      document.querySelectorAll(".nav-tab").forEach(el => el.classList.remove("active"));
-      document.getElementById(`tab-${view}`).classList.add("active");
+      ["feed", "spaces", "friends", "chat", "profile"].forEach(v => {
+        document.getElementById(`view-${v}`).style.display = v === view ? "block" : "none";
+        document.getElementById(`tab-${v}`).classList.toggle("active", v === view);
+      });
 
-      if (view === "feed") { loadPosts(); }
-      if (view === "spaces") { loadSpacesList(); }
-      if (view === "friends") { loadFriends(); }
-      if (view === "chat") { loadChat(); }
+      if (view === "feed") loadPosts();
+      if (view === "spaces") loadSpacesList();
+      if (view === "friends") loadFriends();
+      if (view === "chat") loadChat();
     }
 
     async function loadPosts() {
       let query = sb.from("posts").select("*").order("created_at", { ascending: false });
       if (currentSpace !== "All Community") query = query.eq("space_name", currentSpace);
       const { data } = await query;
-      
+
       const container = document.getElementById("view-feed");
       container.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h2>${escapeHtml(currentSpace)}</h2>
+        <h3 style="margin:0;">${escapeHtml(currentSpace)}</h3>
         ${currentSpace !== "All Community" ? `<button class="chip" onclick="currentSpace='All Community'; loadPosts();">Show All</button>` : ""}
       </div>`;
 
       if (!data || data.length === 0) {
-        container.innerHTML += "<p style='color: var(--muted); margin-top: 15px;'>No posts yet. Be the first to share!</p>";
+        container.innerHTML += `<div class="card"><p style="color: var(--muted);">No posts in ${escapeHtml(currentSpace)} yet. Share the first update above!</p></div>`;
         return;
       }
 
       data.forEach(post => {
+        const author = post.author_name || "Member";
         container.innerHTML += `
           <div class="post-card">
             <div class="post-header">
               <div class="user-info">
-                <div class="avatar">${escapeHtml((post.author_name || "M")[0].toUpperCase())}</div>
+                <div class="avatar">${escapeHtml(author[0].toUpperCase())}</div>
                 <div>
-                  <strong>${escapeHtml(post.author_name || "Member")}</strong>
-                  <div style="font-size: 0.75rem; color: var(--muted);">${new Date(post.created_at).toLocaleString()}</div>
+                  <strong>${escapeHtml(author)}</strong>
+                  <div style="font-size: 0.78rem; color: var(--muted);">${new Date(post.created_at).toLocaleString()}</div>
                 </div>
               </div>
               <span class="pill" style="cursor:pointer;" onclick="currentSpace='${escapeAttr(post.space_name || "All Community")}'; loadPosts();"># ${escapeHtml(post.space_name || "All Community")}</span>
@@ -457,22 +669,25 @@
     async function createPost() {
       const statusEl = document.getElementById("post-status");
       if (!currentUser) {
+        statusEl.className = "status err";
         statusEl.style.display = "block";
-        statusEl.innerText = "Sign in to post.";
+        statusEl.innerText = "Sign in first to publish.";
         return;
       }
       const content = document.getElementById("post-content").value.trim();
       const space = document.getElementById("post-space").value;
       if (!content) return;
 
+      const authorName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
       const { error } = await sb.from("posts").insert({
         user_id: currentUser.id,
-        author_name: currentUser.user_metadata?.full_name || "Member",
+        author_name: authorName,
         space_name: space,
         content: content
       });
 
       if (error) {
+        statusEl.className = "status err";
         statusEl.style.display = "block";
         statusEl.innerText = error.message;
         return;
@@ -485,7 +700,7 @@
     }
 
     async function loadSpaces() {
-      const { data } = await sb.from("leaf_spaces").select("*");
+      const { data } = await sb.from("leaf_spaces").select("*").order("created_at", { ascending: true });
       const select = document.getElementById("post-space");
       select.innerHTML = '<option value="All Community">Post to: All Community</option>';
       if (data) {
@@ -494,7 +709,7 @@
     }
 
     async function loadSpacesList() {
-      const { data } = await sb.from("leaf_spaces").select("*");
+      const { data } = await sb.from("leaf_spaces").select("*").order("created_at", { ascending: true });
       const list = document.getElementById("spaces-list");
       list.innerHTML = "";
       if (data) {
@@ -502,40 +717,93 @@
           list.innerHTML += `
             <div class="card">
               <h3># ${escapeHtml(s.name)}</h3>
-              <p style="color: var(--muted); margin: 10px 0;">${escapeHtml(s.description || "")}</p>
-              <button class="btn btn-secondary" onclick="currentSpace='${escapeAttr(s.name)}'; switchView('feed');">Open Space</button>
+              <p style="color: var(--muted); margin: 8px 0 12px;">${escapeHtml(s.description || "")}</p>
+              <button class="btn btn-secondary" onclick="currentSpace='${escapeAttr(s.name)}'; switchView('feed');">Open Space Feed →</button>
             </div>
           `;
         });
+      }
+    }
+
+    async function createSpace() {
+      const statusEl = document.getElementById("space-status");
+      if (!currentUser) {
+        statusEl.className = "status err";
+        statusEl.style.display = "block";
+        statusEl.innerText = "Sign in first to create a LeafSpace.";
+        return;
+      }
+      const name = document.getElementById("new-space-name").value.trim();
+      const description = document.getElementById("new-space-desc").value.trim();
+      if (!name) return;
+
+      const { error } = await sb.from("leaf_spaces").insert({ name, description, category: "Community" });
+      statusEl.style.display = "block";
+      if (error) {
+        statusEl.className = "status err";
+        statusEl.innerText = error.message;
+      } else {
+        statusEl.className = "status";
+        statusEl.innerText = `Created # ${name}!`;
+        document.getElementById("new-space-name").value = "";
+        document.getElementById("new-space-desc").value = "";
+        await loadSpaces();
+        await loadSpacesList();
       }
     }
 
     async function loadFriends() {
-      const { data } = await sb.from("profiles").select("*").limit(30);
+      const { data } = await sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(40);
       const list = document.getElementById("friends-list");
       list.innerHTML = "";
       if (data && data.length > 0) {
         data.forEach(p => {
+          const isMe = currentUser && p.id === currentUser.id;
+          const added = myFriends.has(p.id);
+          const name = p.full_name || "Member";
           list.innerHTML += `
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 0; border-bottom: 1px solid var(--border);">
               <div class="user-info">
-                <div class="avatar">${escapeHtml((p.full_name || "M")[0].toUpperCase())}</div>
+                <div class="avatar">${escapeHtml(name[0].toUpperCase())}</div>
                 <div>
-                  <strong>${escapeHtml(p.full_name || "Member")}</strong>
-                  <div style="font-size: 0.8rem; color: var(--muted);">📍 ${escapeHtml(p.location || "Community")}</div>
+                  <strong>${escapeHtml(name)}</strong> ${isMe ? '<span class="pill">You</span>' : ""}
+                  <div style="font-size: 0.8rem; color: var(--muted);">📍 ${escapeHtml(p.location || "Nigeria")}</div>
                 </div>
               </div>
-              <button class="chip active" onclick="this.innerText='Added ✓'">Add Friend</button>
+              ${isMe ? "" : `<button class="chip ${added ? "active" : ""}" onclick="toggleFriend('${p.id}', this)">${added ? "In Circle ✓" : "+ Add Friend"}</button>`}
             </div>
           `;
         });
       } else {
-        list.innerHTML = "<p style='color: var(--muted);'>No members found yet.</p>";
+        list.innerHTML = "<p style='color: var(--muted);'>No members listed yet.</p>";
       }
     }
 
+    async function toggleFriend(friendId, btn) {
+      if (!currentUser) return alert("Sign in first to add friends.");
+      if (myFriends.has(friendId)) {
+        await sb.from("friendships").delete().eq("user_id", currentUser.id).eq("friend_id", friendId);
+        myFriends.delete(friendId);
+        btn.classList.remove("active");
+        btn.innerText = "+ Add Friend";
+      } else {
+        await sb.from("friendships").insert({ user_id: currentUser.id, friend_id: friendId });
+        myFriends.add(friendId);
+        btn.classList.add("active");
+        btn.innerText = "In Circle ✓";
+      }
+      document.getElementById("circle-count").innerText = myFriends.size;
+    }
+
+    function switchRoom(room, btn) {
+      currentRoom = room;
+      document.querySelectorAll("#view-chat .chip").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      loadChat();
+    }
+
     async function loadChat() {
-      const { data } = await sb.from("chat_messages").select("*").eq("room_name", "Circle Lounge").order("created_at", { ascending: true });
+      const { data } = await sb.from("chat_messages").select("*").eq("room_name", currentRoom).order("created_at", { ascending: true });
       const box = document.getElementById("chat-messages");
       box.innerHTML = "";
       if (data && data.length > 0) {
@@ -543,25 +811,27 @@
           const isMine = currentUser && m.user_id === currentUser.id;
           box.innerHTML += `
             <div class="msg ${isMine ? 'mine' : ''}">
-              <div style="font-size: 0.75rem; opacity: 0.8;">${escapeHtml(m.sender_name || "Member")}</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">${escapeHtml(m.sender_name || "Member")}</div>
               <div>${escapeHtml(m.message || "")}</div>
             </div>
           `;
         });
         box.scrollTop = box.scrollHeight;
       } else {
-        box.innerHTML = "<p style='color: var(--muted);'>Welcome to Circle Lounge! Send the first message below.</p>";
+        box.innerHTML = `<p style="color: var(--muted);">Welcome to ${escapeHtml(currentRoom)}! Send the first message below.</p>`;
       }
     }
 
     async function sendChat() {
-      if (!currentUser) return alert("Sign in to chat");
+      if (!currentUser) return alert("Sign in first to chat.");
       const input = document.getElementById("chat-input");
       if (!input.value.trim()) return;
 
+      const senderName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
       await sb.from("chat_messages").insert({
         user_id: currentUser.id,
-        sender_name: currentUser.user_metadata?.full_name || "Member",
+        sender_name: senderName,
+        room_name: currentRoom,
         message: input.value.trim()
       });
       input.value = "";
