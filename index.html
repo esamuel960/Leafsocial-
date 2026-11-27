@@ -61,6 +61,8 @@
       font-weight: 800;
       font-size: 1.15rem;
       color: var(--text);
+      cursor: pointer;
+      user-select: none;
     }
 
     .brand-badge {
@@ -91,6 +93,12 @@
       color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-tab:hover {
+      background: var(--surface-soft);
+      color: var(--green-dark);
     }
 
     .nav-tab.active {
@@ -406,12 +414,58 @@
       cursor: pointer;
     }
 
+    .chip-btn.cheered {
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-color: #86efac;
+    }
+
     .highlight-box {
       background: linear-gradient(135deg, #166534, #15803d);
       color: #fff;
       border-radius: var(--radius);
       padding: 18px;
       margin-bottom: 16px;
+    }
+
+    /* Section Panels */
+    .space-item, .friend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .space-item:last-child, .friend-item:last-child {
+      border-bottom: none;
+    }
+
+    .chat-box {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 290px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    .chat-row {
+      display: flex;
+      gap: 8px;
     }
 
     /* Terms Modal */
@@ -468,15 +522,15 @@
 
   <header>
     <div class="nav-inner">
-      <div class="brand">
+      <div class="brand" onclick="openSection('feed')" title="Go to LeafSocial Home Feed">
         <div class="brand-badge">L</div>
         <span>LeafSocial</span>
       </div>
       <div class="nav-tabs">
-        <button class="nav-tab active">Feed</button>
-        <button class="nav-tab">LeafSpaces</button>
-        <button class="nav-tab">Friends</button>
-        <button class="nav-tab">Chat</button>
+        <button type="button" class="nav-tab active" id="nav-feed" onclick="openSection('feed')">Feed</button>
+        <button type="button" class="nav-tab" id="nav-spaces" onclick="openSection('spaces')">LeafSpaces</button>
+        <button type="button" class="nav-tab" id="nav-friends" onclick="openSection('friends')">Friends</button>
+        <button type="button" class="nav-tab" id="nav-chat" onclick="openSection('chat')">Chat</button>
       </div>
     </div>
   </header>
@@ -486,16 +540,16 @@
     <aside class="sidebar-left">
       <div class="card">
         <h3>Your LeafCircles</h3>
-        <div class="list-item"><span>All Community</span><span class="pill">Live</span></div>
-        <div class="list-item"><span>Inner Circle</span><span class="pill">3</span></div>
-        <div class="list-item"><span>LeafAudio Drops</span></div>
-        <div class="list-item"><span>Hangout Polls</span></div>
+        <div class="list-item" onclick="openSection('feed')"><span>All Community</span><span class="pill">Live</span></div>
+        <div class="list-item" onclick="openSection('friends')"><span>Inner Circle</span><span class="pill">3</span></div>
+        <div class="list-item" onclick="openSection('spaces')"><span>LeafAudio Drops</span></div>
+        <div class="list-item" onclick="openSection('chat')"><span>Circle Lounge</span></div>
       </div>
 
       <div class="card">
         <h3>Joined LeafSpaces</h3>
-        <div class="list-item"><span># Afrobeats & Indie Creators</span></div>
-        <div class="list-item"><span># Lagos Tech & Founders</span></div>
+        <div class="list-item" onclick="openSection('spaces')"><span># Afrobeats & Indie Creators</span></div>
+        <div class="list-item" onclick="openSection('spaces')"><span># Lagos Tech & Founders</span></div>
       </div>
     </aside>
 
@@ -546,7 +600,6 @@
               <input id="suPassword" type="password" minlength="6" placeholder="Create a strong password" required />
             </div>
 
-            <!-- Mandatory Terms of Use Agreement -->
             <div class="terms-box">
               <input id="suTerms" type="checkbox" required />
               <label for="suTerms">
@@ -578,26 +631,98 @@
         <div id="authStatus" class="status-msg"></div>
       </div>
 
-      <!-- Signed-In Composer Card -->
-      <div class="card" id="composerCard" style="display: none;">
-        <div class="profile-banner">
-          <div>
-            <strong id="userDisplayName" style="font-size: 1.05rem;">Member</strong>
-            <div class="meta-tags" id="userMetaInfo"></div>
+      <!-- VIEW 1: FEED -->
+      <div id="view-feed">
+        <div class="card" id="composerCard" style="display: none;">
+          <div class="profile-banner">
+            <div>
+              <strong id="userDisplayName" style="font-size: 1.05rem;">Member</strong>
+              <div class="meta-tags" id="userMetaInfo"></div>
+            </div>
+            <button type="button" class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
           </div>
-          <button type="button" class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
+
+          <div class="field">
+            <label for="postBody">Share an update with your circle</label>
+            <textarea id="postBody" rows="3" placeholder="What's happening in your circle today?"></textarea>
+          </div>
+          <button type="button" class="btn-primary" id="publishBtn" onclick="publishPost()">Publish Post</button>
+          <div id="postStatus" class="status-msg"></div>
         </div>
 
-        <div class="field">
-          <label for="postBody">Share an update with your circle</label>
-          <textarea id="postBody" rows="3" placeholder="What's happening in your circle today?"></textarea>
-        </div>
-        <button type="button" class="btn-primary" onclick="publishPost()">Publish Post</button>
-        <div id="postStatus" class="status-msg"></div>
+        <div id="feedContainer"></div>
       </div>
 
-      <!-- Community Feed -->
-      <div id="feedContainer"></div>
+      <!-- VIEW 2: LEAFSPACES -->
+      <div id="view-spaces" style="display: none;">
+        <div class="card">
+          <h3>LeafSpaces — Topic Communities</h3>
+          <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">
+            Join focused rooms for creators, founders, and local hangouts.
+          </p>
+          <div class="space-item">
+            <div>
+              <strong># Afrobeats &amp; Indie Creators</strong>
+              <div style="font-size: 0.82rem; color: var(--muted);">142 members • Daily 15s voice drops</div>
+            </div>
+            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">Joined ✓</button>
+          </div>
+          <div class="space-item">
+            <div>
+              <strong># Lagos Tech &amp; Founders</strong>
+              <div style="font-size: 0.82rem; color: var(--muted);">98 members • Product launches &amp; builders</div>
+            </div>
+            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">Joined ✓</button>
+          </div>
+          <div class="space-item">
+            <div>
+              <strong># Faith, Purpose &amp; Encouragement</strong>
+              <div style="font-size: 0.82rem; color: var(--muted);">215 members • Morning reflections</div>
+            </div>
+            <button type="button" class="chip-btn" onclick="toggleJoin(this)">+ Join Space</button>
+          </div>
+          <div class="space-item">
+            <div>
+              <strong># Weekend Football &amp; Banter</strong>
+              <div style="font-size: 0.82rem; color: var(--muted);">176 members • Matchday live threads</div>
+            </div>
+            <button type="button" class="chip-btn" onclick="toggleJoin(this)">+ Join Space</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: FRIENDS -->
+      <div id="view-friends" style="display: none;">
+        <div class="card">
+          <h3>LeafSocial Members &amp; Inner Circle</h3>
+          <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">
+            Connect with verified members in your community.
+          </p>
+          <div id="friendsList">
+            <p style="font-size: 0.88rem; color: var(--muted);">Loading members...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: CHAT -->
+      <div id="view-chat" style="display: none;">
+        <div class="card">
+          <h3>Circle Lounge — Live Group Chat</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 10px;">
+            Real-time community check-in with your LeafCircle.
+          </p>
+          <div class="chat-box" id="chatMessages">
+            <div class="chat-bubble">
+              <strong>Amaka Okafor</strong> <span style="font-size: 0.75rem; color: var(--muted);">• Lagos</span><br />
+              Welcome to the LeafSocial Circle Lounge! Drop a quick hello below 👋
+            </div>
+          </div>
+          <div class="chat-row">
+            <input id="chatInput" type="text" placeholder="Type a message to your circle..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+            <button type="button" class="btn-primary" style="width: auto; padding: 0 18px;" onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Right Sidebar -->
@@ -651,6 +776,80 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mzk5NjgsImV4cCI6MjExMTExNTk2OH0.irlsfi5a7FwWUTlqYg4zfdODsR1EJ997Wftwi8aJdM8";
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null;
+
+    function openSection(sectionName) {
+      const sections = ["feed", "spaces", "friends", "chat"];
+      sections.forEach(sec => {
+        document.getElementById(`view-${sec}`).style.display = sec === sectionName ? "block" : "none";
+        document.getElementById(`nav-${sec}`).classList.toggle("active", sec === sectionName);
+      });
+
+      if (sectionName === "feed") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        loadPosts();
+      } else if (sectionName === "friends") {
+        loadMembers();
+      }
+    }
+
+    function toggleJoin(btn) {
+      if (btn.classList.contains("cheered")) {
+        btn.classList.remove("cheered");
+        btn.textContent = "+ Join Space";
+      } else {
+        btn.classList.add("cheered");
+        btn.textContent = "Joined ✓";
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const sender = currentUser?.user_metadata?.full_name || "Guest Member";
+      const loc = currentUser?.user_metadata?.location || "Community";
+      const box = document.getElementById("chatMessages");
+
+      const bubble = document.createElement("div");
+      bubble.className = "chat-bubble";
+      bubble.innerHTML = `<strong>${escapeHtml(sender)}</strong> <span style="font-size: 0.75rem; color: var(--muted);">• ${escapeHtml(loc)}</span><br />${escapeHtml(text)}`;
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+      input.value = "";
+    }
+
+    async function loadMembers() {
+      const list = document.getElementById("friendsList");
+      const { data, error } = await sb
+        .from("profiles")
+        .select("full_name, location")
+        .limit(20);
+
+      if (error || !data || data.length === 0) {
+        list.innerHTML = `
+          <div class="friend-item">
+            <div>
+              <strong>Amaka Okafor</strong>
+              <div style="font-size: 0.82rem; color: var(--muted);">📍 Lagos, Nigeria</div>
+            </div>
+            <button type="button" class="chip-btn cheered" onclick="toggleJoin(this)">In Circle ✓</button>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = data.map(member => `
+        <div class="friend-item">
+          <div>
+            <strong>${escapeHtml(member.full_name || "LeafSocial Member")}</strong>
+            <div style="font-size: 0.82rem; color: var(--muted);">📍 ${escapeHtml(member.location || "Community")}</div>
+          </div>
+          <button type="button" class="chip-btn" onclick="this.classList.toggle('cheered'); this.textContent = this.classList.contains('cheered') ? 'In Circle ✓' : '+ Add Friend'">+ Add Friend</button>
+        </div>
+      `).join("");
+    }
 
     function openTermsModal() {
       document.getElementById("termsModal").classList.add("open");
@@ -832,11 +1031,13 @@
 
     async function handleSignOut() {
       await sb.auth.signOut();
+      currentUser = null;
       document.getElementById("authCard").style.display = "block";
       document.getElementById("composerCard").style.display = "none";
     }
 
     function renderUserSession(user) {
+      currentUser = user;
       const meta = user.user_metadata || {};
       const name = meta.full_name || "LeafSocial Member";
       const location = meta.location ? `📍 ${meta.location}` : "";
@@ -868,6 +1069,10 @@
         return;
       }
 
+      const btn = document.getElementById("publishBtn");
+      btn.disabled = true;
+      btn.textContent = "Publishing...";
+
       const authorName = user.user_metadata?.full_name || "Member";
       const authorLocation = user.user_metadata?.location || "";
 
@@ -876,6 +1081,9 @@
         author_name: authorName,
         content: authorLocation ? `${content}\n— 📍 ${authorLocation}` : content
       });
+
+      btn.disabled = false;
+      btn.textContent = "Publish Post";
 
       if (error) {
         showStatus("postStatus", error.message, "error");
@@ -905,7 +1113,7 @@
                 <div style="font-size: 0.8rem; color: var(--muted);">Lagos, Nigeria • Sample Post</div>
               </div>
             </div>
-            <p>Welcome to LeafSocial! Agree to the Terms of Use and create your account above to share your first post.</p>
+            <p>Welcome to LeafSocial! Share your first post above to see it appear live in the feed.</p>
           </div>
         `;
         return;
@@ -913,7 +1121,7 @@
 
       container.innerHTML = data.map(post => {
         const initials = (post.author_name || "LS").slice(0, 2).toUpperCase();
-        const time = new Date(post.created_at).toLocaleString();
+        const time = post.created_at ? new Date(post.created_at).toLocaleString() : "Just now";
         return `
           <div class="post-card">
             <div class="post-head">
@@ -923,10 +1131,10 @@
                 <div style="font-size: 0.8rem; color: var(--muted);">${time}</div>
               </div>
             </div>
-            <p style="white-space: pre-line;">${escapeHtml(post.content)}</p>
+            <p style="white-space: pre-line;">${escapeHtml(post.content || "")}</p>
             <div class="post-actions">
-              <button class="chip-btn" type="button">🌿 Cheer</button>
-              <button class="chip-btn" type="button">💬 Reply</button>
+              <button class="chip-btn" type="button" onclick="this.classList.toggle('cheered'); this.textContent = this.classList.contains('cheered') ? '🌿 Cheered (1)' : '🌿 Cheer'">🌿 Cheer</button>
+              <button class="chip-btn" type="button" onclick="openSection('chat')">💬 Discuss in Chat</button>
             </div>
           </div>
         `;
