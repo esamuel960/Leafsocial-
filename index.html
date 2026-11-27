@@ -1280,9 +1280,7 @@
     async function handleSignOut() {
       isDemoMode = false;
       currentUser = null;
-      if (SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
-        await sb.auth.signOut();
-      }
+      await sb.auth.signOut();
       updateAuthUI();
     }
 
@@ -1410,7 +1408,7 @@
         mediaUrl = URL.createObjectURL(file);
       }
 
-      if (currentUser && SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
+      if (currentUser) {
         await sb.from("posts").insert({
           author_id: currentUser.id,
           content: content || (mediaType === "poll" ? "Vote on my hangout poll:" : "Shared a LeafAudio drop"),
@@ -1790,11 +1788,6 @@
     document.getElementById("signUpBtn").addEventListener("click", async () => {
       const al = document.getElementById("authAlert");
       al.classList.add("hidden");
-      if (SUPABASE_ANON_KEY === "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
-        al.textContent = "Paste your Supabase anon public key in index.html first, or click Preview Demo Mode.";
-        al.classList.remove("hidden");
-        return;
-      }
       const fullName = document.getElementById("fullNameInput").value.trim();
       const email = document.getElementById("emailInput").value.trim();
       const password = document.getElementById("passwordInput").value;
@@ -1817,11 +1810,6 @@
     document.getElementById("signInBtn").addEventListener("click", async () => {
       const al = document.getElementById("authAlert");
       al.classList.add("hidden");
-      if (SUPABASE_ANON_KEY === "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
-        al.textContent = "Paste your Supabase anon public key in index.html first, or click Preview Demo Mode.";
-        al.classList.remove("hidden");
-        return;
-      }
       const email = document.getElementById("emailInput").value.trim();
       const password = document.getElementById("passwordInput").value;
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
@@ -1836,7 +1824,6 @@
     });
 
     async function loadLiveSupabasePosts() {
-      if (SUPABASE_ANON_KEY === "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") return;
       const { data } = await sb
         .from("posts")
         .select("id, content, media_type, media_url, created_at, profiles(full_name, handle)")
@@ -1863,11 +1850,9 @@
     }
 
     (async () => {
-      if (SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
-        const { data } = await sb.auth.getSession();
-        currentUser = data?.session?.user || null;
-        await loadLiveSupabasePosts();
-      }
+      const { data } = await sb.auth.getSession();
+      currentUser = data?.session?.user || null;
+      await loadLiveSupabasePosts();
       updateAuthUI();
       renderFeed();
     })();
