@@ -3,271 +3,768 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LeafSocial</title>
+  <title>LeafSocial — Connect &amp; Share with Friends</title>
+  <meta name="description" content="LeafSocial is a clean community social platform to share updates, photos, audio, and videos with friends." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #0f1713;
-      --surface: #17231d;
-      --surface-2: #1f2f27;
-      --text: #eef5f1;
-      --muted: #9eb3a8;
+      --bg: #0b120e;
+      --surface: #131e18;
+      --surface-hover: #192720;
+      --input-bg: #0e1712;
+      --text: #f3f7f5;
+      --muted: #8ea398;
       --accent: #22c55e;
-      --accent-dark: #16a34a;
-      --border: #2b3e34;
+      --accent-hover: #16a34a;
+      --border: #22332a;
+      --danger: #ef4444;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
-    .container { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
-    h1 { font-size: 1.5rem; color: var(--accent); }
-    p.sub { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
-    .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-    input, textarea, select, button {
-      border-radius: 10px; border: 1px solid var(--border);
-      background: var(--surface-2); color: var(--text); padding: 10px 12px; font-size: 0.95rem;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    input, select { flex: 1 1 200px; }
-    textarea { width: 100%; min-height: 90px; resize: vertical; }
-    button { background: var(--accent); color: #07130c; font-weight: 700; border: none; cursor: pointer; }
-    button:hover { background: var(--accent-dark); color: #fff; }
-    button.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
-    .post { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; display: grid; gap: 8px; }
-    .post:first-child { border-top: none; padding-top: 0; margin-top: 0; }
-    .meta { font-size: 0.85rem; color: var(--muted); }
-    .post img, .post video { max-width: 100%; border-radius: 10px; margin-top: 6px; }
-    .post audio { width: 100%; margin-top: 6px; }
-    .status { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
-    .hidden { display: none; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Sticky Top Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(11, 18, 14, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+
+    .nav-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #051009;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-pill {
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 640px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px 32px;
+      display: grid;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Forms & Inputs */
+    .form-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button {
+      background: var(--accent);
+      color: #051109;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 18px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    button.secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    button.small {
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      border-radius: 10px;
+    }
+
+    button.link-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: underline;
+    }
+
+    button.link-btn:hover {
+      color: var(--accent);
+      background: none;
+    }
+
+    /* Composer Tools */
+    .composer-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .media-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .media-controls select {
+      width: auto;
+      min-width: 120px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+    }
+
+    .media-controls input[type="file"] {
+      width: auto;
+      flex: 1;
+      min-width: 180px;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+    }
+
+    /* Feed & Posts */
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .post-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .post-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1d3528;
+      color: var(--accent);
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .author-info {
+      display: grid;
+    }
+
+    .author-name {
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .post-time {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .post-body {
+      font-size: 0.98rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .post-media img,
+    .post-media video {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .post-media audio {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .alert {
+      font-size: 0.88rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      margin-top: 10px;
+    }
+
+    .alert.success {
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.35);
+      color: #86efac;
+    }
+
+    /* Footer & Policy Modal */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 16px 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .policy-box {
+      max-width: 640px;
+      margin: 16px auto 0;
+      text-align: left;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      color: var(--text);
+    }
+
+    .policy-box h3 {
+      font-size: 1.05rem;
+      color: var(--accent);
+    }
+
+    .policy-box h4 {
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+
+    .policy-box p, .policy-box li {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .policy-box ul {
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .policy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h1>LeafSocial</h1>
-      <p class="sub">Connected to Supabase &amp; ready for GitHub Pages</p>
-      <div class="row">
-        <button class="secondary" id="toggleConfigBtn" type="button">Supabase Settings</button>
-        <button class="secondary hidden" id="logoutBtn" type="button">Sign Out</button>
-      </div>
-      <div id="configPanel" class="hidden" style="margin-top: 14px;">
-        <div class="row">
-          <input id="supabaseUrlInput" type="url" value="https://hgqcflcebwulalpatdxk.supabase.co" placeholder="Supabase Project URL" />
-          <input id="supabaseKeyInput" type="password" placeholder="Paste your anon public key" />
-          <button id="saveConfigBtn" type="button">Save Keys</button>
-        </div>
-      </div>
-      <div class="status" id="statusText">Checking connection...</div>
-    </div>
 
-    <div class="card" id="authCard">
-      <h2>Sign In or Create Account</h2>
-      <div class="row">
-        <input id="fullNameInput" type="text" placeholder="Full name (for sign up)" />
+  <header>
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-icon">L</div>
+        <span>LeafSocial</span>
+      </div>
+      <div class="nav-user hidden" id="navUserArea">
+        <span class="user-pill" id="navUserEmail"></span>
+        <button class="secondary small" id="logoutBtn" type="button">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Auth Section -->
+    <section class="card" id="authCard">
+      <h2>Welcome to LeafSocial</h2>
+      <p class="sub">A simple social community to share updates, photos, music, and videos with friends.</p>
+      <div class="form-grid">
+        <input id="fullNameInput" type="text" placeholder="Full name (required for sign up)" />
         <input id="emailInput" type="email" placeholder="Email address" />
-        <input id="passwordInput" type="password" placeholder="Password (6+ chars)" />
+        <input id="passwordInput" type="password" placeholder="Password (6+ characters)" />
+        <div class="btn-row">
+          <button id="signInBtn" type="button">Sign In</button>
+          <button class="secondary" id="signUpBtn" type="button">Create Account</button>
+        </div>
+        <p class="sub" style="font-size: 0.8rem;">
+          By creating an account or signing in, you agree to our
+          <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button> and
+          <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>.
+        </p>
       </div>
-      <div class="row">
-        <button id="signUpBtn" type="button">Sign Up</button>
-        <button class="secondary" id="signInBtn" type="button">Sign In</button>
-      </div>
-    </div>
+      <div id="authMessage" class="alert hidden"></div>
+    </section>
 
-    <div class="card hidden" id="composerCard">
-      <h2>Create a Post</h2>
-      <div style="margin-top: 10px;">
-        <textarea id="postContentInput" placeholder="Share an update with LeafSocial..."></textarea>
+    <!-- Composer Section -->
+    <section class="card hidden" id="composerCard">
+      <textarea id="postContentInput" placeholder="What's on your mind?"></textarea>
+      <div class="composer-footer">
+        <div class="media-controls">
+          <select id="mediaTypeInput">
+            <option value="text">Text</option>
+            <option value="photo">Photo</option>
+            <option value="music">Audio</option>
+            <option value="video">Video</option>
+          </select>
+          <input id="mediaFileInput" type="file" accept="image/*,audio/*,video/*" class="hidden" />
+        </div>
+        <button id="publishPostBtn" type="button">Post</button>
       </div>
-      <div class="row">
-        <select id="mediaTypeInput">
-          <option value="text">Text only</option>
-          <option value="photo">Photo</option>
-          <option value="music">Audio (MP3/WAV/OGG)</option>
-          <option value="video">Video (MP4/WebM)</option>
-        </select>
-        <input id="mediaFileInput" type="file" accept="image/*,audio/*,video/*" />
-      </div>
-      <div class="row">
-        <button id="publishPostBtn" type="button">Publish Post</button>
-      </div>
-    </div>
+      <div id="composerMessage" class="alert hidden"></div>
+    </section>
 
-    <div class="card">
-      <h2>Community Feed</h2>
-      <div id="feedList" style="margin-top: 12px;">
-        <p class="sub">Loading posts...</p>
+    <!-- Community Feed -->
+    <section>
+      <div class="feed-header">
+        <h2>Community Feed</h2>
+        <button class="secondary small" id="refreshFeedBtn" type="button">Refresh</button>
       </div>
+      <div class="post-list" id="feedList">
+        <div class="card"><p class="sub">Loading feed...</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <button class="link-btn" type="button" onclick="openPolicy('about')">About LeafSocial</button>
+      <button class="link-btn" type="button" onclick="openPolicy('privacy')">Privacy Policy</button>
+      <button class="link-btn" type="button" onclick="openPolicy('terms')">Terms of Service</button>
     </div>
-  </div>
+    <p>&copy; 2026 LeafSocial. All rights reserved.</p>
+
+    <!-- Policy & Info Drawer -->
+    <div id="policyContainer" class="policy-box hidden">
+      <div class="policy-header">
+        <h3 id="policyTitle">Privacy Policy</h3>
+        <button class="secondary small" type="button" onclick="closePolicy()">Close</button>
+      </div>
+      <div id="policyContent"></div>
+    </div>
+  </footer>
 
   <script>
-    const DEFAULT_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
-    let sb = null;
+    // Replace PASTE_YOUR_ANON_PUBLIC_KEY_HERE with your Supabase anon public key
+    const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_PUBLIC_KEY_HERE";
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
 
-    const statusText = document.getElementById("statusText");
-    const supabaseUrlInput = document.getElementById("supabaseUrlInput");
-    const supabaseKeyInput = document.getElementById("supabaseKeyInput");
-    const configPanel = document.getElementById("configPanel");
     const authCard = document.getElementById("authCard");
     const composerCard = document.getElementById("composerCard");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const navUserArea = document.getElementById("navUserArea");
+    const navUserEmail = document.getElementById("navUserEmail");
+    const authMessage = document.getElementById("authMessage");
+    const composerMessage = document.getElementById("composerMessage");
+    const mediaTypeInput = document.getElementById("mediaTypeInput");
+    const mediaFileInput = document.getElementById("mediaFileInput");
     const feedList = document.getElementById("feedList");
 
-    function loadSavedConfig() {
-      const savedUrl = localStorage.getItem("leafsocial_sb_url") || DEFAULT_URL;
-      const savedKey = localStorage.getItem("leafsocial_sb_key") || "";
-      supabaseUrlInput.value = savedUrl;
-      supabaseKeyInput.value = savedKey;
-      initSupabase(savedUrl, savedKey);
+    const POLICIES = {
+      privacy: {
+        title: "Privacy Policy (Effective November 2026)",
+        html: `
+          <p>LeafSocial respects your privacy and is committed to protecting the personal data you share when using our service.</p>
+          <h4>1. Information We Collect</h4>
+          <ul>
+            <li><strong>Account Information:</strong> Your full name, email address, and encrypted authentication credentials when you create an account.</li>
+            <li><strong>User Content:</strong> Text posts, photos, audio files, and videos you voluntarily publish to the community feed.</li>
+            <li><strong>Technical &amp; Cookie Data:</strong> Basic browser storage tokens used to keep you signed in, as well as standard analytics or advertising cookies (such as Google Ads or Google AdSense cookies) when enabled.</li>
+          </ul>
+          <h4>2. How We Use Your Information</h4>
+          <ul>
+            <li>To create and manage your LeafSocial account and authenticate sessions.</li>
+            <li>To display your posts and uploaded media to the community feed.</li>
+            <li>To maintain platform security, prevent abuse, and improve site performance.</li>
+          </ul>
+          <h4>3. Third-Party Services &amp; Advertising</h4>
+          <p>We use Supabase to securely host our database, authentication, and media storage. If third-party advertising partners (such as Google) serve ads on LeafSocial, they may use cookies to display relevant ads based on prior visits. You can manage ad personalization through your Google Ad Settings.</p>
+          <h4>4. Data Retention &amp; Deletion</h4>
+          <p>We do not sell your personal information. You may request account or content deletion at any time by contacting the site administrator via our GitHub repository (<code>github.com/esamuel960/Leafsocial-</code>).</p>
+        `
+      },
+      terms: {
+        title: "Terms of Service",
+        html: `
+          <p>By accessing or using LeafSocial, you agree to follow these community terms:</p>
+          <ul>
+            <li><strong>Respectful Content:</strong> You may not post illegal, abusive, infringing, or harmful material.</li>
+            <li><strong>Ownership:</strong> You retain ownership of the text, photos, audio, and videos you post, and grant LeafSocial permission to display them on the platform.</li>
+            <li><strong>Account Security:</strong> You are responsible for keeping your login password secure.</li>
+          </ul>
+        `
+      },
+      about: {
+        title: "About LeafSocial",
+        html: `
+          <p>LeafSocial is a lightweight, fast social community built for friends and creators to share text updates, photos, audio clips, and short videos in one clean feed.</p>
+          <p>Built with modern web standards and powered by Supabase.</p>
+        `
+      }
+    };
+
+    function openPolicy(type) {
+      const container = document.getElementById("policyContainer");
+      const titleEl = document.getElementById("policyTitle");
+      const contentEl = document.getElementById("policyContent");
+      const item = POLICIES[type];
+      if (!item) return;
+      titleEl.textContent = item.title;
+      contentEl.innerHTML = item.html;
+      container.classList.remove("hidden");
+      container.scrollIntoView({ behavior: "smooth" });
     }
 
-    function initSupabase(url, key) {
-      if (!url || !key || !window.supabase) {
-        statusText.textContent = "Enter your Supabase anon public key in Supabase Settings to enable live auth & posting.";
-        loadFeed();
-        return;
-      }
-      sb = window.supabase.createClient(url.trim(), key.trim());
-      statusText.textContent = "Connected to " + url.trim();
-      refreshSession();
-      loadFeed();
+    function closePolicy() {
+      document.getElementById("policyContainer").classList.add("hidden");
     }
+
+    function showNotice(el, text, isSuccess = false) {
+      el.textContent = text;
+      el.classList.remove("hidden", "success");
+      if (isSuccess) el.classList.add("success");
+    }
+
+    function hideNotice(el) {
+      el.classList.add("hidden");
+    }
+
+    mediaTypeInput.addEventListener("change", () => {
+      mediaFileInput.classList.toggle("hidden", mediaTypeInput.value === "text");
+    });
 
     async function refreshSession() {
-      if (!sb) return;
       const { data } = await sb.auth.getSession();
       currentUser = data?.session?.user || null;
+
       authCard.classList.toggle("hidden", Boolean(currentUser));
       composerCard.classList.toggle("hidden", !currentUser);
-      logoutBtn.classList.toggle("hidden", !currentUser);
+      navUserArea.classList.toggle("hidden", !currentUser);
+
       if (currentUser) {
-        statusText.textContent = "Signed in as " + currentUser.email;
+        navUserEmail.textContent = currentUser.user_metadata?.full_name || currentUser.email;
       }
+    }
+
+    function getInitials(name) {
+      return (name || "M")
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
     }
 
     async function loadFeed() {
-      if (!sb) {
-        feedList.innerHTML = '<p class="sub">Save your Supabase anon public key to load posts from public.posts.</p>';
+      if (SUPABASE_ANON_KEY === "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
+        feedList.innerHTML = `
+          <div class="card">
+            <p class="sub">Almost ready! Add your Supabase <strong>anon public</strong> key inside <code>index.html</code> to load posts.</p>
+          </div>`;
         return;
       }
+
       const { data, error } = await sb
         .from("posts")
         .select("id, content, media_type, media_url, created_at, profiles(full_name, handle)")
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(40);
 
       if (error) {
-        feedList.innerHTML = `<p class="sub">Could not load feed: ${error.message}</p>`;
-        return;
-      }
-      if (!data || data.length === 0) {
-        feedList.innerHTML = '<p class="sub">No posts yet. Be the first to post!</p>';
+        feedList.innerHTML = `<div class="card"><p class="sub">Unable to load posts: ${escapeHtml(error.message)}</p></div>`;
         return;
       }
 
-      feedList.innerHTML = data.map((p) => {
-        const author = p.profiles?.full_name || "Member";
-        const handle = p.profiles?.handle ? "@" + p.profiles.handle : "";
+      if (!data || data.length === 0) {
+        feedList.innerHTML = `<div class="card"><p class="sub">No posts yet. Be the first to share something!</p></div>`;
+        return;
+      }
+
+      feedList.innerHTML = data.map((post) => {
+        const author = post.profiles?.full_name || "Member";
+        const handle = post.profiles?.handle ? ` · @${post.profiles.handle}` : "";
+        const time = new Date(post.created_at).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
         let mediaHtml = "";
-        if (p.media_url && p.media_type === "photo") {
-          mediaHtml = `<img src="${p.media_url}" alt="Post image" />`;
-        } else if (p.media_url && p.media_type === "music") {
-          mediaHtml = `<audio controls src="${p.media_url}"></audio>`;
-        } else if (p.media_url && p.media_type === "video") {
-          mediaHtml = `<video controls src="${p.media_url}"></video>`;
+        if (post.media_url && post.media_type === "photo") {
+          mediaHtml = `<div class="post-media"><img src="${post.media_url}" alt="Shared photo" loading="lazy" /></div>`;
+        } else if (post.media_url && post.media_type === "music") {
+          mediaHtml = `<div class="post-media"><audio controls src="${post.media_url}"></audio></div>`;
+        } else if (post.media_url && post.media_type === "video") {
+          mediaHtml = `<div class="post-media"><video controls src="${post.media_url}"></video></div>`;
         }
+
         return `
-          <div class="post">
-            <div class="meta"><strong>${author}</strong> ${handle} · ${new Date(p.created_at).toLocaleString()}</div>
-            <div>${p.content}</div>
+          <article class="post-card">
+            <div class="post-top">
+              <div class="avatar">${escapeHtml(getInitials(author))}</div>
+              <div class="author-info">
+                <span class="author-name">${escapeHtml(author)}</span>
+                <span class="post-time">${escapeHtml(time)}${escapeHtml(handle)}</span>
+              </div>
+            </div>
+            <div class="post-body">${escapeHtml(post.content)}</div>
             ${mediaHtml}
-          </div>
+          </article>
         `;
       }).join("");
     }
 
-    document.getElementById("toggleConfigBtn").addEventListener("click", () => {
-      configPanel.classList.toggle("hidden");
-    });
-
-    document.getElementById("saveConfigBtn").addEventListener("click", () => {
-      const url = supabaseUrlInput.value.trim() || DEFAULT_URL;
-      const key = supabaseKeyInput.value.trim();
-      localStorage.setItem("leafsocial_sb_url", url);
-      localStorage.setItem("leafsocial_sb_key", key);
-      configPanel.classList.add("hidden");
-      initSupabase(url, key);
-    });
-
     document.getElementById("signUpBtn").addEventListener("click", async () => {
-      if (!sb) return alert("Save your Supabase anon public key first.");
+      hideNotice(authMessage);
       const fullName = document.getElementById("fullNameInput").value.trim();
       const email = document.getElementById("emailInput").value.trim();
       const password = document.getElementById("passwordInput").value;
+
+      if (!fullName || !email || password.length < 6) {
+        return showNotice(authMessage, "Enter your full name, email, and a password (6+ characters).");
+      }
+
       const { error } = await sb.auth.signUp({
         email,
         password,
         options: { data: { full_name: fullName } }
       });
-      if (error) return alert("Sign up error: " + error.message);
-      alert("Account created! Check your email if confirmation is enabled, then sign in.");
-      refreshSession();
+
+      if (error) return showNotice(authMessage, error.message);
+
+      showNotice(authMessage, "Account created! If email confirmation is off, click Sign In now.", true);
+      await refreshSession();
+      await loadFeed();
     });
 
     document.getElementById("signInBtn").addEventListener("click", async () => {
-      if (!sb) return alert("Save your Supabase anon public key first.");
+      hideNotice(authMessage);
       const email = document.getElementById("emailInput").value.trim();
       const password = document.getElementById("passwordInput").value;
+
+      if (!email || !password) {
+        return showNotice(authMessage, "Enter your email and password.");
+      }
+
       const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) return alert("Sign in error: " + error.message);
-      refreshSession();
-      loadFeed();
+      if (error) return showNotice(authMessage, error.message);
+
+      await refreshSession();
+      await loadFeed();
     });
 
-    logoutBtn.addEventListener("click", async () => {
-      if (!sb) return;
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
       await sb.auth.signOut();
-      refreshSession();
+      await refreshSession();
     });
 
     document.getElementById("publishPostBtn").addEventListener("click", async () => {
-      if (!sb || !currentUser) return alert("Please sign in first.");
+      hideNotice(composerMessage);
+      if (!currentUser) return;
+
       const content = document.getElementById("postContentInput").value.trim();
-      const mediaType = document.getElementById("mediaTypeInput").value;
-      const fileInput = document.getElementById("mediaFileInput");
-      if (!content) return alert("Write something before publishing.");
+      const mediaType = mediaTypeInput.value;
+      const file = mediaFileInput.files?.[0];
 
-      let mediaUrl = null;
-      if (mediaType !== "text" && fileInput.files && fileInput.files[0]) {
-        const file = fileInput.files[0];
-        const ext = file.name.split(".").pop();
-        const filePath = `${currentUser.id}/${Date.now()}.${ext}`;
-        const { error: uploadError } = await sb.storage
-          .from("posts-media")
-          .upload(filePath, file, { upsert: false });
-        if (uploadError) return alert("Media upload failed: " + uploadError.message);
-
-        const { data: publicUrlData } = sb.storage
-          .from("posts-media")
-          .getPublicUrl(filePath);
-        mediaUrl = publicUrlData.publicUrl;
+      if (!content) {
+        return showNotice(composerMessage, "Write a message before posting.");
       }
 
-      const { error: insertError } = await sb.from("posts").insert({
-        author_id: currentUser.id,
-        content,
-        media_type: mediaType,
-        media_url: mediaUrl
-      });
-      if (insertError) return alert("Post failed: " + insertError.message);
+      const btn = document.getElementById("publishPostBtn");
+      btn.disabled = true;
+      btn.textContent = "Posting...";
 
-      document.getElementById("postContentInput").value = "";
-      fileInput.value = "";
-      loadFeed();
+      try {
+        let mediaUrl = null;
+        if (mediaType !== "text" && file) {
+          const ext = file.name.split(".").pop();
+          const filePath = `${currentUser.id}/${Date.now()}.${ext}`;
+          const { error: uploadError } = await sb.storage
+            .from("posts-media")
+            .upload(filePath, file, { upsert: false });
+
+          if (uploadError) throw uploadError;
+
+          const { data: publicUrlData } = sb.storage
+            .from("posts-media")
+            .getPublicUrl(filePath);
+          mediaUrl = publicUrlData.publicUrl;
+        }
+
+        const { error: insertError } = await sb.from("posts").insert({
+          author_id: currentUser.id,
+          content,
+          media_type: mediaType,
+          media_url: mediaUrl
+        });
+
+        if (insertError) throw insertError;
+
+        document.getElementById("postContentInput").value = "";
+        mediaFileInput.value = "";
+        mediaTypeInput.value = "text";
+        mediaFileInput.classList.add("hidden");
+        await loadFeed();
+      } catch (err) {
+        showNotice(composerMessage, err.message || "Could not publish post.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Post";
+      }
     });
 
-    loadSavedConfig();
+    document.getElementById("refreshFeedBtn").addEventListener("click", loadFeed);
+
+    (async () => {
+      await refreshSession();
+      await loadFeed();
+    })();
   </script>
 </body>
 </html>
