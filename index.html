@@ -3,58 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>LeafSocial — Where Voices, Circles & Communities Come Alive</title>
+  <title>LeafSocial — Connect, Share &amp; Grow Your Circle</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #f1f5f2;
-      --surface: #ffffff;
-      --surface-tint: #f5fbf7;
-      --green: #15803d;
-      --green-dark: #14532d;
-      --green-mid: #16a34a;
-      --green-soft: #dcfce7;
-      --green-border: #bbf7d0;
-      --text: #0f172a;
-      --text-secondary: #475569;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --danger: #dc2626;
-      --radius: 16px;
-      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.07);
-      --shadow-lg: 0 20px 44px rgba(15, 23, 42, 0.16);
+      --fb-bg: #f0f2f5;
+      --fb-card: #ffffff;
+      --fb-green: #15803d;
+      --fb-green-dark: #14532d;
+      --fb-green-mid: #16a34a;
+      --fb-green-soft: #dcfce7;
+      --fb-green-tint: #f0fdf4;
+      --fb-hover: #f2f3f5;
+      --fb-input: #f0f2f5;
+      --fb-text: #050505;
+      --fb-secondary: #65676b;
+      --fb-divider: #ced0d4;
+      --fb-border: #e4e6eb;
+      --fb-danger: #dc2626;
+      --fb-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      --fb-shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.2);
+      --radius: 10px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+      background: var(--fb-bg);
+      color: var(--fb-text);
+      line-height: 1.45;
       overflow-x: hidden;
-      padding-bottom: 74px;
+      padding-bottom: 64px;
     }
 
     /* ===========================
-       1. LOADING & SKELETON STYLES
+       1. LOADING SPLASH & SKELETONS
        =========================== */
     #app-splash {
       position: fixed;
       inset: 0;
       z-index: 999;
-      background: linear-gradient(160deg, #ffffff 0%, #f0fdf4 60%, #dcfce7 100%);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      gap: 14px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     #app-splash.hidden {
@@ -64,46 +64,45 @@
     }
 
     .splash-logo {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
       color: #ffffff;
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 2rem;
-      box-shadow: 0 12px 28px rgba(21, 128, 61, 0.32);
-      animation: leafPulse 1.5s ease-in-out infinite;
+      font-size: 2.2rem;
+      box-shadow: 0 10px 24px rgba(21, 128, 61, 0.28);
+      animation: pulseLogo 1.4s ease-in-out infinite;
     }
 
-    @keyframes leafPulse {
+    @keyframes pulseLogo {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.07); }
+      50% { transform: scale(1.06); }
     }
 
-    .splash-bar {
-      width: 170px;
-      height: 5px;
-      background: #d1fae5;
-      border-radius: 999px;
-      overflow: hidden;
+    .splash-dots {
+      display: flex;
+      gap: 6px;
     }
 
-    .splash-bar-fill {
-      width: 45%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--green), var(--green-mid));
-      border-radius: 999px;
-      animation: slideLoader 1.1s ease-in-out infinite;
+    .splash-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--fb-green);
+      animation: bounceDot 0.9s infinite alternate;
     }
 
-    @keyframes slideLoader {
-      0% { transform: translateX(-110%); }
-      100% { transform: translateX(240%); }
+    .splash-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .splash-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounceDot {
+      from { opacity: 0.3; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(-5px); }
     }
 
-    /* Top Route Progress Bar */
     #top-progress {
       position: fixed;
       top: 0;
@@ -111,27 +110,19 @@
       height: 3px;
       width: 0%;
       z-index: 200;
-      background: linear-gradient(90deg, var(--green), #22c55e);
+      background: var(--fb-green-mid);
       transition: width 0.25s ease, opacity 0.25s ease;
       opacity: 0;
     }
 
-    #top-progress.active {
-      opacity: 1;
-      width: 78%;
-    }
+    #top-progress.active { opacity: 1; width: 78%; }
+    #top-progress.done { opacity: 1; width: 100%; }
 
-    #top-progress.done {
-      opacity: 1;
-      width: 100%;
-    }
-
-    /* Shimmer Skeleton Placeholders */
     .skeleton {
-      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
       background-size: 200% 100%;
-      animation: shimmer 1.3s infinite linear;
-      border-radius: 8px;
+      animation: shimmer 1.2s infinite linear;
+      border-radius: 6px;
     }
 
     @keyframes shimmer {
@@ -140,38 +131,34 @@
     }
 
     .skeleton-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--fb-card);
       border-radius: var(--radius);
-      padding: 18px;
+      box-shadow: var(--fb-shadow);
+      padding: 16px;
       margin-bottom: 14px;
     }
 
     .sk-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .sk-circle {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .sk-line {
-      height: 12px;
-      margin-bottom: 8px;
-    }
+    .sk-line { height: 11px; margin-bottom: 8px; }
 
-    /* Inline Button Spinner */
     .spinner {
       display: inline-block;
-      width: 15px;
-      height: 15px;
-      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
       border-top-color: #ffffff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
@@ -179,140 +166,175 @@
       margin-right: 6px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===========================
-       2. HEADER & NAVIGATION
+       2. FACEBOOK-STYLE TOP BAR
        =========================== */
     header {
       position: sticky;
       top: 0;
-      z-index: 70;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .nav-inner {
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 10px 16px;
+      z-index: 80;
+      height: 56px;
+      background: var(--fb-card);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .brand {
+    .fb-nav-left {
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
-      user-select: none;
-      flex-shrink: 0;
+      flex: 1;
+      min-width: 0;
     }
 
-    .brand-logo {
+    .fb-logo {
       width: 40px;
       height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
       color: #ffffff;
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 10px rgba(21, 128, 61, 0.28);
+      font-size: 1.45rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      user-select: none;
     }
 
-    .brand-title {
-      font-weight: 800;
-      font-size: 1.22rem;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-
-    .brand-sub {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--green);
-      display: block;
-      margin-top: -3px;
-    }
-
-    .nav-center {
+    .fb-search {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: var(--bg);
-      padding: 4px;
+      background: var(--fb-input);
       border-radius: 999px;
-      border: 1px solid var(--border);
+      padding: 0 14px;
+      height: 40px;
+      max-width: 250px;
+      width: 100%;
     }
 
-    @media (max-width: 760px) {
-      .nav-center { display: none; }
-    }
-
-    .nav-tab {
+    .fb-search input {
       border: none;
       background: transparent;
-      padding: 8px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.16s ease;
+      outline: none;
+      width: 100%;
+      font-size: 0.92rem;
+      color: var(--fb-text);
+      margin-left: 8px;
     }
 
-    .nav-tab:hover {
-      color: var(--green-dark);
-      background: rgba(21, 128, 61, 0.08);
+    @media (max-width: 600px) {
+      .fb-search { max-width: 170px; height: 36px; padding: 0 10px; }
     }
 
-    .nav-tab.active {
-      background: var(--green);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25);
-    }
-
-    .nav-right {
+    /* Center Icon Tabs with Bottom Active Indicator */
+    .fb-nav-center {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      align-items: stretch;
+      height: 56px;
+      gap: 4px;
     }
 
-    .join-pill-btn {
+    @media (max-width: 820px) {
+      .fb-nav-center { display: none; }
+    }
+
+    .fb-tab {
+      position: relative;
       border: none;
-      background: var(--green);
+      background: transparent;
+      width: 104px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--fb-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 4px 0;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .fb-tab:hover {
+      background: var(--fb-hover);
+      color: var(--fb-text);
+    }
+
+    .fb-tab.active {
+      color: var(--fb-green);
+      background: transparent;
+    }
+
+    .fb-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--fb-green);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .fb-nav-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .fb-circle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--fb-input);
+      color: var(--fb-text);
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .fb-circle-btn:hover { background: #e4e6eb; }
+
+    .fb-join-btn {
+      border: none;
+      background: var(--fb-green);
       color: #ffffff;
-      padding: 9px 18px;
-      border-radius: 999px;
+      padding: 8px 16px;
+      border-radius: 8px;
       font-weight: 700;
       font-size: 0.88rem;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(21, 128, 61, 0.25);
+      white-space: nowrap;
     }
 
-    .join-pill-btn:hover { background: var(--green-dark); }
+    .fb-join-btn:hover { background: var(--fb-green-dark); }
 
-    .user-pill {
+    .fb-user-chip {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: var(--surface-tint);
-      border: 1px solid var(--green-border);
-      padding: 5px 12px 5px 6px;
+      background: var(--fb-input);
+      padding: 4px 12px 4px 4px;
       border-radius: 999px;
       cursor: pointer;
-      font-size: 0.85rem;
       font-weight: 700;
-      color: var(--green-dark);
+      font-size: 0.88rem;
     }
+
+    .fb-user-chip:hover { background: #e4e6eb; }
 
     /* Mobile Bottom Tab Bar */
     .mobile-bar {
@@ -321,15 +343,14 @@
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 70;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+      z-index: 80;
+      background: var(--fb-card);
+      border-top: 1px solid var(--fb-border);
+      padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
       justify-content: space-around;
-      box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06);
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 820px) {
       .mobile-bar { display: flex; }
     }
 
@@ -340,341 +361,332 @@
       flex-direction: column;
       align-items: center;
       gap: 2px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      color: var(--muted);
-      padding: 5px 10px;
-      border-radius: 10px;
+      color: var(--fb-secondary);
+      padding: 6px 10px;
+      border-radius: 8px;
       cursor: pointer;
     }
 
     .mob-tab span.ico { font-size: 1.15rem; }
-
-    .mob-tab.active {
-      color: var(--green);
-      background: var(--green-soft);
-    }
+    .mob-tab.active { color: var(--fb-green); }
 
     /* ===========================
-       3. 3-COLUMN LAYOUT & CARDS
+       3. 3-COLUMN FACEBOOK SHELL
        =========================== */
-    .layout {
-      max-width: 1260px;
-      margin: 18px auto;
-      padding: 0 14px;
+    .fb-shell {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 16px 14px;
       display: grid;
-      grid-template-columns: 270px minmax(0, 1fr) 300px;
+      grid-template-columns: 280px minmax(0, 620px) 280px;
+      justify-content: space-between;
       gap: 20px;
       align-items: start;
     }
 
-    @media (max-width: 1024px) {
-      .layout { grid-template-columns: 240px minmax(0, 1fr); }
-      .sidebar-right { display: none; }
+    @media (max-width: 1180px) {
+      .fb-shell {
+        grid-template-columns: 240px minmax(0, 1fr);
+        justify-content: stretch;
+      }
+      .fb-right { display: none; }
     }
 
-    @media (max-width: 760px) {
-      .layout { grid-template-columns: 1fr; margin-top: 12px; }
-      .sidebar-left { display: none; }
+    @media (max-width: 820px) {
+      .fb-shell {
+        grid-template-columns: 1fr;
+        padding: 10px 10px;
+      }
+      .fb-left { display: none; }
     }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .fb-left,
+    .fb-right {
+      position: sticky;
+      top: 72px;
+      max-height: calc(100vh - 88px);
+      overflow-y: auto;
+    }
+
+    .fb-shortcut {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      font-weight: 600;
+      color: var(--fb-text);
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .fb-shortcut:hover { background: #e4e6eb; }
+
+    .fb-shortcut-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--fb-green-soft);
+      color: var(--fb-green);
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+    }
+
+    .fb-divider {
+      height: 1px;
+      background: var(--fb-divider);
+      margin: 10px 8px;
+    }
+
+    .fb-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--fb-secondary);
+      padding: 4px 10px 8px;
+    }
+
+    .fb-card {
+      background: var(--fb-card);
       border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--fb-shadow);
+      padding: 14px 16px;
+      margin-bottom: 14px;
     }
 
-    .card h3 {
-      font-size: 0.98rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-
-    /* Hero Banner */
-    .hero-banner {
-      background: linear-gradient(135deg, #14532d 0%, #15803d 55%, #16a34a 100%);
+    /* Guest Welcome Banner */
+    .guest-banner {
+      background: linear-gradient(135deg, var(--fb-green-dark) 0%, var(--fb-green) 100%);
       color: #ffffff;
       border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-md);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--fb-shadow);
     }
 
-    .hero-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      margin-bottom: 10px;
+    .guest-banner h2 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
     }
 
-    .hero-banner h1 {
-      font-size: 1.42rem;
-      line-height: 1.25;
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
-
-    .hero-banner p {
-      font-size: 0.92rem;
-      opacity: 0.94;
-      margin-bottom: 16px;
-      max-width: 540px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn-white {
-      border: none;
-      background: #ffffff;
-      color: var(--green-dark);
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 800;
+    .guest-banner p {
       font-size: 0.9rem;
-      cursor: pointer;
+      opacity: 0.93;
+      margin-bottom: 14px;
     }
 
-    .btn-ghost-white {
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    /* Topic Spaces Story Strip */
-    .spaces-strip {
+    /* ===========================
+       4. FACEBOOK STORIES CAROUSEL
+       =========================== */
+    .stories-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 16px;
+      padding-bottom: 4px;
+      margin-bottom: 14px;
       scrollbar-width: none;
     }
 
-    .spaces-strip::-webkit-scrollbar { display: none; }
+    .stories-row::-webkit-scrollbar { display: none; }
 
-    .space-story {
-      flex: 0 0 155px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
+    .story-tile {
+      flex: 0 0 116px;
+      height: 175px;
+      border-radius: 12px;
+      background: linear-gradient(160deg, #14532d 0%, #15803d 55%, #22c55e 100%);
+      color: #ffffff;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-      box-shadow: var(--shadow-sm);
+      position: relative;
+      box-shadow: var(--fb-shadow);
+      transition: transform 0.15s ease;
     }
 
-    .space-story:hover,
-    .space-story.active-story {
-      border-color: var(--green);
-      background: var(--surface-tint);
-      transform: translateY(-2px);
+    .story-tile:hover { transform: scale(1.02); }
+
+    .story-tile.active-story {
+      outline: 3px solid var(--fb-green-mid);
+      outline-offset: 2px;
     }
 
-    .space-story-tag {
-      font-size: 0.7rem;
+    .story-tile.create-tile {
+      background: var(--fb-card);
+      color: var(--fb-text);
+      border: 1px solid var(--fb-border);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .create-tile-top {
+      height: 112px;
+      background: linear-gradient(135deg, var(--fb-green-soft), #bbf7d0);
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
       font-weight: 800;
-      color: var(--green);
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
+      color: var(--fb-green-dark);
     }
 
-    .space-story-name {
-      font-size: 0.86rem;
+    .create-tile-bottom {
+      position: relative;
+      padding: 18px 8px 8px;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .create-plus-badge {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--fb-green);
+      color: #ffffff;
+      border: 3px solid #ffffff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .story-ring {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      border: 2.5px solid #ffffff;
+      display: grid;
+      place-items: center;
       font-weight: 800;
-      margin-top: 4px;
-      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .story-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    /* Sidebar Links */
-    .side-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .side-item:hover {
-      background: var(--surface-tint);
-      color: var(--green-dark);
-    }
-
-    .pill {
-      background: var(--green-soft);
-      color: var(--green-dark);
-      font-size: 0.74rem;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    /* Composer */
-    .composer-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .composer-top {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
+    /* ===========================
+       5. FACEBOOK "WHAT'S ON YOUR MIND?" COMPOSER
+       =========================== */
     .avatar {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--green-soft), #bbf7d0);
-      color: var(--green-dark);
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
+      color: #ffffff;
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1rem;
       display: grid;
       place-items: center;
       flex-shrink: 0;
     }
 
-    .avatar.sm {
-      width: 30px;
-      height: 30px;
-      font-size: 0.82rem;
+    .avatar.sm { width: 32px; height: 32px; font-size: 0.85rem; }
+
+    .composer-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    textarea,
-    input[type="text"],
-    input[type="password"],
-    select {
-      width: 100%;
-      padding: 11px 13px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 11px;
-      color: var(--text);
-      font-size: 0.94rem;
+    .composer-pill-input {
+      flex: 1;
+      background: var(--fb-input);
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      color: var(--fb-text);
       outline: none;
     }
 
-    textarea:focus,
-    input:focus,
-    select:focus {
-      background: #ffffff;
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    .composer-pill-input:focus {
+      background: #e4e6eb;
     }
 
-    .media-toolbar {
+    .composer-actions-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--fb-border);
+    }
+
+    .comp-media-btn {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 6px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--fb-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .comp-media-btn:hover { background: var(--fb-hover); }
+
+    .composer-publish-row {
+      display: flex;
       gap: 8px;
       margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
       align-items: center;
     }
 
-    .media-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: var(--surface-tint);
-      border: 1px solid var(--green-border);
-      color: var(--green-dark);
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .media-btn:hover { background: var(--green-soft); }
-
-    .composer-submit-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .composer-submit-row select {
-      flex: 2;
-      min-width: 175px;
-    }
-
-    .btn {
-      padding: 10px 16px;
+    .composer-publish-row select {
+      flex: 1;
+      background: var(--fb-input);
       border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.92rem;
-      cursor: pointer;
-      transition: background 0.15s ease, opacity 0.15s ease;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--fb-text);
+      outline: none;
     }
 
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: #ffffff;
-    }
-
-    .btn-primary:hover:not(:disabled) { background: var(--green-dark); }
-
-    .btn-secondary {
-      background: var(--surface-tint);
-      color: var(--green-dark);
-      border: 1px solid var(--green-border);
-    }
-
-    /* Clean Media Preview Without Raw Filenames Above Photos/Videos */
+    /* Clean Borderless Media Preview (No Raw Filenames) */
     .media-preview {
       position: relative;
       margin-top: 10px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
+      background: #000000;
       display: none;
     }
 
     .media-preview img,
     .media-preview video {
       width: 100%;
-      max-height: 300px;
+      max-height: 320px;
       object-fit: cover;
       display: block;
+    }
+
+    .media-preview.audio-mode {
+      background: var(--fb-green-tint);
+      border: 1px solid var(--fb-green-soft);
+      padding: 12px;
     }
 
     .preview-remove-btn {
@@ -686,186 +698,287 @@
       height: 32px;
       border: none;
       border-radius: 50%;
-      background: rgba(15, 23, 42, 0.72);
+      background: rgba(0, 0, 0, 0.72);
       color: #ffffff;
       font-weight: 800;
       cursor: pointer;
     }
 
-    /* Post Cards */
+    /* ===========================
+       6. FACEBOOK FEED POST CARDS
+       =========================== */
     .post-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--fb-card);
       border-radius: var(--radius);
-      padding: 18px;
+      box-shadow: var(--fb-shadow);
       margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
+      overflow: hidden;
     }
 
-    .post-head {
+    .post-top {
+      padding: 12px 16px 8px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 10px;
-      margin-bottom: 10px;
     }
 
-    .post-author {
+    .post-author-wrap {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
     }
 
-    .post-meta {
+    .post-author-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--fb-text);
+    }
+
+    .post-sub {
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--fb-secondary);
     }
 
-    .post-body {
-      font-size: 0.96rem;
+    .space-badge {
+      background: var(--fb-green-soft);
+      color: var(--fb-green-dark);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .post-text {
+      padding: 2px 16px 12px;
+      font-size: 0.95rem;
       white-space: pre-line;
-      color: var(--text);
+      color: var(--fb-text);
     }
 
-    .post-media { margin-top: 12px; }
-
-    .post-media img {
+    .post-media-full img {
       width: 100%;
-      max-height: 440px;
+      max-height: 480px;
       object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      display: block;
     }
 
-    .post-media video {
+    .post-media-full video {
       width: 100%;
-      max-height: 440px;
-      border-radius: 12px;
+      max-height: 480px;
       background: #000000;
+      display: block;
     }
 
-    .audio-wrapper {
-      background: var(--surface-tint);
-      border: 1px solid var(--green-border);
-      border-radius: 12px;
+    .post-audio-box {
+      margin: 0 16px 12px;
       padding: 10px 12px;
+      background: var(--fb-green-tint);
+      border: 1px solid var(--fb-green-soft);
+      border-radius: 10px;
     }
 
-    .audio-wrapper audio {
+    .post-audio-box audio {
       width: 100%;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
-    .post-actions {
+    .post-stats {
+      margin: 0 16px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--fb-border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--fb-secondary);
+    }
+
+    .post-action-bar {
+      padding: 4px 12px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
+      gap: 4px;
     }
 
-    .action-btn {
+    .fb-action-btn {
       border: none;
-      background: #f8fafc;
-      color: var(--text-secondary);
-      padding: 8px 10px;
-      border-radius: 9px;
-      font-size: 0.85rem;
-      font-weight: 700;
+      background: transparent;
+      padding: 8px 6px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--fb-secondary);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .action-btn:hover,
-    .action-btn.active {
-      background: var(--green-soft);
-      color: var(--green-dark);
-    }
+    .fb-action-btn:hover { background: var(--fb-hover); }
+    .fb-action-btn.liked { color: var(--fb-green); font-weight: 700; }
 
-    /* Threaded Comments */
-    .comments-drawer {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border);
+    /* Facebook Comment Thread */
+    .comments-section {
+      padding: 8px 16px 14px;
+      border-top: 1px solid var(--fb-border);
       display: none;
     }
 
-    .comment-item {
-      background: #f8fafc;
-      border-radius: 10px;
+    .fb-comment-bubble {
+      background: var(--fb-input);
+      border-radius: 16px;
       padding: 8px 12px;
-      margin-bottom: 8px;
-      font-size: 0.88rem;
+      margin-bottom: 6px;
+      font-size: 0.86rem;
+      display: inline-block;
+      max-width: 100%;
     }
 
-    .comment-form {
+    .fb-comment-input-row {
       display: flex;
       gap: 8px;
       margin-top: 8px;
     }
 
-    /* Directory & Chat */
+    .fb-comment-input-row input {
+      flex: 1;
+      background: var(--fb-input);
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    /* ===========================
+       7. BUTTONS, INPUTS, PROFILE & CHAT
+       =========================== */
+    .btn {
+      padding: 9px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    .btn-green { background: var(--fb-green); color: #ffffff; }
+    .btn-green:hover:not(:disabled) { background: var(--fb-green-dark); }
+    .btn-gray { background: var(--fb-input); color: var(--fb-text); }
+    .btn-gray:hover:not(:disabled) { background: #e4e6eb; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--fb-secondary);
+      margin-bottom: 4px;
+    }
+
+    .fb-field {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--fb-input);
+      border: 1px solid var(--fb-divider);
+      border-radius: 8px;
+      font-size: 0.93rem;
+      color: var(--fb-text);
+      outline: none;
+    }
+
+    .fb-field:focus {
+      background: #ffffff;
+      border-color: var(--fb-green);
+    }
+
+    /* Facebook-Style Profile Header Card */
+    .profile-cover-card {
+      background: var(--fb-card);
+      border-radius: var(--radius);
+      box-shadow: var(--fb-shadow);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .profile-cover-banner {
+      height: 150px;
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #22c55e 100%);
+    }
+
+    .profile-header-body {
+      padding: 0 20px 18px;
+      position: relative;
+    }
+
+    .profile-big-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
+      color: #ffffff;
+      border: 4px solid #ffffff;
+      font-size: 2.3rem;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      margin-top: -48px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Friends & Directory Grid */
     .dir-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--fb-border);
     }
 
     .dir-row:last-child { border-bottom: none; }
 
-    .chip {
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      color: var(--text);
-      padding: 6px 13px;
-      border-radius: 999px;
-      font-size: 0.83rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .chip.active {
-      background: var(--green-soft);
-      color: var(--green-dark);
-      border-color: var(--green-border);
-    }
-
+    /* Messenger-Style Chat */
     .chat-box {
       height: 340px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       padding: 12px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid var(--fb-border);
+      border-radius: 10px;
     }
 
     .msg {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 10px 13px;
-      border-radius: 12px;
-      max-width: 82%;
+      background: var(--fb-input);
+      color: var(--fb-text);
+      padding: 9px 14px;
+      border-radius: 18px;
+      max-width: 78%;
+      font-size: 0.92rem;
     }
 
     .msg.mine {
       align-self: flex-end;
-      background: var(--green-soft);
-      border-color: var(--green-border);
+      background: var(--fb-green);
+      color: #ffffff;
     }
+
+    .msg.mine .msg-sender { color: rgba(255, 255, 255, 0.85); }
 
     /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 100;
-      background: rgba(15, 23, 42, 0.6);
+      z-index: 120;
+      background: rgba(255, 255, 255, 0.78);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
@@ -876,119 +989,91 @@
     .modal-backdrop.open { display: flex; }
 
     .modal-card {
-      background: var(--surface);
-      border-radius: 20px;
-      max-width: 440px;
+      background: var(--fb-card);
+      border-radius: 12px;
+      max-width: 430px;
       width: 100%;
-      padding: 24px;
-      box-shadow: var(--shadow-lg);
+      padding: 22px;
+      box-shadow: var(--fb-shadow-lg);
+      border: 1px solid var(--fb-border);
       position: relative;
-      max-height: 88vh;
+      max-height: 90vh;
       overflow-y: auto;
     }
 
     .modal-close {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 14px;
+      right: 14px;
       border: none;
-      background: var(--bg);
-      width: 32px;
-      height: 32px;
+      background: var(--fb-input);
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       font-weight: 800;
       cursor: pointer;
     }
 
-    .form-group { margin-bottom: 12px; }
-
-    label {
-      display: block;
-      font-size: 0.83rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-
     .status {
       margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.86rem;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: 600;
       display: none;
-      background: var(--green-soft);
-      color: var(--green-dark);
+      background: var(--fb-green-soft);
+      color: var(--fb-green-dark);
     }
 
     .status.err {
-      background: #fef2f2;
-      color: var(--danger);
-    }
-
-    .footer-links {
-      font-size: 0.78rem;
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    .footer-links span {
-      cursor: pointer;
-      text-decoration: underline;
+      background: #fee2e2;
+      color: var(--fb-danger);
     }
   </style>
 </head>
 <body>
 
-  <!-- FULL-PAGE BRANDED LOADING SCREEN -->
+  <!-- BRANDED SPLASH LOADER -->
   <div id="app-splash" aria-live="polite">
     <div class="splash-logo">L</div>
-    <div style="text-align: center;">
-      <strong style="font-size: 1.2rem; color: var(--text); display: block;">LeafSocial</strong>
-      <span style="font-size: 0.85rem; color: var(--green); font-weight: 600;">Loading your circles &amp; live feed...</span>
-    </div>
-    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+    <div style="font-weight: 800; font-size: 1.25rem; color: var(--fb-green);">LeafSocial</div>
+    <div class="splash-dots"><span></span><span></span><span></span></div>
   </div>
 
   <!-- TOP ROUTE PROGRESS BAR -->
   <div id="top-progress"></div>
 
-  <!-- TOP HEADER -->
+  <!-- FACEBOOK-STYLE STICKY TOP HEADER -->
   <header>
-    <div class="nav-inner">
-      <div class="brand" onclick="switchView('feed', 'All Community')">
-        <div class="brand-logo">L</div>
-        <div>
-          <span class="brand-title">LeafSocial</span>
-          <span class="brand-sub">Community • Voice • Circles</span>
-        </div>
+    <div class="fb-nav-left">
+      <div class="fb-logo" title="LeafSocial Home" onclick="switchView('feed', 'All Community')">L</div>
+      <div class="fb-search">
+        <span>🔍</span>
+        <input type="text" id="global-search" placeholder="Search LeafSocial" oninput="handleSearchFilter(this.value)" />
       </div>
+    </div>
 
-      <nav class="nav-center" aria-label="Main Navigation">
-        <button type="button" class="nav-tab active" id="tab-feed" onclick="switchView('feed')">Feed</button>
-        <button type="button" class="nav-tab" id="tab-spaces" onclick="switchView('spaces')">LeafSpaces</button>
-        <button type="button" class="nav-tab" id="tab-friends" onclick="switchView('friends')">Friends</button>
-        <button type="button" class="nav-tab" id="tab-chat" onclick="switchView('chat')">Chat</button>
-        <button type="button" class="nav-tab" id="tab-profile" onclick="switchView('profile')">Profile</button>
-      </nav>
+    <nav class="fb-nav-center" aria-label="Primary">
+      <button type="button" class="fb-tab active" id="tab-feed" onclick="switchView('feed')">🏠 Home</button>
+      <button type="button" class="fb-tab" id="tab-spaces" onclick="switchView('spaces')">🌿 Spaces</button>
+      <button type="button" class="fb-tab" id="tab-friends" onclick="switchView('friends')">👥 Friends</button>
+      <button type="button" class="fb-tab" id="tab-chat" onclick="switchView('chat')">💬 Chat</button>
+    </nav>
 
-      <div class="nav-right">
-        <button type="button" class="join-pill-btn" id="header-join-btn" onclick="openAuthModal('signup')">Join Free</button>
-        <div class="user-pill" id="header-user-pill" style="display: none;" onclick="switchView('profile')">
-          <div class="avatar sm" id="header-avatar">M</div>
-          <span id="header-user-name">Member</span>
-        </div>
+    <div class="fb-nav-right">
+      <button type="button" class="fb-circle-btn" title="Messenger / Chat" onclick="switchView('chat')">💬</button>
+      <button type="button" class="fb-join-btn" id="header-join-btn" onclick="openAuthModal('signup')">Sign Up</button>
+      <div class="fb-user-chip" id="header-user-pill" style="display: none;" onclick="switchView('profile')">
+        <div class="avatar sm" id="header-avatar">M</div>
+        <span id="header-user-name">Member</span>
       </div>
     </div>
   </header>
 
   <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="mobile-bar" aria-label="Mobile Navigation">
+  <nav class="mobile-bar" aria-label="Mobile">
     <button type="button" class="mob-tab active" id="mob-feed" onclick="switchView('feed')">
-      <span class="ico">🏠</span><span>Feed</span>
+      <span class="ico">🏠</span><span>Home</span>
     </button>
     <button type="button" class="mob-tab" id="mob-spaces" onclick="switchView('spaces')">
       <span class="ico">🌿</span><span>Spaces</span>
@@ -1004,268 +1089,251 @@
     </button>
   </nav>
 
-  <!-- MAIN 3-COLUMN WORKSPACE -->
-  <main class="layout">
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar-left">
-      <div class="card">
-        <h3>Navigation</h3>
-        <div class="side-item" onclick="switchView('feed', 'All Community')">
-          <span>🏠 Home Feed</span><span class="pill">Live</span>
-        </div>
-        <div class="side-item" onclick="switchView('friends')">
-          <span>👥 Inner Circle</span><span class="pill" id="circle-count">0</span>
-        </div>
-        <div class="side-item" onclick="switchView('spaces')">
-          <span>🌿 Topic Spaces</span><span class="pill">Explore</span>
-        </div>
-        <div class="side-item" onclick="switchView('chat')">
-          <span>💬 Circle Lounge</span><span class="pill">Chat</span>
-        </div>
+  <!-- 3-COLUMN FACEBOOK LAYOUT -->
+  <div class="fb-shell">
+    <!-- LEFT SHORTCUTS RAIL -->
+    <aside class="fb-left">
+      <div class="fb-shortcut" id="left-profile-shortcut" onclick="switchView('profile')">
+        <div class="avatar sm" id="left-avatar">L</div>
+        <span id="left-profile-name">Guest Visitor</span>
+      </div>
+      <div class="fb-shortcut" onclick="switchView('feed', 'All Community')">
+        <div class="fb-shortcut-icon">🏠</div>
+        <span>News Feed</span>
+      </div>
+      <div class="fb-shortcut" onclick="switchView('friends')">
+        <div class="fb-shortcut-icon">👥</div>
+        <span>Friends (<span id="circle-count">0</span>)</span>
+      </div>
+      <div class="fb-shortcut" onclick="switchView('spaces')">
+        <div class="fb-shortcut-icon">🌿</div>
+        <span>LeafSpaces</span>
+      </div>
+      <div class="fb-shortcut" onclick="switchView('chat')">
+        <div class="fb-shortcut-icon">💬</div>
+        <span>Messenger Chat</span>
       </div>
 
-      <div class="card">
-        <h3>Trending Spaces</h3>
-        <div id="sidebar-spaces">
-          <div class="skeleton sk-line" style="width: 80%;"></div>
-          <div class="skeleton sk-line" style="width: 65%;"></div>
-          <div class="skeleton sk-line" style="width: 75%;"></div>
-        </div>
+      <div class="fb-divider"></div>
+      <div class="fb-section-title">Your Shortcuts</div>
+      <div id="sidebar-spaces"></div>
+
+      <div class="fb-divider"></div>
+      <div style="padding: 4px 10px; font-size: 0.76rem; color: var(--fb-secondary);">
+        <span style="cursor:pointer;" onclick="openPolicyModal('Privacy Policy')">Privacy</span> ·
+        <span style="cursor:pointer;" onclick="openPolicyModal('Terms of Service')">Terms</span> ·
+        <span style="cursor:pointer;" onclick="openPolicyModal('Contact')">Contact</span> ·
+        LeafSocial © 2026
       </div>
     </aside>
 
-    <!-- CENTER STREAM -->
-    <section class="main-feed">
-      <!-- GUEST HERO BANNER -->
-      <div class="hero-banner" id="guest-hero">
-        <span class="hero-badge">🌿 Open Community • Zero Algorithm Clutter</span>
-        <h1>Share your voice, photos, music &amp; moments with people who care.</h1>
-        <p>Browse live updates and topic spaces right now—or create your free profile in 15 seconds to post, cheer, and join live circle chats.</p>
-        <div class="hero-actions">
-          <button type="button" class="btn-white" onclick="openAuthModal('signup')">Create Free Account</button>
-          <button type="button" class="btn-ghost-white" onclick="openAuthModal('signin')">Sign In</button>
+    <!-- CENTER NEWS FEED & VIEWS -->
+    <main>
+      <!-- GUEST WELCOME BANNER -->
+      <div class="guest-banner" id="guest-hero">
+        <h2>Welcome to LeafSocial</h2>
+        <p>See photos, music &amp; voice drops, and updates from friends and topic communities.</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn" style="background: #ffffff; color: var(--fb-green-dark);" onclick="openAuthModal('signup')">Create New Account</button>
+          <button type="button" class="btn" style="background: rgba(255,255,255,0.18); color: #ffffff;" onclick="openAuthModal('signin')">Log In</button>
         </div>
       </div>
 
-      <!-- TOPIC SPACES STORY STRIP -->
-      <div class="spaces-strip" id="spaces-strip"></div>
+      <!-- FACEBOOK-STYLE STORIES STRIP -->
+      <div class="stories-row" id="stories-strip"></div>
 
-      <!-- COMPOSER CARD -->
-      <div class="composer-card" id="composer-card" style="display: none;">
-        <div class="composer-top">
-          <div class="avatar" id="composer-avatar">M</div>
-          <div style="flex: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px;">
-              <div>
-                <strong id="composer-name" style="font-size: 0.95rem;">Member</strong>
-                <span id="composer-loc" style="font-size: 0.78rem; color: var(--muted); margin-left: 6px;">📍 Lagos, Nigeria</span>
-              </div>
-              <button type="button" class="chip" onclick="signOut()">Sign Out</button>
-            </div>
-            <textarea id="post-content" rows="2" placeholder="What's on your mind? Share a story, voice note, photo, or video..."></textarea>
-          </div>
-        </div>
-
-        <div class="media-toolbar">
-          <label class="media-btn">
-            📷 Photo
-            <input type="file" accept="image/*" hidden onchange="onMediaSelected(event, 'image')" />
-          </label>
-          <label class="media-btn">
-            🎵 Music / Voice
-            <input type="file" accept="audio/*" hidden onchange="onMediaSelected(event, 'audio')" />
-          </label>
-          <label class="media-btn">
-            🎬 Video
-            <input type="file" accept="video/*" hidden onchange="onMediaSelected(event, 'video')" />
-          </label>
-          <button type="button" class="chip" id="clear-media-btn" style="display: none;" onclick="clearSelectedMedia()">Remove Media ✕</button>
+      <!-- "WHAT'S ON YOUR MIND?" COMPOSER CARD -->
+      <div class="fb-card" id="composer-card" style="display: none;">
+        <div class="composer-row">
+          <div class="avatar" id="composer-avatar" style="cursor:pointer;" onclick="switchView('profile')">M</div>
+          <input type="text" id="post-content" class="composer-pill-input" placeholder="What's on your mind?" />
         </div>
 
         <div class="media-preview" id="media-preview">
-          <div id="media-preview-label" style="display: none; font-size: 0.8rem; font-weight: 700; color: var(--green);"></div>
+          <div id="media-preview-label" style="display: none; font-size: 0.82rem; font-weight: 700; color: var(--fb-green);"></div>
           <div id="media-preview-content"></div>
         </div>
 
-        <div class="composer-submit-row">
-          <select id="post-space" aria-label="Choose LeafSpace">
-            <option value="All Community">Post to: All Community</option>
+        <div class="composer-actions-bar">
+          <label class="comp-media-btn">
+            <span style="color: #16a34a;">🖼️</span> Photo
+            <input type="file" accept="image/*" hidden onchange="onMediaSelected(event, 'image')" />
+          </label>
+          <label class="comp-media-btn">
+            <span style="color: #dc2626;">🎬</span> Video
+            <input type="file" accept="video/*" hidden onchange="onMediaSelected(event, 'video')" />
+          </label>
+          <label class="comp-media-btn">
+            <span style="color: #0d9488;">🎵</span> Music / Voice
+            <input type="file" accept="audio/*" hidden onchange="onMediaSelected(event, 'audio')" />
+          </label>
+        </div>
+
+        <div class="composer-publish-row">
+          <select id="post-space" aria-label="Audience / Space">
+            <option value="All Community">Audience: All Community</option>
           </select>
-          <button type="button" class="btn btn-primary" id="publish-btn" style="flex: 1; min-width: 130px;" onclick="createPost()">Publish Post</button>
+          <button type="button" class="btn btn-green" id="publish-btn" style="min-width: 110px;" onclick="createPost()">Post</button>
         </div>
         <div id="post-status" class="status"></div>
       </div>
 
       <!-- VIEW 1: FEED -->
       <div id="view-feed">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h3 style="font-size: 1rem;">Viewing: <span id="feed-space-title" style="color: var(--green);">All Community</span></h3>
-          <button type="button" class="chip" id="reset-feed-btn" style="display: none;" onclick="switchView('feed', 'All Community')">Show All Posts</button>
+        <div id="feed-filter-bar" class="fb-card" style="display: none; padding: 10px 16px; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.9rem;">Showing posts in <strong id="feed-space-title" style="color: var(--fb-green);">All Community</strong></span>
+          <button type="button" class="btn btn-gray" style="padding: 5px 12px; font-size: 0.82rem;" onclick="switchView('feed', 'All Community')">Back to News Feed</button>
         </div>
         <div id="posts-list"></div>
       </div>
 
       <!-- VIEW 2: LEAFSPACES -->
       <div id="view-spaces" style="display: none;">
-        <div class="card">
-          <h3>Launch a New LeafSpace</h3>
+        <div class="fb-card">
+          <h3 style="margin-bottom: 10px;">Create New LeafSpace</h3>
           <div class="form-group">
             <label for="new-space-name">Space Name</label>
-            <input type="text" id="new-space-name" placeholder="e.g. Naija Indie Artists" />
+            <input type="text" id="new-space-name" class="fb-field" placeholder="e.g. Naija Indie Creators" />
           </div>
           <div class="form-group">
             <label for="new-space-cat">Category</label>
-            <input type="text" id="new-space-cat" placeholder="e.g. Music, Tech, Lifestyle" />
+            <input type="text" id="new-space-cat" class="fb-field" placeholder="e.g. Music, Tech, Sports" />
           </div>
           <div class="form-group">
             <label for="new-space-desc">Description</label>
-            <input type="text" id="new-space-desc" placeholder="What brings members together here?" />
+            <input type="text" id="new-space-desc" class="fb-field" placeholder="What is this space about?" />
           </div>
-          <button type="button" class="btn btn-primary" id="create-space-btn" style="width: 100%;" onclick="createSpace()">+ Create LeafSpace</button>
+          <button type="button" class="btn btn-green" id="create-space-btn" style="width: 100%;" onclick="createSpace()">Create Space</button>
           <div id="space-status" class="status"></div>
         </div>
 
-        <div class="card">
-          <h3>All Topic Spaces</h3>
+        <div class="fb-card">
+          <h3 style="margin-bottom: 8px;">Discover LeafSpaces</h3>
           <div id="spaces-list"></div>
         </div>
       </div>
 
       <!-- VIEW 3: FRIENDS -->
       <div id="view-friends" style="display: none;">
-        <div class="card">
-          <h3>People on LeafSocial</h3>
-          <p style="font-size: 0.86rem; color: var(--muted); margin-bottom: 12px;">
-            Add people to your Inner Circle to stay closely connected.
-          </p>
+        <div class="fb-card">
+          <h3 style="margin-bottom: 4px;">People You May Know</h3>
+          <p style="font-size: 0.84rem; color: var(--fb-secondary); margin-bottom: 10px;">Add friends to grow your Inner Circle.</p>
           <div id="friends-list"></div>
         </div>
       </div>
 
       <!-- VIEW 4: CHAT -->
       <div id="view-chat" style="display: none;">
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-            <h3 style="margin: 0;">Live Circle Chat</h3>
+        <div class="fb-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+            <h3 style="margin: 0;">LeafSocial Messenger</h3>
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <button type="button" class="chip active" onclick="switchRoom('Circle Lounge', this)">Lounge</button>
-              <button type="button" class="chip" onclick="switchRoom('Creators', this)">Creators</button>
-              <button type="button" class="chip" onclick="switchRoom('Founders', this)">Founders</button>
+              <button type="button" class="btn btn-green" style="padding: 5px 12px; font-size: 0.82rem;" onclick="switchRoom('Circle Lounge', this)">Lounge</button>
+              <button type="button" class="btn btn-gray" style="padding: 5px 12px; font-size: 0.82rem;" onclick="switchRoom('Creators', this)">Creators</button>
+              <button type="button" class="btn btn-gray" style="padding: 5px 12px; font-size: 0.82rem;" onclick="switchRoom('Founders', this)">Founders</button>
             </div>
           </div>
 
           <div class="chat-box" id="chat-messages"></div>
 
           <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <input type="text" id="chat-input" placeholder="Say hello to the room..." onkeydown="if(event.key==='Enter') sendChat()" />
-            <button type="button" class="btn btn-primary" id="send-chat-btn" onclick="sendChat()">Send</button>
+            <input type="text" id="chat-input" class="fb-field" style="border-radius: 999px;" placeholder="Aa" onkeydown="if(event.key==='Enter') sendChat()" />
+            <button type="button" class="btn btn-green" id="send-chat-btn" style="border-radius: 999px;" onclick="sendChat()">Send</button>
           </div>
           <div id="chat-status" class="status"></div>
         </div>
       </div>
 
-      <!-- VIEW 5: PROFILE -->
+      <!-- VIEW 5: FACEBOOK-STYLE PROFILE -->
       <div id="view-profile" style="display: none;">
-        <div class="card">
-          <h3>Your LeafSocial Profile</h3>
-          <div id="profile-guest-box">
-            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 12px;">
-              Sign in or create a free account to customize your profile, post media, and build your Inner Circle.
-            </p>
-            <button type="button" class="btn btn-primary" onclick="openAuthModal('signup')">Create Account / Sign In</button>
+        <div class="profile-cover-card">
+          <div class="profile-cover-banner"></div>
+          <div class="profile-header-body">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div class="profile-big-avatar" id="prof-big-avatar">L</div>
+                <h2 id="prof-header-name" style="margin-top: 8px; font-size: 1.35rem;">Guest Visitor</h2>
+                <div id="prof-header-sub" style="font-size: 0.86rem; color: var(--fb-secondary);">Sign in to personalize your profile</div>
+              </div>
+              <button type="button" class="btn btn-gray" id="prof-signout-btn" style="display: none;" onclick="signOut()">Log Out</button>
+            </div>
           </div>
+        </div>
 
-          <form id="profile-form" style="display: none;" onsubmit="saveProfile(event)">
+        <div class="fb-card" id="profile-guest-box">
+          <p style="font-size: 0.9rem; color: var(--fb-secondary); margin-bottom: 12px;">
+            Log in or create a free LeafSocial account to edit your profile, post media, and connect with friends.
+          </p>
+          <button type="button" class="btn btn-green" onclick="openAuthModal('signup')">Create Account / Log In</button>
+        </div>
+
+        <div class="fb-card" id="profile-form-card" style="display: none;">
+          <h3 style="margin-bottom: 12px;">Edit Profile Details</h3>
+          <form onsubmit="saveProfile(event)">
             <div class="form-group">
               <label for="prof-name">Full Name</label>
-              <input type="text" id="prof-name" required />
+              <input type="text" id="prof-name" class="fb-field" required />
             </div>
             <div class="form-group">
-              <label for="prof-location">Location</label>
-              <input type="text" id="prof-location" placeholder="Lagos, Nigeria" />
+              <label for="prof-location">Current City</label>
+              <input type="text" id="prof-location" class="fb-field" placeholder="Lagos, Nigeria" />
             </div>
             <div class="form-group">
-              <label for="prof-bio">Short Bio</label>
-              <input type="text" id="prof-bio" placeholder="Tell your circle what you love..." />
+              <label for="prof-bio">Bio</label>
+              <input type="text" id="prof-bio" class="fb-field" placeholder="Describe yourself..." />
             </div>
             <div class="form-group">
-              <label for="prof-contact">Contact</label>
-              <input type="text" id="prof-contact" readonly style="opacity: 0.7;" />
+              <label for="prof-contact">Email / Phone</label>
+              <input type="text" id="prof-contact" class="fb-field" readonly style="opacity: 0.7;" />
             </div>
-            <button type="submit" class="btn btn-primary" id="save-profile-btn" style="width: 100%;">Save Profile</button>
+            <button type="submit" class="btn btn-green" id="save-profile-btn" style="width: 100%;">Save Changes</button>
             <div id="profile-status" class="status"></div>
           </form>
         </div>
       </div>
-    </section>
+    </main>
 
-    <!-- RIGHT SIDEBAR -->
-    <aside class="sidebar-right">
-      <div class="card" style="background: linear-gradient(135deg, #14532d, #15803d); color: #ffffff; border: none;">
-        <span class="pill" style="background: rgba(255,255,255,0.2); color: #ffffff;">LeafAudio &amp; Reels</span>
-        <h3 style="color: #ffffff; margin-top: 10px;">Rich Media, Zero Noise</h3>
-        <p style="font-size: 0.86rem; opacity: 0.93;">
-          Upload photos, music tracks, voice notes, and videos directly into your circles.
-        </p>
+    <!-- RIGHT CONTACTS & HIGHLIGHTS RAIL -->
+    <aside class="fb-right">
+      <div class="fb-card" style="background: linear-gradient(135deg, #14532d, #15803d); color: #ffffff;">
+        <div style="font-size: 0.74rem; font-weight: 700; text-transform: uppercase; opacity: 0.85;">LeafAudio &amp; Reels</div>
+        <h3 style="margin: 6px 0; font-size: 1rem;">Share Voices &amp; Moments</h3>
+        <p style="font-size: 0.84rem; opacity: 0.92;">Post photos, videos, and music tracks directly to your friends and topic spaces.</p>
       </div>
 
-      <div class="card">
-        <h3>Suggested Members</h3>
-        <div id="sidebar-members">
-          <div class="skeleton sk-line" style="width: 85%;"></div>
-          <div class="skeleton sk-line" style="width: 70%;"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>About LeafSocial</h3>
-        <p style="font-size: 0.82rem; color: var(--muted);">
-          A calm, chronological community platform built for real voices and genuine friendships.
-        </p>
-        <div class="footer-links">
-          <span onclick="openPolicyModal('Privacy Policy')">Privacy Policy</span>
-          <span onclick="openPolicyModal('Terms of Service')">Terms</span>
-          <span onclick="openPolicyModal('Contact')">Contact</span>
-        </div>
-      </div>
+      <div class="fb-section-title">Contacts</div>
+      <div id="sidebar-members"></div>
     </aside>
-  </main>
+  </div>
 
-  <!-- ONE-TAP AUTH MODAL -->
+  <!-- AUTH MODAL -->
   <div class="modal-backdrop" id="auth-modal" onclick="if(event.target === this) closeAuthModal()">
     <div class="modal-card">
       <button type="button" class="modal-close" onclick="closeAuthModal()">✕</button>
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-        <div class="brand-logo" style="width: 34px; height: 34px; font-size: 1rem;">L</div>
-        <h2 id="auth-title" style="font-size: 1.25rem;">Join LeafSocial</h2>
-      </div>
-      <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 14px;">
-        Connect with friends, share media, and join live topic spaces.
-      </p>
+      <h2 id="auth-title" style="font-size: 1.4rem; margin-bottom: 4px;">Sign Up</h2>
+      <p style="font-size: 0.86rem; color: var(--fb-secondary); margin-bottom: 14px;">It’s quick and easy.</p>
 
       <form id="auth-form" onsubmit="handleAuth(event)">
         <div class="form-group" id="name-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" placeholder="Emmanuel Agwaraonye" />
+          <input type="text" id="name" class="fb-field" placeholder="Full Name" />
         </div>
         <div class="form-group" id="location-group">
-          <label for="location">Location</label>
-          <input type="text" id="location" placeholder="Lagos, Nigeria" />
+          <input type="text" id="location" class="fb-field" placeholder="City (e.g. Lagos, Nigeria)" />
         </div>
         <div class="form-group">
-          <label for="contact">Email Address or Phone Number</label>
-          <input type="text" id="contact" required placeholder="you@example.com or +2348012345678" />
+          <input type="text" id="contact" class="fb-field" required placeholder="Mobile number or email address" />
         </div>
         <div class="form-group">
-          <label for="password">Password (6+ characters)</label>
-          <input type="password" id="password" minlength="6" required placeholder="••••••••" />
+          <input type="password" id="password" class="fb-field" minlength="6" required placeholder="Password (6+ characters)" />
         </div>
-        <button type="submit" class="btn btn-primary" id="auth-btn" style="width: 100%;">Create Free Account</button>
+        <button type="submit" class="btn btn-green" id="auth-btn" style="width: 100%; font-size: 1rem;">Sign Up</button>
       </form>
 
-      <button type="button" class="btn btn-secondary" id="toggle-auth-btn" style="width: 100%; margin-top: 10px;" onclick="toggleAuthMode()">
-        Already have an account? Sign In
-      </button>
+      <div style="text-align: center; margin-top: 12px;">
+        <button type="button" id="toggle-auth-btn" style="border: none; background: transparent; color: var(--fb-green); font-weight: 700; cursor: pointer;" onclick="toggleAuthMode()">
+          Already have an account? Log In
+        </button>
+      </div>
       <div id="auth-status" class="status"></div>
     </div>
   </div>
@@ -1275,7 +1343,7 @@
     <div class="modal-card">
       <button type="button" class="modal-close" onclick="closePolicyModal()">✕</button>
       <h2 id="policy-title" style="font-size: 1.2rem; margin-bottom: 10px;">Privacy Policy</h2>
-      <div id="policy-body" style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;"></div>
+      <div id="policy-body" style="font-size: 0.88rem; color: var(--fb-secondary); line-height: 1.6;"></div>
     </div>
   </div>
 
@@ -1290,13 +1358,13 @@
     let currentProfile = null;
     let currentSpace = "All Community";
     let currentRoom = "Circle Lounge";
+    let allLoadedPosts = [];
     let myFriends = new Set();
     let cheeredPosts = new Set();
     let selectedFile = null;
     let selectedMediaType = null;
     let selectedPreviewUrl = null;
 
-    /* Loading Helpers */
     function startRouteProgress() {
       const bar = document.getElementById("top-progress");
       bar.classList.remove("done");
@@ -1307,9 +1375,7 @@
       const bar = document.getElementById("top-progress");
       bar.classList.remove("active");
       bar.classList.add("done");
-      setTimeout(() => {
-        bar.classList.remove("done");
-      }, 300);
+      setTimeout(() => bar.classList.remove("done"), 300);
     }
 
     function renderFeedSkeletons(count = 3) {
@@ -1318,26 +1384,13 @@
           <div class="sk-row">
             <div class="skeleton sk-circle"></div>
             <div style="flex: 1;">
-              <div class="skeleton sk-line" style="width: 38%;"></div>
-              <div class="skeleton sk-line" style="width: 24%; height: 10px;"></div>
+              <div class="skeleton sk-line" style="width: 36%;"></div>
+              <div class="skeleton sk-line" style="width: 22%; height: 9px;"></div>
             </div>
           </div>
-          <div class="skeleton sk-line" style="width: 92%;"></div>
-          <div class="skeleton sk-line" style="width: 76%;"></div>
-          <div class="skeleton" style="width: 100%; height: 140px; margin-top: 10px;"></div>
-        </div>
-      `).join("");
-    }
-
-    function renderListSkeletons(count = 4) {
-      return Array.from({ length: count }).map(() => `
-        <div class="sk-row" style="padding: 10px 0; border-bottom: 1px solid var(--border);">
-          <div class="skeleton sk-circle"></div>
-          <div style="flex: 1;">
-            <div class="skeleton sk-line" style="width: 45%;"></div>
-            <div class="skeleton sk-line" style="width: 30%; height: 10px;"></div>
-          </div>
-          <div class="skeleton" style="width: 82px; height: 30px; border-radius: 999px;"></div>
+          <div class="skeleton sk-line" style="width: 90%;"></div>
+          <div class="skeleton sk-line" style="width: 72%;"></div>
+          <div class="skeleton" style="width: 100%; height: 150px; margin-top: 8px;"></div>
         </div>
       `).join("");
     }
@@ -1375,15 +1428,14 @@
     }
 
     function openPolicyModal(type) {
-      const titleEl = document.getElementById("policy-title");
+      document.getElementById("policy-title").textContent = type;
       const bodyEl = document.getElementById("policy-body");
-      titleEl.textContent = type;
       if (type === "Privacy Policy") {
-        bodyEl.innerHTML = "<p>LeafSocial respects member privacy. We store only the profile information, posts, media uploads, and messages you explicitly share on the platform. You can update your profile anytime.</p>";
+        bodyEl.innerHTML = "<p>LeafSocial stores only the profile details, posts, media uploads, and messages you explicitly share. You can edit your profile anytime.</p>";
       } else if (type === "Terms of Service") {
-        bodyEl.innerHTML = "<p>Members agree to share respectful, lawful content and respect fellow community participants across LeafSpaces and Circle Chat rooms.</p>";
+        bodyEl.innerHTML = "<p>Members agree to post respectful, lawful content and treat others kindly across all LeafSpaces and Messenger rooms.</p>";
       } else {
-        bodyEl.innerHTML = "<p>For community inquiries, partnerships, or support, reach the LeafSocial team at <strong>support@leafsocial.app</strong>.</p>";
+        bodyEl.innerHTML = "<p>Contact the LeafSocial team at <strong>support@leafsocial.app</strong>.</p>";
       }
       document.getElementById("policy-modal").classList.add("open");
     }
@@ -1399,11 +1451,11 @@
 
     function syncAuthModalUI() {
       clearStatus("auth-status");
-      document.getElementById("auth-title").textContent = isSignUp ? "Join LeafSocial" : "Welcome Back";
-      document.getElementById("auth-btn").textContent = isSignUp ? "Create Free Account" : "Sign In";
+      document.getElementById("auth-title").textContent = isSignUp ? "Sign Up" : "Log In to LeafSocial";
+      document.getElementById("auth-btn").textContent = isSignUp ? "Sign Up" : "Log In";
       document.getElementById("toggle-auth-btn").textContent = isSignUp
-        ? "Already have an account? Sign In"
-        : "New here? Create Free Account";
+        ? "Already have an account? Log In"
+        : "Create new account";
       document.getElementById("name-group").style.display = isSignUp ? "block" : "none";
       document.getElementById("location-group").style.display = isSignUp ? "block" : "none";
     }
@@ -1426,14 +1478,10 @@
     }
 
     function subscribeRealtime() {
-      sb.channel("leafsocial-live")
-        .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => {
-          loadPosts();
-        })
+      sb.channel("leafsocial-fb-live")
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => loadPosts())
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, () => {
-          if (document.getElementById("view-chat").style.display !== "none") {
-            loadChat();
-          }
+          if (document.getElementById("view-chat").style.display !== "none") loadChat();
         })
         .subscribe();
     }
@@ -1451,7 +1499,7 @@
           full_name: meta.full_name || "Member",
           contact_identifier: meta.contact_identifier || currentUser.email,
           location: meta.location || "Lagos, Nigeria",
-          bio: "Building & sharing on LeafSocial"
+          bio: "Connected on LeafSocial"
         };
         await sb.from("profiles").upsert(fresh);
         currentProfile = fresh;
@@ -1467,7 +1515,7 @@
       clearStatus("auth-status");
       const btn = document.getElementById("auth-btn");
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span>${isSignUp ? "Creating Account..." : "Signing In..."}`;
+      btn.innerHTML = `<span class="spinner"></span>${isSignUp ? "Signing Up..." : "Logging In..."}`;
 
       const rawContact = document.getElementById("contact").value.trim();
       const email = normalizeEmail(rawContact);
@@ -1526,16 +1574,23 @@
 
       const displayName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
       const displayLoc = currentProfile?.location || currentUser.user_metadata?.location || "Lagos, Nigeria";
+      const firstName = displayName.split(" ")[0];
       const initial = displayName[0].toUpperCase();
 
       document.getElementById("header-avatar").textContent = initial;
-      document.getElementById("header-user-name").textContent = displayName.split(" ")[0];
+      document.getElementById("header-user-name").textContent = firstName;
+      document.getElementById("left-avatar").textContent = initial;
+      document.getElementById("left-profile-name").textContent = displayName;
       document.getElementById("composer-avatar").textContent = initial;
-      document.getElementById("composer-name").textContent = displayName;
-      document.getElementById("composer-loc").textContent = `📍 ${displayLoc}`;
+      document.getElementById("post-content").placeholder = `What's on your mind, ${firstName}?`;
 
+      // Profile View Sync
+      document.getElementById("prof-big-avatar").textContent = initial;
+      document.getElementById("prof-header-name").textContent = displayName;
+      document.getElementById("prof-header-sub").textContent = `📍 ${displayLoc} · ${myFriends.size} Friends`;
+      document.getElementById("prof-signout-btn").style.display = "inline-block";
       document.getElementById("profile-guest-box").style.display = "none";
-      document.getElementById("profile-form").style.display = "block";
+      document.getElementById("profile-form-card").style.display = "block";
       document.getElementById("prof-name").value = displayName;
       document.getElementById("prof-location").value = displayLoc;
       document.getElementById("prof-bio").value = currentProfile?.bio || "";
@@ -1566,14 +1621,14 @@
       await sb.auth.updateUser({ data: { full_name: fullName, location: locVal } });
 
       btn.disabled = false;
-      btn.textContent = "Save Profile";
+      btn.textContent = "Save Changes";
 
       if (error) {
         setStatus("profile-status", error.message, true);
       } else {
         currentProfile = { ...currentProfile, full_name: fullName, location: locVal, bio: bioVal };
         setupAuthedUI();
-        setStatus("profile-status", "Profile updated!", false);
+        setStatus("profile-status", "Profile saved!", false);
       }
     }
 
@@ -1586,9 +1641,10 @@
       selectedMediaType = mediaType;
       selectedPreviewUrl = URL.createObjectURL(file);
 
+      const box = document.getElementById("media-preview");
       const labelEl = document.getElementById("media-preview-label");
       const contentEl = document.getElementById("media-preview-content");
-      document.getElementById("clear-media-btn").style.display = "none";
+      box.classList.remove("audio-mode");
 
       if (mediaType === "image") {
         labelEl.style.display = "none";
@@ -1597,12 +1653,12 @@
         labelEl.style.display = "none";
         contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove video" onclick="clearSelectedMedia()">✕</button><video controls src="${selectedPreviewUrl}"></video>`;
       } else if (mediaType === "audio") {
+        box.classList.add("audio-mode");
         labelEl.style.display = "block";
-        labelEl.style.padding = "10px 12px 0";
-        labelEl.textContent = "🎵 Voice / Audio Ready";
-        contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove audio" onclick="clearSelectedMedia()">✕</button><div style="padding: 8px 12px 12px;"><audio controls src="${selectedPreviewUrl}"></audio></div>`;
+        labelEl.textContent = "🎵 Music / Voice Drop Ready";
+        contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove audio" onclick="clearSelectedMedia()">✕</button><audio controls src="${selectedPreviewUrl}" style="width:100%; margin-top:8px;"></audio>`;
       }
-      document.getElementById("media-preview").style.display = "block";
+      box.style.display = "block";
     }
 
     function clearSelectedMedia() {
@@ -1610,22 +1666,21 @@
       selectedFile = null;
       selectedMediaType = null;
       selectedPreviewUrl = null;
-      const labelEl = document.getElementById("media-preview-label");
-      labelEl.style.display = "none";
-      labelEl.textContent = "";
-      document.getElementById("media-preview").style.display = "none";
+      const box = document.getElementById("media-preview");
+      box.style.display = "none";
+      box.classList.remove("audio-mode");
+      document.getElementById("media-preview-label").style.display = "none";
       document.getElementById("media-preview-content").innerHTML = "";
-      document.getElementById("clear-media-btn").style.display = "none";
     }
 
     async function switchView(view, spaceFilter = null) {
       startRouteProgress();
       ["feed", "spaces", "friends", "chat", "profile"].forEach(v => {
         document.getElementById(`view-${v}`).style.display = v === view ? "block" : "none";
-        const desktopTab = document.getElementById(`tab-${v}`);
-        const mobTab = document.getElementById(`mob-${v}`);
-        if (desktopTab) desktopTab.classList.toggle("active", v === view);
-        if (mobTab) mobTab.classList.toggle("active", v === view);
+        const dTab = document.getElementById(`tab-${v}`);
+        const mTab = document.getElementById(`mob-${v}`);
+        if (dTab) dTab.classList.toggle("active", v === view);
+        if (mTab) mTab.classList.toggle("active", v === view);
       });
 
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1633,8 +1688,13 @@
       try {
         if (view === "feed") {
           if (spaceFilter) currentSpace = spaceFilter;
-          document.getElementById("feed-space-title").textContent = currentSpace;
-          document.getElementById("reset-feed-btn").style.display = currentSpace !== "All Community" ? "inline-block" : "none";
+          const filterBar = document.getElementById("feed-filter-bar");
+          if (currentSpace !== "All Community") {
+            filterBar.style.display = "flex";
+            document.getElementById("feed-space-title").textContent = currentSpace;
+          } else {
+            filterBar.style.display = "none";
+          }
           await Promise.all([loadSpaces(), loadPosts()]);
         } else if (view === "spaces") {
           await loadSpacesList();
@@ -1659,13 +1719,13 @@
       const space = document.getElementById("post-space").value || "All Community";
 
       if (!content && !selectedFile) {
-        setStatus("post-status", "Write something or attach a photo, audio clip, or video.", true);
+        setStatus("post-status", "Write something or attach a photo, video, or audio clip.", true);
         return;
       }
 
       const btn = document.getElementById("publish-btn");
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span>Publishing...`;
+      btn.innerHTML = `<span class="spinner"></span>Posting...`;
 
       let uploadedUrl = null;
       let uploadedType = null;
@@ -1677,7 +1737,7 @@
 
         if (uploadErr) {
           btn.disabled = false;
-          btn.textContent = "Publish Post";
+          btn.textContent = "Post";
           setStatus("post-status", `Upload error: ${uploadErr.message}`, true);
           return;
         }
@@ -1702,7 +1762,7 @@
       });
 
       btn.disabled = false;
-      btn.textContent = "Publish Post";
+      btn.textContent = "Post";
 
       if (insertErr) {
         setStatus("post-status", insertErr.message, true);
@@ -1712,9 +1772,9 @@
       document.getElementById("post-content").value = "";
       clearSelectedMedia();
       currentSpace = space;
+      document.getElementById("feed-filter-bar").style.display = currentSpace !== "All Community" ? "flex" : "none";
       document.getElementById("feed-space-title").textContent = currentSpace;
-      document.getElementById("reset-feed-btn").style.display = currentSpace !== "All Community" ? "inline-block" : "none";
-      setStatus("post-status", "Posted live!", false);
+      setStatus("post-status", "Shared to your feed!", false);
       await Promise.all([loadSpaces(), loadPosts()]);
     }
 
@@ -1722,15 +1782,29 @@
       if (!post.media_url) return "";
       const url = escapeAttr(post.media_url);
       if (post.media_type === "image") {
-        return `<div class="post-media"><img src="${url}" alt="Photo" loading="lazy" /></div>`;
-      }
-      if (post.media_type === "audio") {
-        return `<div class="post-media"><div class="audio-wrapper"><span style="font-size:0.78rem; font-weight:700; color:var(--green);">🎵 LeafAudio Drop</span><audio controls preload="metadata" src="${url}"></audio></div></div>`;
+        return `<div class="post-media-full"><img src="${url}" alt="Post photo" loading="lazy" /></div>`;
       }
       if (post.media_type === "video") {
-        return `<div class="post-media"><video controls preload="metadata" src="${url}"></video></div>`;
+        return `<div class="post-media-full"><video controls preload="metadata" src="${url}"></video></div>`;
+      }
+      if (post.media_type === "audio") {
+        return `<div class="post-audio-box"><span style="font-size:0.78rem; font-weight:700; color:var(--fb-green);">🎵 LeafAudio Track</span><audio controls preload="metadata" src="${url}"></audio></div>`;
       }
       return "";
+    }
+
+    function handleSearchFilter(term) {
+      const q = term.trim().toLowerCase();
+      if (!q) {
+        renderPostsArray(allLoadedPosts);
+        return;
+      }
+      const filtered = allLoadedPosts.filter(p =>
+        (p.content || "").toLowerCase().includes(q) ||
+        (p.author_name || "").toLowerCase().includes(q) ||
+        (p.space_name || "").toLowerCase().includes(q)
+      );
+      renderPostsArray(filtered);
     }
 
     async function loadPosts() {
@@ -1745,18 +1819,24 @@
       const { data, error } = await query;
 
       if (error) {
-        list.innerHTML = `<div class="card"><p style="color: var(--danger);">${escapeHtml(error.message)}</p></div>`;
+        list.innerHTML = `<div class="fb-card"><p style="color: var(--fb-danger);">${escapeHtml(error.message)}</p></div>`;
         return;
       }
 
-      if (!data || data.length === 0) {
-        list.innerHTML = `<div class="card"><p style="color: var(--muted);">No posts in <strong>${escapeHtml(currentSpace)}</strong> yet. Be the first to share!</p></div>`;
+      allLoadedPosts = data || [];
+      renderPostsArray(allLoadedPosts);
+    }
+
+    function renderPostsArray(posts) {
+      const list = document.getElementById("posts-list");
+      if (!posts || posts.length === 0) {
+        list.innerHTML = `<div class="fb-card"><p style="color: var(--fb-secondary);">No posts found in <strong>${escapeHtml(currentSpace)}</strong> yet.</p></div>`;
         return;
       }
 
-      list.innerHTML = data.map(post => {
+      list.innerHTML = posts.map(post => {
         const author = post.author_name || "Member";
-        const loc = post.author_location ? ` • 📍 ${escapeHtml(post.author_location)}` : "";
+        const loc = post.author_location ? ` · 📍 ${escapeHtml(post.author_location)}` : "";
         const spaceTag = post.space_name || "All Community";
         const cheers = post.cheers_count || 0;
         const isCheered = cheeredPosts.has(post.id);
@@ -1764,37 +1844,42 @@
 
         return `
           <article class="post-card">
-            <div class="post-head">
-              <div class="post-author">
+            <div class="post-top">
+              <div class="post-author-wrap">
                 <div class="avatar">${escapeHtml(author[0].toUpperCase())}</div>
                 <div>
-                  <strong>${escapeHtml(author)}</strong>
-                  <div class="post-meta">${escapeHtml(dateStr)}${loc}</div>
+                  <div class="post-author-name">${escapeHtml(author)}</div>
+                  <div class="post-sub">${escapeHtml(dateStr)}${loc}</div>
                 </div>
               </div>
-              <span class="pill" style="cursor: pointer;" onclick="switchView('feed', '${escapeAttr(spaceTag)}')"># ${escapeHtml(spaceTag)}</span>
+              <span class="space-badge" onclick="switchView('feed', '${escapeAttr(spaceTag)}')"># ${escapeHtml(spaceTag)}</span>
             </div>
 
-            ${post.content ? `<div class="post-body">${escapeHtml(post.content)}</div>` : ""}
+            ${post.content ? `<div class="post-text">${escapeHtml(post.content)}</div>` : ""}
             ${renderMediaBlock(post)}
 
-            <div class="post-actions">
-              <button type="button" class="action-btn ${isCheered ? "active" : ""}" onclick="cheer('${post.id}', ${cheers}, this)">
-                🌿 Cheer (${cheers})
+            <div class="post-stats">
+              <span id="like-stat-${post.id}">🌿 ${cheers} ${cheers === 1 ? "Cheer" : "Cheers"}</span>
+              <span style="cursor:pointer;" onclick="toggleComments('${post.id}')">Comments</span>
+            </div>
+
+            <div class="post-action-bar">
+              <button type="button" class="fb-action-btn ${isCheered ? "liked" : ""}" onclick="cheer('${post.id}', ${cheers}, this)">
+                👍 Cheer
               </button>
-              <button type="button" class="action-btn" onclick="toggleComments('${post.id}')">
+              <button type="button" class="fb-action-btn" onclick="toggleComments('${post.id}')">
                 💬 Comment
               </button>
-              <button type="button" class="action-btn" onclick="sharePost('${escapeAttr(author)}', '${escapeAttr(spaceTag)}', this)">
+              <button type="button" class="fb-action-btn" onclick="sharePost('${escapeAttr(author)}', '${escapeAttr(spaceTag)}', this)">
                 ↗ Share
               </button>
             </div>
 
-            <div class="comments-drawer" id="comments-${post.id}">
-              <div id="comment-list-${post.id}" style="font-size: 0.85rem; color: var(--muted);">Loading comments...</div>
-              <div class="comment-form">
-                <input type="text" id="comment-input-${post.id}" placeholder="Write a reply..." onkeydown="if(event.key==='Enter') submitComment('${post.id}')" />
-                <button type="button" class="btn btn-primary" onclick="submitComment('${post.id}')">Reply</button>
+            <div class="comments-section" id="comments-${post.id}">
+              <div id="comment-list-${post.id}" style="font-size: 0.84rem; color: var(--fb-secondary);">Loading comments...</div>
+              <div class="fb-comment-input-row">
+                <input type="text" id="comment-input-${post.id}" placeholder="Write a comment..." onkeydown="if(event.key==='Enter') submitComment('${post.id}')" />
+                <button type="button" class="btn btn-green" style="border-radius: 999px; padding: 6px 14px;" onclick="submitComment('${post.id}')">Post</button>
               </div>
             </div>
           </article>
@@ -1807,27 +1892,22 @@
       if (!drawer) return;
       const isOpen = drawer.style.display === "block";
       drawer.style.display = isOpen ? "none" : "block";
-      if (!isOpen) {
-        await loadCommentsForPost(postId);
-      }
+      if (!isOpen) await loadCommentsForPost(postId);
     }
 
     async function loadCommentsForPost(postId) {
       const box = document.getElementById(`comment-list-${postId}`);
-      const { data, error } = await sb
-        .from("post_comments")
-        .select("*")
-        .eq("post_id", postId)
-        .order("created_at", { ascending: true });
-
-      if (error || !data || data.length === 0) {
-        box.innerHTML = `<p style="color: var(--muted); margin-bottom: 6px;">No replies yet. Start the conversation!</p>`;
+      const { data } = await sb.from("post_comments").select("*").eq("post_id", postId).order("created_at", { ascending: true });
+      if (!data || data.length === 0) {
+        box.innerHTML = `<div style="margin-bottom: 6px;">No comments yet.</div>`;
         return;
       }
-
       box.innerHTML = data.map(c => `
-        <div class="comment-item">
-          <strong style="color: var(--green-dark);">${escapeHtml(c.author_name)}</strong>: ${escapeHtml(c.body)}
+        <div style="margin-bottom: 6px;">
+          <div class="fb-comment-bubble">
+            <strong style="display:block; font-size:0.8rem;">${escapeHtml(c.author_name)}</strong>
+            <span>${escapeHtml(c.body)}</span>
+          </div>
         </div>
       `).join("");
     }
@@ -1855,20 +1935,21 @@
     async function cheer(postId, currentCount, btn) {
       const nextCount = (currentCount || 0) + 1;
       cheeredPosts.add(postId);
-      btn.classList.add("active");
-      btn.textContent = `🌿 Cheer (${nextCount})`;
+      btn.classList.add("liked");
+      const statEl = document.getElementById(`like-stat-${postId}`);
+      if (statEl) statEl.textContent = `🌿 ${nextCount} ${nextCount === 1 ? "Cheer" : "Cheers"}`;
       await sb.from("posts").update({ cheers_count: nextCount }).eq("id", postId);
     }
 
     function sharePost(author, spaceTag, btn) {
       const url = window.location.href;
       if (navigator.share) {
-        navigator.share({ title: "LeafSocial", text: `${author} on LeafSocial (#${spaceTag})`, url }).catch(() => {});
+        navigator.share({ title: "LeafSocial", text: `${author} in #${spaceTag}`, url }).catch(() => {});
       } else if (navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(url).catch(() => {});
       }
       const prev = btn.textContent;
-      btn.textContent = "✓ Copied";
+      btn.textContent = "✓ Link Copied";
       setTimeout(() => { btn.textContent = prev; }, 1400);
     }
 
@@ -1877,46 +1958,51 @@
       const spaces = data || [];
 
       const select = document.getElementById("post-space");
-      select.innerHTML = `<option value="All Community">Post to: All Community</option>` +
-        spaces.map(s => `<option value="${escapeAttr(s.name)}">Post to: # ${escapeHtml(s.name)}</option>`).join("");
+      select.innerHTML = `<option value="All Community">Audience: All Community</option>` +
+        spaces.map(s => `<option value="${escapeAttr(s.name)}">Space: # ${escapeHtml(s.name)}</option>`).join("");
 
       document.getElementById("sidebar-spaces").innerHTML = spaces.map(s => `
-        <div class="side-item" onclick="switchView('feed', '${escapeAttr(s.name)}')">
-          <span># ${escapeHtml(s.name)}</span>
+        <div class="fb-shortcut" onclick="switchView('feed', '${escapeAttr(s.name)}')">
+          <div class="fb-shortcut-icon">#</div>
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(s.name)}</span>
         </div>
       `).join("");
 
-      document.getElementById("spaces-strip").innerHTML =
-        `<div class="space-story ${currentSpace === "All Community" ? "active-story" : ""}" onclick="switchView('feed', 'All Community')">
-          <div class="space-story-tag">Live Stream</div>
-          <div class="space-story-name">🌐 All Community</div>
+      document.getElementById("stories-strip").innerHTML =
+        `<div class="story-tile create-tile" onclick="switchView('spaces')">
+          <div class="create-tile-top">🌿</div>
+          <div class="create-tile-bottom">
+            <div class="create-plus-badge">+</div>
+            Create Space
+          </div>
+        </div>
+        <div class="story-tile ${currentSpace === "All Community" ? "active-story" : ""}" onclick="switchView('feed', 'All Community')">
+          <div class="story-ring">🌐</div>
+          <div class="story-label">All Community News Feed</div>
         </div>` +
         spaces.map(s => `
-          <div class="space-story ${currentSpace === s.name ? "active-story" : ""}" onclick="switchView('feed', '${escapeAttr(s.name)}')">
-            <div class="space-story-tag">${escapeHtml(s.category || "Space")}</div>
-            <div class="space-story-name"># ${escapeHtml(s.name)}</div>
+          <div class="story-tile ${currentSpace === s.name ? "active-story" : ""}" onclick="switchView('feed', '${escapeAttr(s.name)}')">
+            <div class="story-ring">#</div>
+            <div class="story-label">${escapeHtml(s.name)}</div>
           </div>
         `).join("");
     }
 
     async function loadSpacesList() {
       const list = document.getElementById("spaces-list");
-      list.innerHTML = renderListSkeletons(4);
-
       const { data } = await sb.from("leaf_spaces").select("*").order("created_at", { ascending: true });
       if (!data || data.length === 0) {
-        list.innerHTML = `<p style="color: var(--muted);">No spaces created yet.</p>`;
+        list.innerHTML = `<p style="color: var(--fb-secondary);">No spaces yet.</p>`;
         return;
       }
 
       list.innerHTML = data.map(s => `
         <div class="dir-row">
           <div>
-            <span class="pill">${escapeHtml(s.category || "Community")}</span>
-            <div style="margin-top: 4px;"><strong># ${escapeHtml(s.name)}</strong></div>
-            <div style="font-size: 0.84rem; color: var(--muted);">${escapeHtml(s.description || "")}</div>
+            <strong># ${escapeHtml(s.name)}</strong>
+            <div style="font-size: 0.82rem; color: var(--fb-secondary);">${escapeHtml(s.category || "Community")} · ${escapeHtml(s.description || "")}</div>
           </div>
-          <button type="button" class="chip active" onclick="switchView('feed', '${escapeAttr(s.name)}')">Open →</button>
+          <button type="button" class="btn btn-green" style="padding: 6px 14px; font-size: 0.84rem;" onclick="switchView('feed', '${escapeAttr(s.name)}')">View</button>
         </div>
       `).join("");
     }
@@ -1931,7 +2017,7 @@
       const category = document.getElementById("new-space-cat").value.trim() || "Community";
       const description = document.getElementById("new-space-desc").value.trim();
       if (!name) {
-        setStatus("space-status", "Enter a space name.", true);
+        setStatus("space-status", "Please enter a space name.", true);
         return;
       }
 
@@ -1947,12 +2033,12 @@
       });
 
       btn.disabled = false;
-      btn.textContent = "+ Create LeafSpace";
+      btn.textContent = "Create Space";
 
       if (error) {
         if (error.code === "23505") {
           setStatus("space-status", `# ${name} already exists — opening it now...`, false);
-          setTimeout(() => switchView("feed", name), 650);
+          setTimeout(() => switchView("feed", name), 600);
         } else {
           setStatus("space-status", error.message, true);
         }
@@ -1960,38 +2046,32 @@
         document.getElementById("new-space-name").value = "";
         document.getElementById("new-space-cat").value = "";
         document.getElementById("new-space-desc").value = "";
-        setStatus("space-status", `Created # ${name}! Opening feed...`, false);
+        setStatus("space-status", `Created # ${name}! Opening...`, false);
         await Promise.all([loadSpaces(), loadSpacesList()]);
-        setTimeout(() => switchView("feed", name), 650);
+        setTimeout(() => switchView("feed", name), 600);
       }
     }
 
     async function loadSuggestedMembers() {
-      const { data } = await sb.from("profiles").select("id, full_name, location").order("created_at", { ascending: false }).limit(5);
+      const { data } = await sb.from("profiles").select("id, full_name, location").order("created_at", { ascending: false }).limit(8);
       const box = document.getElementById("sidebar-members");
       if (!box || !data) return;
 
       box.innerHTML = data.map(m => {
         const name = m.full_name || "Member";
         return `
-          <div class="dir-row" style="padding: 8px 0;">
-            <div class="post-author" style="gap: 8px;">
-              <div class="avatar sm">${escapeHtml(name[0].toUpperCase())}</div>
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 700;">${escapeHtml(name)}</div>
-                <div style="font-size: 0.74rem; color: var(--muted);">📍 ${escapeHtml(m.location || "Nigeria")}</div>
-              </div>
+          <div class="fb-shortcut" onclick="switchView('friends')">
+            <div class="avatar sm">${escapeHtml(name[0].toUpperCase())}</div>
+            <div>
+              <div style="font-size: 0.88rem; font-weight: 600;">${escapeHtml(name)}</div>
+              <div style="font-size: 0.74rem; color: var(--fb-secondary);">📍 ${escapeHtml(m.location || "Nigeria")}</div>
             </div>
-            <button type="button" class="chip" onclick="switchView('friends')">View</button>
           </div>
         `;
       }).join("");
     }
 
     async function loadFriends() {
-      const list = document.getElementById("friends-list");
-      list.innerHTML = renderListSkeletons(4);
-
       if (currentUser) {
         const { data: fRows } = await sb.from("friendships").select("friend_id").eq("user_id", currentUser.id);
         myFriends = new Set((fRows || []).map(r => r.friend_id));
@@ -1999,9 +2079,10 @@
       }
 
       const { data } = await sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(50);
+      const list = document.getElementById("friends-list");
 
       if (!data || data.length === 0) {
-        list.innerHTML = `<p style="color: var(--muted);">No members registered yet.</p>`;
+        list.innerHTML = `<p style="color: var(--fb-secondary);">No members listed yet.</p>`;
         return;
       }
 
@@ -2011,16 +2092,16 @@
         const name = member.full_name || "Member";
         return `
           <div class="dir-row">
-            <div class="post-author">
+            <div class="post-author-wrap">
               <div class="avatar">${escapeHtml(name[0].toUpperCase())}</div>
               <div>
-                <strong>${escapeHtml(name)}</strong> ${isMe ? `<span class="pill">You</span>` : ""}
-                <div style="font-size: 0.8rem; color: var(--muted);">📍 ${escapeHtml(member.location || "Nigeria")}${member.bio ? ` • ${escapeHtml(member.bio)}` : ""}</div>
+                <strong>${escapeHtml(name)}</strong> ${isMe ? `<span class="space-badge">You</span>` : ""}
+                <div style="font-size: 0.8rem; color: var(--fb-secondary);">📍 ${escapeHtml(member.location || "Nigeria")}</div>
               </div>
             </div>
             ${isMe ? "" : `
-              <button type="button" class="chip ${added ? "active" : ""}" onclick="toggleFriend('${member.id}', this)">
-                ${added ? "In Circle ✓" : "+ Add Friend"}
+              <button type="button" class="btn ${added ? "btn-gray" : "btn-green"}" style="padding: 7px 14px; font-size: 0.84rem;" onclick="toggleFriend('${member.id}', this)">
+                ${added ? "Friends ✓" : "Add Friend"}
               </button>
             `}
           </div>
@@ -2038,13 +2119,13 @@
       if (myFriends.has(friendId)) {
         await sb.from("friendships").delete().eq("user_id", currentUser.id).eq("friend_id", friendId);
         myFriends.delete(friendId);
-        btn.classList.remove("active");
-        btn.textContent = "+ Add Friend";
+        btn.className = "btn btn-green";
+        btn.textContent = "Add Friend";
       } else {
         await sb.from("friendships").insert({ user_id: currentUser.id, friend_id: friendId });
         myFriends.add(friendId);
-        btn.classList.add("active");
-        btn.textContent = "In Circle ✓";
+        btn.className = "btn btn-gray";
+        btn.textContent = "Friends ✓";
       }
       btn.disabled = false;
       document.getElementById("circle-count").textContent = String(myFriends.size);
@@ -2052,15 +2133,15 @@
 
     function switchRoom(room, btn) {
       currentRoom = room;
-      document.querySelectorAll("#view-chat .chip").forEach(c => c.classList.remove("active"));
-      btn.classList.add("active");
+      document.querySelectorAll("#view-chat .btn").forEach(b => {
+        if (b.id !== "send-chat-btn") b.className = "btn btn-gray";
+      });
+      btn.className = "btn btn-green";
       loadChat();
     }
 
     async function loadChat() {
       const box = document.getElementById("chat-messages");
-      box.innerHTML = `<div style="text-align:center; padding: 24px; color: var(--muted); font-size: 0.88rem;">Loading ${escapeHtml(currentRoom)} messages...</div>`;
-
       const { data } = await sb
         .from("chat_messages")
         .select("*")
@@ -2069,7 +2150,7 @@
         .limit(60);
 
       if (!data || data.length === 0) {
-        box.innerHTML = `<p style="color: var(--muted); font-size: 0.9rem;">Welcome to <strong>${escapeHtml(currentRoom)}</strong>! Send the first message below.</p>`;
+        box.innerHTML = `<p style="color: var(--fb-secondary); font-size: 0.9rem;">Say hello in <strong>${escapeHtml(currentRoom)}</strong>!</p>`;
         return;
       }
 
@@ -2077,8 +2158,8 @@
         const isMine = currentUser && m.user_id === currentUser.id;
         return `
           <div class="msg ${isMine ? "mine" : ""}">
-            <div style="font-size: 0.75rem; color: var(--green-dark); font-weight: 700;">${escapeHtml(m.sender_name || "Member")}</div>
-            <div style="margin-top: 2px;">${escapeHtml(m.message || "")}</div>
+            <div class="msg-sender" style="font-size: 0.72rem; font-weight: 700;">${escapeHtml(m.sender_name || "Member")}</div>
+            <div>${escapeHtml(m.message || "")}</div>
           </div>
         `;
       }).join("");
