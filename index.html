@@ -3,349 +3,421 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>LeafSocial — Connect, Share & Grow</title>
-  <script src="https://jsdelivr.net"></script>
+  <title>LeafSocial — Where Voices, Circles & Communities Come Alive</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #f2f5f3;
+      --bg: #f2f6f3;
       --surface: #ffffff;
-      --surface-hover: #f7faf8;
-      --green-50: #f0fdf4;
-      --green-100: #dcfce7;
-      --green-200: #bbf7d0;
-      --green-500: #22c55e;
-      --green-600: #16a34a;
-      --green-700: #15803d;
-      --green-800: #166534;
-      --text-main: #0f172a;
-      --text-sub: #64748b;
+      --surface-tint: #f6fbf8;
+      --green: #15803d;
+      --green-dark: #14532d;
+      --green-mid: #16a34a;
+      --green-soft: #dcfce7;
+      --green-border: #bbf7d0;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --muted: #64748b;
       --border: #e2e8f0;
-      --danger: #ef4444;
+      --danger: #dc2626;
+      --radius: 16px;
       --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --radius-full: 9999px;
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.16);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
     }
 
     body {
       background: var(--bg);
-      color: var(--text-main);
+      color: var(--text);
       line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      padding-bottom: 68px;
     }
 
-    /* ================= NAVBAR ================= */
-    .topbar {
+    /* Sticky Top Navigation Bar */
+    header {
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: var(--surface);
+      z-index: 70;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
-      height: 62px;
-      padding: 0 20px;
+    }
+
+    .nav-inner {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
       gap: 12px;
-      flex: 1;
     }
 
-    .logo {
+    .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      text-decoration: none;
-      color: var(--green-700);
-      font-weight: 900;
-      font-size: 1.35rem;
-      letter-spacing: -0.5px;
       cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
     }
 
-    .logo-icon {
+    .brand-logo {
       width: 40px;
       height: 40px;
-      border-radius: var(--radius-full);
-      background: linear-gradient(135deg, var(--green-600), var(--green-500));
-      color: #fff;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #ffffff;
       display: grid;
       place-items: center;
+      font-weight: 900;
       font-size: 1.25rem;
-      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+      box-shadow: 0 4px 10px rgba(21, 128, 61, 0.28);
     }
 
-    .search-box {
-      position: relative;
-      max-width: 260px;
-      width: 100%;
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.22rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
     }
 
-    .search-box input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid transparent;
-      border-radius: var(--radius-full);
-      padding: 9px 16px 9px 36px;
-      font-size: 0.9rem;
-      color: var(--text-main);
-      transition: all 0.2s;
-    }
-
-    .search-box input:focus {
-      background: var(--surface);
-      border-color: var(--green-600);
-      outline: none;
-      box-shadow: 0 0 0 3px var(--green-100);
-    }
-
-    .search-box::before {
-      content: "🔍";
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.82rem;
-      opacity: 0.6;
-    }
-
-    .topbar-center {
-      display: flex;
-      height: 100%;
-      gap: 4px;
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: none;
-      padding: 0 24px;
-      height: 100%;
+    .brand-sub {
+      font-size: 0.7rem;
       font-weight: 700;
-      font-size: 0.92rem;
-      color: var(--text-sub);
+      color: var(--green);
+      display: block;
+      margin-top: -3px;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 760px) {
+      .nav-center {
+        display: none;
+      }
+    }
+
+    .nav-tab {
+      border: none;
+      background: transparent;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
       cursor: pointer;
-      position: relative;
+      transition: all 0.16s ease;
+    }
+
+    .nav-tab:hover {
+      color: var(--green-dark);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .nav-tab.active {
+      background: var(--green);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25);
+    }
+
+    .nav-right {
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: color 0.15s, background 0.15s;
     }
 
-    .nav-btn:hover {
-      background: var(--surface-hover);
-      color: var(--green-700);
+    .join-pill-btn {
+      border: none;
+      background: var(--green);
+      color: #ffffff;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(21, 128, 61, 0.25);
     }
 
-    .nav-btn.active {
-      color: var(--green-600);
+    .join-pill-btn:hover {
+      background: var(--green-dark);
     }
 
-    .nav-btn.active::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 8px;
-      right: 8px;
-      height: 3px;
-      background: var(--green-600);
-      border-radius: 3px 3px 0 0;
-    }
-
-    .topbar-right {
+    .user-pill {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .icon-circle {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-full);
-      background: var(--bg);
-      border: none;
-      display: grid;
-      place-items: center;
-      font-size: 1.05rem;
+      gap: 8px;
+      background: var(--surface-tint);
+      border: 1px solid var(--green-border);
+      padding: 5px 12px 5px 6px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: 0.15s;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
     }
 
-    .icon-circle:hover {
-      background: var(--green-100);
-      color: var(--green-700);
+    /* Mobile Bottom Tab Bar */
+    .mobile-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 70;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 6px 8px;
+      justify-content: space-around;
+      box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06);
     }
 
-    /* ================= LAYOUT ================= */
-    .shell {
-      max-width: 1340px;
-      margin: 20px auto;
-      padding: 0 18px 60px;
+    @media (max-width: 760px) {
+      .mobile-bar {
+        display: flex;
+      }
+    }
+
+    .mob-tab {
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 5px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .mob-tab span.ico {
+      font-size: 1.15rem;
+    }
+
+    .mob-tab.active {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    /* 3-Column Shell */
+    .layout {
+      max-width: 1260px;
+      margin: 18px auto;
+      padding: 0 14px;
       display: grid;
-      grid-template-columns: 280px minmax(0, 640px) 300px;
-      justify-content: space-between;
+      grid-template-columns: 270px minmax(0, 1fr) 300px;
       gap: 20px;
       align-items: start;
     }
 
-    @media (max-width: 1120px) {
-      .shell { grid-template-columns: minmax(0, 640px) 290px; justify-content: center; }
-      .left-rail { display: none; }
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 240px minmax(0, 1fr);
+      }
+      .sidebar-right {
+        display: none;
+      }
     }
 
-    @media (max-width: 880px) {
-      .shell { grid-template-columns: 1fr; max-width: 640px; }
-      .right-rail { display: none; }
-      .search-box { display: none; }
-      .nav-btn { padding: 0 12px; font-size: 0.85rem; }
+    @media (max-width: 760px) {
+      .layout {
+        grid-template-columns: 1fr;
+        margin-top: 12px;
+      }
+      .sidebar-left {
+        display: none;
+      }
     }
 
-    .sticky-rail {
-      position: sticky;
-      top: 80px;
-    }
-
-    .panel {
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px;
+      border-radius: var(--radius);
+      padding: 18px;
       margin-bottom: 16px;
       box-shadow: var(--shadow-sm);
     }
 
-    .panel-title {
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-sub);
+    .card h3 {
+      font-size: 0.98rem;
       font-weight: 800;
       margin-bottom: 12px;
+      color: var(--text);
     }
 
-    .menu-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      font-size: 0.93rem;
-      color: var(--text-main);
-      cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .menu-row:hover, .menu-row.active {
-      background: var(--green-50);
-      color: var(--green-700);
-    }
-
-    .menu-row-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .badge {
-      background: var(--green-100);
-      color: var(--green-800);
-      font-size: 0.75rem;
-      font-weight: 800;
-      padding: 2px 9px;
-      border-radius: var(--radius-full);
-    }
-
-    /* ================= STORIES ================= */
-    .stories-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+    /* Hero Welcome Banner (Auto-attracts visitors) */
+    .hero-banner {
+      background: linear-gradient(135deg, #14532d 0%, #15803d 55%, #16a34a 100%);
+      color: #ffffff;
+      border-radius: var(--radius);
+      padding: 22px;
       margin-bottom: 16px;
-    }
-
-    .story {
-      height: 175px;
-      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
       position: relative;
       overflow: hidden;
-      cursor: pointer;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      color: #fff;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.76rem;
       font-weight: 700;
-      font-size: 0.84rem;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.2s;
+      margin-bottom: 10px;
     }
 
-    .story:hover {
-      transform: translateY(-3px);
+    .hero-banner h1 {
+      font-size: 1.42rem;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      font-weight: 800;
     }
 
-    .story-add {
+    .hero-banner p {
+      font-size: 0.92rem;
+      opacity: 0.94;
+      margin-bottom: 16px;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-white {
+      border: none;
+      background: #ffffff;
+      color: var(--green-dark);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-ghost-white {
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    /* Story / Space Highlights Strip */
+    .spaces-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .spaces-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .space-story {
+      flex: 0 0 155px;
       background: var(--surface);
       border: 1px solid var(--border);
-      color: var(--text-main);
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .space-story:hover,
+    .space-story.active-story {
+      border-color: var(--green);
+      background: var(--surface-tint);
+      transform: translateY(-2px);
+    }
+
+    .space-story-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .space-story-name {
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-top: 4px;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Sidebar Items */
+    .side-item {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s ease;
     }
 
-    .story-add-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-full);
-      background: var(--green-600);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 1.4rem;
-      box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+    .side-item:hover {
+      background: var(--surface-tint);
+      color: var(--green-dark);
     }
 
-    .story-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-full);
+    .pill {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* Composer */
+    .composer-card {
       background: var(--surface);
-      color: var(--green-700);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      border: 3px solid var(--green-500);
-    }
-
-    /* ================= AVATAR & COMPOSER ================= */
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-full);
-      background: linear-gradient(135deg, var(--green-100), var(--green-200));
-      color: var(--green-800);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 1rem;
-      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
     }
 
     .composer-top {
@@ -354,81 +426,1404 @@
       align-items: flex-start;
     }
 
-    .composer-top textarea {
-      flex: 1;
-      border: none;
-      background: var(--bg);
-      border-radius: 18px;
-      padding: 12px 16px;
-      font-size: 0.96rem;
-      resize: none;
-      min-height: 48px;
-      color: var(--text-main);
-      transition: 0.2s;
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-soft), #bbf7d0);
+      color: var(--green-dark);
+      font-weight: 800;
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
     }
 
-    .composer-top textarea:focus {
-      background: var(--surface);
-      outline: 2px solid var(--green-500);
+    .avatar.sm {
+      width: 30px;
+      height: 30px;
+      font-size: 0.82rem;
     }
 
-    .composer-bar {
+    textarea,
+    input[type="text"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 11px 13px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 11px;
+      color: var(--text);
+      font-size: 0.94rem;
+      outline: none;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      background: #ffffff;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
+
+    .media-toolbar {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid var(--border);
+      align-items: center;
     }
 
-    .media-pills {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .pill-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      padding: 7px 13px;
-      border-radius: var(--radius-full);
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--text-main);
-      cursor: pointer;
+    .media-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: 0.15s;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--surface-tint);
+      border: 1px solid var(--green-border);
+      color: var(--green-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    .pill-btn:hover {
-      background: var(--green-50);
-      border-color: var(--green-200);
-      color: var(--green-700);
+    .media-btn:hover {
+      background: var(--green-soft);
     }
 
-    .pill-btn.active {
-      background: var(--green-100);
-      border-color: var(--green-500);
-      color: var(--green-800);
+    .composer-submit-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
     }
 
-    .pill-btn.rec {
-      background: #fef2f2;
-      border-color: #fca5a5;
-      color: var(--danger);
-      animation: pulse 1.2s infinite;
+    .composer-submit-row select {
+      flex: 2;
+      min-width: 175px;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.65; }
-    }
-
-    .btn-green {
-      background: var(--green-600);
-      color: #fff;
+    .btn {
+      padding: 10px 16px;
       border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn-secondary {
+      background: var(--surface-tint);
+      color: var(--green-dark);
+      border: 1px solid var(--green-border);
+    }
+
+    .media-preview {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: none;
+    }
+
+    .media-preview img,
+    .media-preview video {
+      max-width: 100%;
+      max-height: 260px;
+      border-radius: 10px;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .media-preview audio {
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    /* Post Cards */
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .post-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .post-body {
+      font-size: 0.96rem;
+      white-space: pre-line;
+      color: var(--text);
+    }
+
+    .post-media {
+      margin-top: 12px;
+    }
+
+    .post-media img {
+      width: 100%;
+      max-height: 440px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .post-media video {
+      width: 100%;
+      max-height: 440px;
+      border-radius: 12px;
+      background: #000000;
+    }
+
+    .audio-wrapper {
+      background: var(--surface-tint);
+      border: 1px solid var(--green-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .audio-wrapper audio {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .post-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .action-btn {
+      border: none;
+      background: #f8fafc;
+      color: var(--text-secondary);
+      padding: 8px 10px;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .action-btn:hover,
+    .action-btn.active {
+      background: var(--green-soft);
+      color: var(--green-dark);
+    }
+
+    /* Threaded Comments Box */
+    .comments-drawer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      display: none;
+    }
+
+    .comment-item {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Directory & Chat */
+    .dir-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dir-row:last-child {
+      border-bottom: none;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      border-color: var(--green-border);
+    }
+
+    .chat-box {
+      height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .msg {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 10px 13px;
+      border-radius: 12px;
+      max-width: 82%;
+    }
+
+    .msg.mine {
+      align-self: flex-end;
+      background: var(--green-soft);
+      border-color: var(--green-border);
+    }
+
+    /* Auth Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border: none;
+      background: var(--bg);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      display: none;
+      background: var(--green-soft);
+      color: var(--green-dark);
+    }
+
+    .status.err {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header>
+    <div class="nav-inner">
+      <div class="brand" onclick="switchView('feed', 'All Community')">
+        <div class="brand-logo">L</div>
+        <div>
+          <span class="brand-title">LeafSocial</span>
+          <span class="brand-sub">Community • Voice • Circles</span>
+        </div>
+      </div>
+
+      <nav class="nav-center" aria-label="Main Navigation">
+        <button type="button" class="nav-tab active" id="tab-feed" onclick="switchView('feed')">Feed</button>
+        <button type="button" class="nav-tab" id="tab-spaces" onclick="switchView('spaces')">LeafSpaces</button>
+        <button type="button" class="nav-tab" id="tab-friends" onclick="switchView('friends')">Friends</button>
+        <button type="button" class="nav-tab" id="tab-chat" onclick="switchView('chat')">Chat</button>
+        <button type="button" class="nav-tab" id="tab-profile" onclick="switchView('profile')">Profile</button>
+      </nav>
+
+      <div class="nav-right">
+        <button type="button" class="join-pill-btn" id="header-join-btn" onclick="openAuthModal('signup')">Join Free</button>
+        <div class="user-pill" id="header-user-pill" style="display: none;" onclick="switchView('profile')">
+          <div class="avatar sm" id="header-avatar">M</div>
+          <span id="header-user-name">Member</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="mobile-bar" aria-label="Mobile Navigation">
+    <button type="button" class="mob-tab active" id="mob-feed" onclick="switchView('feed')">
+      <span class="ico">🏠</span><span>Feed</span>
+    </button>
+    <button type="button" class="mob-tab" id="mob-spaces" onclick="switchView('spaces')">
+      <span class="ico">🌿</span><span>Spaces</span>
+    </button>
+    <button type="button" class="mob-tab" id="mob-friends" onclick="switchView('friends')">
+      <span class="ico">👥</span><span>Friends</span>
+    </button>
+    <button type="button" class="mob-tab" id="mob-chat" onclick="switchView('chat')">
+      <span class="ico">💬</span><span>Chat</span>
+    </button>
+    <button type="button" class="mob-tab" id="mob-profile" onclick="switchView('profile')">
+      <span class="ico">👤</span><span>Profile</span>
+    </button>
+  </nav>
+
+  <!-- MAIN 3-COLUMN WORKSPACE -->
+  <main class="layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+      <div class="card">
+        <h3>Navigation</h3>
+        <div class="side-item" onclick="switchView('feed', 'All Community')">
+          <span>🏠 Home Feed</span><span class="pill">Live</span>
+        </div>
+        <div class="side-item" onclick="switchView('friends')">
+          <span>👥 Inner Circle</span><span class="pill" id="circle-count">0</span>
+        </div>
+        <div class="side-item" onclick="switchView('spaces')">
+          <span>🌿 Topic Spaces</span><span class="pill">Explore</span>
+        </div>
+        <div class="side-item" onclick="switchView('chat')">
+          <span>💬 Circle Lounge</span><span class="pill">Chat</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Trending Spaces</h3>
+        <div id="sidebar-spaces"></div>
+      </div>
+    </aside>
+
+    <!-- CENTER STREAM -->
+    <section class="main-feed">
+      <!-- GUEST HERO BANNER (Shown before login so anyone can browse & join effortlessly) -->
+      <div class="hero-banner" id="guest-hero">
+        <span class="hero-badge">🌿 Open Community • Zero Algorithm Clutter</span>
+        <h1>Share your voice, photos, music &amp; moments with people who care.</h1>
+        <p>Browse live updates and topic spaces right now—or create your free profile in 15 seconds to post, cheer, and join live circle chats.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn-white" onclick="openAuthModal('signup')">Create Free Account</button>
+          <button type="button" class="btn-ghost-white" onclick="openAuthModal('signin')">Sign In</button>
+        </div>
+      </div>
+
+      <!-- TOPIC SPACES STORY STRIP -->
+      <div class="spaces-strip" id="spaces-strip"></div>
+
+      <!-- COMPOSER CARD (Shown when signed in) -->
+      <div class="composer-card" id="composer-card" style="display: none;">
+        <div class="composer-top">
+          <div class="avatar" id="composer-avatar">M</div>
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <div>
+                <strong id="composer-name" style="font-size: 0.95rem;">Member</strong>
+                <span id="composer-loc" style="font-size: 0.78rem; color: var(--muted); margin-left: 6px;">📍 Lagos, Nigeria</span>
+              </div>
+              <button type="button" class="chip" onclick="signOut()">Sign Out</button>
+            </div>
+            <textarea id="post-content" rows="2" placeholder="What's on your mind? Share a story, voice note, photo, or video..."></textarea>
+          </div>
+        </div>
+
+        <div class="media-toolbar">
+          <label class="media-btn">
+            📷 Photo
+            <input type="file" accept="image/*" hidden onchange="onMediaSelected(event, 'image')" />
+          </label>
+          <label class="media-btn">
+            🎵 Music / Voice
+            <input type="file" accept="audio/*" hidden onchange="onMediaSelected(event, 'audio')" />
+          </label>
+          <label class="media-btn">
+            🎬 Video
+            <input type="file" accept="video/*" hidden onchange="onMediaSelected(event, 'video')" />
+          </label>
+          <button type="button" class="chip" id="clear-media-btn" style="display: none;" onclick="clearSelectedMedia()">Remove Media ✕</button>
+        </div>
+
+        <div class="media-preview" id="media-preview">
+          <div id="media-preview-label" style="font-size: 0.8rem; font-weight: 700; color: var(--green);"></div>
+          <div id="media-preview-content"></div>
+        </div>
+
+        <div class="composer-submit-row">
+          <select id="post-space" aria-label="Choose LeafSpace">
+            <option value="All Community">Post to: All Community</option>
+          </select>
+          <button type="button" class="btn btn-primary" id="publish-btn" style="flex: 1; min-width: 130px;" onclick="createPost()">Publish Post</button>
+        </div>
+        <div id="post-status" class="status"></div>
+      </div>
+
+      <!-- VIEW 1: FEED -->
+      <div id="view-feed">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size: 1rem;">Viewing: <span id="feed-space-title" style="color: var(--green);">All Community</span></h3>
+          <button type="button" class="chip" id="reset-feed-btn" style="display: none;" onclick="switchView('feed', 'All Community')">Show All Posts</button>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+
+      <!-- VIEW 2: LEAFSPACES -->
+      <div id="view-spaces" style="display: none;">
+        <div class="card">
+          <h3>Launch a New LeafSpace</h3>
+          <div class="form-group">
+            <label for="new-space-name">Space Name</label>
+            <input type="text" id="new-space-name" placeholder="e.g. Naija Indie Artists" />
+          </div>
+          <div class="form-group">
+            <label for="new-space-cat">Category</label>
+            <input type="text" id="new-space-cat" placeholder="e.g. Music, Tech, Lifestyle" />
+          </div>
+          <div class="form-group">
+            <label for="new-space-desc">Description</label>
+            <input type="text" id="new-space-desc" placeholder="What brings members together here?" />
+          </div>
+          <button type="button" class="btn btn-primary" style="width: 100%;" onclick="createSpace()">+ Create LeafSpace</button>
+          <div id="space-status" class="status"></div>
+        </div>
+
+        <div class="card">
+          <h3>All Topic Spaces</h3>
+          <div id="spaces-list"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: FRIENDS -->
+      <div id="view-friends" style="display: none;">
+        <div class="card">
+          <h3>People on LeafSocial</h3>
+          <p style="font-size: 0.86rem; color: var(--muted); margin-bottom: 12px;">
+            Add people to your Inner Circle to stay closely connected.
+          </p>
+          <div id="friends-list"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: CHAT -->
+      <div id="view-chat" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+            <h3 style="margin: 0;">Live Circle Chat</h3>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="chip active" onclick="switchRoom('Circle Lounge', this)">Lounge</button>
+              <button type="button" class="chip" onclick="switchRoom('Creators', this)">Creators</button>
+              <button type="button" class="chip" onclick="switchRoom('Founders', this)">Founders</button>
+            </div>
+          </div>
+
+          <div class="chat-box" id="chat-messages"></div>
+
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <input type="text" id="chat-input" placeholder="Say hello to the room..." onkeydown="if(event.key==='Enter') sendChat()" />
+            <button type="button" class="btn btn-primary" onclick="sendChat()">Send</button>
+          </div>
+          <div id="chat-status" class="status"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: PROFILE -->
+      <div id="view-profile" style="display: none;">
+        <div class="card">
+          <h3>Your LeafSocial Profile</h3>
+          <div id="profile-guest-box">
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 12px;">
+              Sign in or create a free account to customize your profile, post media, and build your Inner Circle.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="openAuthModal('signup')">Create Account / Sign In</button>
+          </div>
+
+          <form id="profile-form" style="display: none;" onsubmit="saveProfile(event)">
+            <div class="form-group">
+              <label for="prof-name">Full Name</label>
+              <input type="text" id="prof-name" required />
+            </div>
+            <div class="form-group">
+              <label for="prof-location">Location</label>
+              <input type="text" id="prof-location" placeholder="Lagos, Nigeria" />
+            </div>
+            <div class="form-group">
+              <label for="prof-bio">Short Bio</label>
+              <input type="text" id="prof-bio" placeholder="Tell your circle what you love..." />
+            </div>
+            <div class="form-group">
+              <label for="prof-contact">Contact</label>
+              <input type="text" id="prof-contact" readonly style="opacity: 0.7;" />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Profile</button>
+            <div id="profile-status" class="status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar-right">
+      <div class="card" style="background: linear-gradient(135deg, #14532d, #15803d); color: #ffffff; border: none;">
+        <span class="pill" style="background: rgba(255,255,255,0.2); color: #ffffff;">LeafAudio &amp; Reels</span>
+        <h3 style="color: #ffffff; margin-top: 10px;">Rich Media, Zero Noise</h3>
+        <p style="font-size: 0.86rem; opacity: 0.93;">
+          Upload photos, music tracks, voice notes, and videos directly into your circles.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Suggested Members</h3>
+        <div id="sidebar-members"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ONE-TAP AUTH MODAL -->
+  <div class="modal-backdrop" id="auth-modal" onclick="if(event.target === this) closeAuthModal()">
+    <div class="modal-card">
+      <button type="button" class="modal-close" onclick="closeAuthModal()">✕</button>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <div class="brand-logo" style="width: 34px; height: 34px; font-size: 1rem;">L</div>
+        <h2 id="auth-title" style="font-size: 1.25rem;">Join LeafSocial</h2>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 14px;">
+        Connect with friends, share media, and join live topic spaces.
+      </p>
+
+      <form id="auth-form" onsubmit="handleAuth(event)">
+        <div class="form-group" id="name-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Emmanuel Agwaraonye" />
+        </div>
+        <div class="form-group" id="location-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" placeholder="Lagos, Nigeria" />
+        </div>
+        <div class="form-group">
+          <label for="contact">Email Address or Phone Number</label>
+          <input type="text" id="contact" required placeholder="you@example.com or +2348012345678" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password (6+ characters)</label>
+          <input type="password" id="password" minlength="6" required placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="auth-btn" style="width: 100%;">Create Account</button>
+      </form>
+
+      <button type="button" class="btn btn-secondary" id="toggle-auth-btn" style="width: 100%; margin-top: 10px;" onclick="toggleAuthMode()">
+        Already have an account? Sign In
+      </button>
+      <div id="auth-status" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://hgqcflcebwulalpatdxk.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncWNmbGNlYnd1bGFscGF0ZHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mzk5NjgsImV4cCI6MjExMTExNTk2OH0.irlsfi5a7FwWUTlqYg4zfdODsR1EJ997Wftwi8aJdM8";
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let isSignUp = true;
+    let currentUser = null;
+    let currentProfile = null;
+    let currentSpace = "All Community";
+    let currentRoom = "Circle Lounge";
+    let myFriends = new Set();
+    let cheeredPosts = new Set();
+    let selectedFile = null;
+    let selectedMediaType = null;
+    let selectedPreviewUrl = null;
+
+    function normalizeEmail(raw) {
+      const cleaned = raw.trim();
+      if (cleaned.includes("@")) return cleaned.toLowerCase();
+      const digits = cleaned.replace(/[^0-9]/g, "");
+      return digits.length >= 7 ? `${digits}@phone.leafsocial.app` : null;
+    }
+
+    function setStatus(id, msg, isError = false) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.className = isError ? "status err" : "status";
+      el.style.display = "block";
+    }
+
+    function clearStatus(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = "";
+      el.style.display = "none";
+    }
+
+    function openAuthModal(mode = "signup") {
+      isSignUp = mode === "signup";
+      syncAuthModalUI();
+      document.getElementById("auth-modal").classList.add("open");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("auth-modal").classList.remove("open");
+    }
+
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      syncAuthModalUI();
+    }
+
+    function syncAuthModalUI() {
+      clearStatus("auth-status");
+      document.getElementById("auth-title").textContent = isSignUp ? "Join LeafSocial" : "Welcome Back";
+      document.getElementById("auth-btn").textContent = isSignUp ? "Create Free Account" : "Sign In";
+      document.getElementById("toggle-auth-btn").textContent = isSignUp
+        ? "Already have an account? Sign In"
+        : "New here? Create Free Account";
+      document.getElementById("name-group").style.display = isSignUp ? "block" : "none";
+      document.getElementById("location-group").style.display = isSignUp ? "block" : "none";
+    }
+
+    async function init() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user) {
+        currentUser = session.user;
+        await loadOrSyncProfile();
+        setupAuthedUI();
+      }
+      await Promise.all([loadSpaces(), loadPosts(), loadSuggestedMembers()]);
+      subscribeRealtime();
+    }
+
+    function subscribeRealtime() {
+      sb.channel("leafsocial-live")
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => {
+          loadPosts();
+        })
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, () => {
+          if (document.getElementById("view-chat").style.display !== "none") {
+            loadChat();
+          }
+        })
+        .subscribe();
+    }
+
+    async function loadOrSyncProfile() {
+      if (!currentUser) return;
+      const meta = currentUser.user_metadata || {};
+      const { data } = await sb.from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
+
+      if (data) {
+        currentProfile = data;
+      } else {
+        const fresh = {
+          id: currentUser.id,
+          full_name: meta.full_name || "Member",
+          contact_identifier: meta.contact_identifier || currentUser.email,
+          location: meta.location || "Lagos, Nigeria",
+          bio: "Building & sharing on LeafSocial"
+        };
+        await sb.from("profiles").upsert(fresh);
+        currentProfile = fresh;
+      }
+
+      const { data: fRows } = await sb.from("friendships").select("friend_id").eq("user_id", currentUser.id);
+      myFriends = new Set((fRows || []).map(r => r.friend_id));
+      document.getElementById("circle-count").textContent = String(myFriends.size);
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      clearStatus("auth-status");
+      const btn = document.getElementById("auth-btn");
+      btn.disabled = true;
+      btn.textContent = isSignUp ? "Creating Account..." : "Signing In...";
+
+      const rawContact = document.getElementById("contact").value.trim();
+      const email = normalizeEmail(rawContact);
+      if (!email) {
+        btn.disabled = false;
+        syncAuthModalUI();
+        setStatus("auth-status", "Enter a valid email address or phone number.", true);
+        return;
+      }
+
+      const pass = document.getElementById("password").value;
+      const name = document.getElementById("name").value.trim() || "Member";
+      const loc = document.getElementById("location").value.trim() || "Lagos, Nigeria";
+
+      let error = null;
+      if (isSignUp) {
+        const res = await sb.auth.signUp({
+          email,
+          password: pass,
+          options: { data: { full_name: name, location: loc, contact_identifier: rawContact } }
+        });
+        error = res.error;
+        if (!error && res.data.user) {
+          await sb.from("profiles").upsert({
+            id: res.data.user.id,
+            full_name: name,
+            contact_identifier: rawContact,
+            location: loc
+          });
+        }
+      } else {
+        const res = await sb.auth.signInWithPassword({ email, password: pass });
+        error = res.error;
+      }
+
+      btn.disabled = false;
+      syncAuthModalUI();
+
+      if (error) {
+        setStatus("auth-status", error.message, true);
+      } else {
+        location.reload();
+      }
+    }
+
+    async function signOut() {
+      await sb.auth.signOut();
+      location.reload();
+    }
+
+    function setupAuthedUI() {
+      document.getElementById("guest-hero").style.display = "none";
+      document.getElementById("header-join-btn").style.display = "none";
+      document.getElementById("header-user-pill").style.display = "flex";
+      document.getElementById("composer-card").style.display = "block";
+
+      const displayName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
+      const displayLoc = currentProfile?.location || currentUser.user_metadata?.location || "Lagos, Nigeria";
+      const initial = displayName[0].toUpperCase();
+
+      document.getElementById("header-avatar").textContent = initial;
+      document.getElementById("header-user-name").textContent = displayName.split(" ")[0];
+      document.getElementById("composer-avatar").textContent = initial;
+      document.getElementById("composer-name").textContent = displayName;
+      document.getElementById("composer-loc").textContent = `📍 ${displayLoc}`;
+
+      document.getElementById("profile-guest-box").style.display = "none";
+      document.getElementById("profile-form").style.display = "block";
+      document.getElementById("prof-name").value = displayName;
+      document.getElementById("prof-location").value = displayLoc;
+      document.getElementById("prof-bio").value = currentProfile?.bio || "";
+      document.getElementById("prof-contact").value = currentProfile?.contact_identifier || currentUser.email || "";
+    }
+
+    async function saveProfile(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+      clearStatus("profile-status");
+
+      const fullName = document.getElementById("prof-name").value.trim();
+      const locVal = document.getElementById("prof-location").value.trim();
+      const bioVal = document.getElementById("prof-bio").value.trim();
+
+      const { error } = await sb.from("profiles").upsert({
+        id: currentUser.id,
+        full_name: fullName,
+        location: locVal,
+        bio: bioVal,
+        contact_identifier: document.getElementById("prof-contact").value
+      });
+
+      await sb.auth.updateUser({ data: { full_name: fullName, location: locVal } });
+
+      if (error) {
+        setStatus("profile-status", error.message, true);
+      } else {
+        currentProfile = { ...currentProfile, full_name: fullName, location: locVal, bio: bioVal };
+        setupAuthedUI();
+        setStatus("profile-status", "Profile updated!", false);
+      }
+    }
+
+    function onMediaSelected(event, mediaType) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+
+      selectedFile = file;
+      selectedMediaType = mediaType;
+      selectedPreviewUrl = URL.createObjectURL(file);
+
+      document.getElementById("clear-media-btn").style.display = "inline-block";
+      document.getElementById("media-preview-label").textContent = `Attached ${mediaType}: ${file.name}`;
+      const contentEl = document.getElementById("media-preview-content");
+
+      if (mediaType === "image") {
+        contentEl.innerHTML = `<img src="${selectedPreviewUrl}" alt="Preview" />`;
+      } else if (mediaType === "audio") {
+        contentEl.innerHTML = `<audio controls src="${selectedPreviewUrl}"></audio>`;
+      } else if (mediaType === "video") {
+        contentEl.innerHTML = `<video controls src="${selectedPreviewUrl}"></video>`;
+      }
+      document.getElementById("media-preview").style.display = "block";
+    }
+
+    function clearSelectedMedia() {
+      if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+      selectedFile = null;
+      selectedMediaType = null;
+      selectedPreviewUrl = null;
+      document.getElementById("media-preview").style.display = "none";
+      document.getElementById("media-preview-content").innerHTML = "";
+      document.getElementById("clear-media-btn").style.display = "none";
+    }
+
+    async function switchView(view, spaceFilter = null) {
+      ["feed", "spaces", "friends", "chat", "profile"].forEach(v => {
+        document.getElementById(`view-${v}`).style.display = v === view ? "block" : "none";
+        const desktopTab = document.getElementById(`tab-${v}`);
+        const mobTab = document.getElementById(`mob-${v}`);
+        if (desktopTab) desktopTab.classList.toggle("active", v === view);
+        if (mobTab) mobTab.classList.toggle("active", v === view);
+      });
+
+      if (view === "feed") {
+        if (spaceFilter) currentSpace = spaceFilter;
+        document.getElementById("feed-space-title").textContent = currentSpace;
+        document.getElementById("reset-feed-btn").style.display = currentSpace !== "All Community" ? "inline-block" : "none";
+        await loadPosts();
+      } else if (view === "spaces") {
+        await loadSpacesList();
+      } else if (view === "friends") {
+        await loadFriends();
+      } else if (view === "chat") {
+        await loadChat();
+      }
+    }
+
+    async function createPost() {
+      clearStatus("post-status");
+      if (!currentUser) {
+        openAuthModal("signup");
+        return;
+      }
+
+      const content = document.getElementById("post-content").value.trim();
+      const space = document.getElementById("post-space").value || "All Community";
+
+      if (!content && !selectedFile) {
+        setStatus("post-status", "Write something or attach a photo, audio clip, or video.", true);
+        return;
+      }
+
+      const btn = document.getElementById("publish-btn");
+      btn.disabled = true;
+      btn.textContent = "Publishing...";
+
+      let uploadedUrl = null;
+      let uploadedType = null;
+
+      if (selectedFile) {
+        const ext = (selectedFile.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const filePath = `${currentUser.id}/${Date.now()}.${ext}`;
+        const { error: uploadErr } = await sb.storage.from("media").upload(filePath, selectedFile);
+
+        if (uploadErr) {
+          btn.disabled = false;
+          btn.textContent = "Publish Post";
+          setStatus("post-status", `Upload error: ${uploadErr.message}`, true);
+          return;
+        }
+
+        const { data: pub } = sb.storage.from("media").getPublicUrl(filePath);
+        uploadedUrl = pub?.publicUrl || null;
+        uploadedType = selectedMediaType;
+      }
+
+      const authorName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
+      const authorLoc = currentProfile?.location || currentUser.user_metadata?.location || "Lagos, Nigeria";
+
+      const { error: insertErr } = await sb.from("posts").insert({
+        user_id: currentUser.id,
+        author_name: authorName,
+        author_location: authorLoc,
+        space_name: space,
+        content: content || "",
+        media_url: uploadedUrl,
+        media_type: uploadedType,
+        cheers_count: 0
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Publish Post";
+
+      if (insertErr) {
+        setStatus("post-status", insertErr.message, true);
+        return;
+      }
+
+      document.getElementById("post-content").value = "";
+      clearSelectedMedia();
+      currentSpace = space;
+      document.getElementById("feed-space-title").textContent = currentSpace;
+      document.getElementById("reset-feed-btn").style.display = currentSpace !== "All Community" ? "inline-block" : "none";
+      setStatus("post-status", "Posted live!", false);
+      await loadPosts();
+    }
+
+    function renderMediaBlock(post) {
+      if (!post.media_url) return "";
+      const url = escapeAttr(post.media_url);
+      if (post.media_type === "image") {
+        return `<div class="post-media"><img src="${url}" alt="Photo" loading="lazy" /></div>`;
+      }
+      if (post.media_type === "audio") {
+        return `<div class="post-media"><div class="audio-wrapper"><span style="font-size:0.78rem; font-weight:700; color:var(--green);">🎵 LeafAudio Drop</span><audio controls preload="metadata" src="${url}"></audio></div></div>`;
+      }
+      if (post.media_type === "video") {
+        return `<div class="post-media"><video controls preload="metadata" src="${url}"></video></div>`;
+      }
+      return "";
+    }
+
+    async function loadPosts() {
+      let query = sb.from("posts").select("*").order("created_at", { ascending: false }).limit(40);
+      if (currentSpace !== "All Community") {
+        query = query.eq("space_name", currentSpace);
+      }
+
+      const { data, error } = await query;
+      const list = document.getElementById("posts-list");
+
+      if (error) {
+        list.innerHTML = `<div class="card"><p style="color: var(--danger);">${escapeHtml(error.message)}</p></div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = `<div class="card"><p style="color: var(--muted);">No posts in <strong>${escapeHtml(currentSpace)}</strong> yet. Be the first to share!</p></div>`;
+        return;
+      }
+
+      list.innerHTML = data.map(post => {
+        const author = post.author_name || "Member";
+        const loc = post.author_location ? ` • 📍 ${escapeHtml(post.author_location)}` : "";
+        const spaceTag = post.space_name || "All Community";
+        const cheers = post.cheers_count || 0;
+        const isCheered = cheeredPosts.has(post.id);
+        const dateStr = post.created_at ? new Date(post.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "";
+
+        return `
+          <article class="post-card">
+            <div class="post-head">
+              <div class="post-author">
+                <div class="avatar">${escapeHtml(author[0].toUpperCase())}</div>
+                <div>
+                  <strong>${escapeHtml(author)}</strong>
+                  <div class="post-meta">${escapeHtml(dateStr)}${loc}</div>
+                </div>
+              </div>
+              <span class="pill" style="cursor: pointer;" onclick="switchView('feed', '${escapeAttr(spaceTag)}')"># ${escapeHtml(spaceTag)}</span>
+            </div>
+
+            ${post.content ? `<div class="post-body">${escapeHtml(post.content)}</div>` : ""}
+            ${renderMediaBlock(post)}
+
+            <div class="post-actions">
+              <button type="button" class="action-btn ${isCheered ? "active" : ""}" onclick="cheer('${post.id}', ${cheers}, this)">
+                🌿 Cheer (${cheers})
+              </button>
+              <button type="button" class="action-btn" onclick="toggleComments('${post.id}')">
+                💬 Comment
+              </button>
+              <button type="button" class="action-btn" onclick="sharePost('${escapeAttr(author)}', '${escapeAttr(spaceTag)}', this)">
+                ↗ Share
+              </button>
+            </div>
+
+            <div class="comments-drawer" id="comments-${post.id}">
+              <div id="comment-list-${post.id}" style="font-size: 0.85rem; color: var(--muted);">Loading comments...</div>
+              <div class="comment-form">
+                <input type="text" id="comment-input-${post.id}" placeholder="Write a reply..." onkeydown="if(event.key==='Enter') submitComment('${post.id}')" />
+                <button type="button" class="btn btn-primary" onclick="submitComment('${post.id}')">Reply</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function toggleComments(postId) {
+      const drawer = document.getElementById(`comments-${postId}`);
+      if (!drawer) return;
+      const isOpen = drawer.style.display === "block";
+      drawer.style.display = isOpen ? "none" : "block";
+      if (!isOpen) {
+        await loadCommentsForPost(postId);
+      }
+    }
+
+    async function loadCommentsForPost(postId) {
+      const box = document.getElementById(`comment-list-${postId}`);
+      const { data, error } = await sb
+        .from("post_comments")
+        .select("*")
+        .eq("post_id", postId)
+        .order("created_at", { ascending: true });
+
+      if (error || !data || data.length === 0) {
+        box.innerHTML = `<p style="color: var(--muted); margin-bottom: 6px;">No replies yet. Start the conversation!</p>`;
+        return;
+      }
+
+      box.innerHTML = data.map(c => `
+        <div class="comment-item">
+          <strong style="color: var(--green-dark);">${escapeHtml(c.author_name)}</strong>: ${escapeHtml(c.body)}
+        </div>
+      `).join("");
+    }
+
+    async function submitComment(postId) {
+      if (!currentUser) {
+        openAuthModal("signup");
+        return;
+      }
+      const input = document.getElementById(`comment-input-${postId}`);
+      const body = input.value.trim();
+      if (!body) return;
+
+      const authorName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
+      input.value = "";
+      await sb.from("post_comments").insert({
+        post_id: postId,
+        user_id: currentUser.id,
+        author_name: authorName,
+        body
+      });
+      await loadCommentsForPost(postId);
+    }
+
+    async function cheer(postId, currentCount, btn) {
+      const nextCount = (currentCount || 0) + 1;
+      cheeredPosts.add(postId);
+      btn.classList.add("active");
+      btn.textContent = `🌿 Cheer (${nextCount})`;
+      await sb.from("posts").update({ cheers_count: nextCount }).eq("id", postId);
+    }
+
+    function sharePost(author, spaceTag, btn) {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: "LeafSocial", text: `${author} on LeafSocial (#${spaceTag})`, url }).catch(() => {});
+      } else if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(url).catch(() => {});
+      }
+      const prev = btn.textContent;
+      btn.textContent = "✓ Copied";
+      setTimeout(() => { btn.textContent = prev; }, 1400);
+    }
+
+    async function loadSpaces() {
+      const { data } = await sb.from("leaf_spaces").select("*").order("created_at", { ascending: true });
+      const spaces = data || [];
+
+      const select = document.getElementById("post-space");
+      select.innerHTML = `<option value="All Community">Post to: All Community</option>` +
+        spaces.map(s => `<option value="${escapeAttr(s.name)}">Post to: # ${escapeHtml(s.name)}</option>`).join("");
+
+      document.getElementById("sidebar-spaces").innerHTML = spaces.map(s => `
+        <div class="side-item" onclick="switchView('feed', '${escapeAttr(s.name)}')">
+          <span># ${escapeHtml(s.name)}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("spaces-strip").innerHTML =
+        `<div class="space-story ${currentSpace === "All Community" ? "active-story" : ""}" onclick="switchView('feed', 'All Community')">
+          <div class="space-story-tag">Live Stream</div>
+          <div class="space-story-name">🌐 All Community</div>
+        </div>` +
+        spaces.map(s => `
+          <div class="space-story ${currentSpace === s.name ? "active-story" : ""}" onclick="switchView('feed', '${escapeAttr(s.name)}')">
+            <div class="space-story-tag">${escapeHtml(s.category || "Space")}</div>
+            <div class="space-story-name"># ${escapeHtml(s.name)}</div>
+          </div>
+        `).join("");
+    }
+
+    async function loadSpacesList() {
+      const { data } = await sb.from("leaf_spaces").select("*").order("created_at", { ascending: true });
+      const list = document.getElementById("spaces-list");
+      if (!data || data.length === 0) {
+        list.innerHTML = `<p style="color: var(--muted);">No spaces created yet.</p>`;
+        return;
+      }
+
+      list.innerHTML = data.map(s => `
+        <div class="dir-row">
+          <div>
+            <span class="pill">${escapeHtml(s.category || "Community")}</span>
+            <div style="margin-top: 4px;"><strong># ${escapeHtml(s.name)}</strong></div>
+            <div style="font-size: 0.84rem; color: var(--muted);">${escapeHtml(s.description || "")}</div>
+          </div>
+          <button type="button" class="chip active" onclick="switchView('feed', '${escapeAttr(s.name)}')">Open →</button>
+        </div>
+      `).join("");
+    }
+
+    async function createSpace() {
+      clearStatus("space-status");
+      if (!currentUser) {
+        openAuthModal("signup");
+        return;
+      }
+      const name = document.getElementById("new-space-name").value.trim();
+      const category = document.getElementById("new-space-cat").value.trim() || "Community";
+      const description = document.getElementById("new-space-desc").value.trim();
+      if (!name) {
+        setStatus("space-status", "Enter a space name.", true);
+        return;
+      }
+
+      const { error } = await sb.from("leaf_spaces").insert({
+        name,
+        category,
+        description,
+        created_by: currentUser.id
+      });
+
+      if (error) {
+        setStatus("space-status", error.message, true);
+      } else {
+        document.getElementById("new-space-name").value = "";
+        document.getElementById("new-space-cat").value = "";
+        document.getElementById("new-space-desc").value = "";
+        setStatus("space-status", `Created # ${name}!`, false);
+        await loadSpaces();
+        await loadSpacesList();
+      }
+    }
+
+    async function loadSuggestedMembers() {
+      const { data } = await sb.from("profiles").select("id, full_name, location").order("created_at", { ascending: false }).limit(5);
+      const box = document.getElementById("sidebar-members");
+      if (!box || !data) return;
+
+      box.innerHTML = data.map(m => {
+        const name = m.full_name || "Member";
+        return `
+          <div class="dir-row" style="padding: 8px 0;">
+            <div class="post-author" style="gap: 8px;">
+              <div class="avatar sm">${escapeHtml(name[0].toUpperCase())}</div>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700;">${escapeHtml(name)}</div>
+                <div style="font-size: 0.74rem; color: var(--muted);">📍 ${escapeHtml(m.location || "Nigeria")}</div>
+              </div>
+            </div>
+            <button type="button" class="chip" onclick="switchView('friends')">View</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadFriends() {
+      if (currentUser) {
+        const { data: fRows } = await sb.from("friendships").select("friend_id").eq("user_id", currentUser.id);
+        myFriends = new Set((fRows || []).map(r => r.friend_id));
+        document.getElementById("circle-count").textContent = String(myFriends.size);
+      }
+
+      const { data } = await sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(50);
+      const list = document.getElementById("friends-list");
+
+      if (!data || data.length === 0) {
+        list.innerHTML = `<p style="color: var(--muted);">No members registered yet.</p>`;
+        return;
+      }
+
+      list.innerHTML = data.map(member => {
+        const isMe = currentUser && member.id === currentUser.id;
+        const added = myFriends.has(member.id);
+        const name = member.full_name || "Member";
+        return `
+          <div class="dir-row">
+            <div class="post-author">
+              <div class="avatar">${escapeHtml(name[0].toUpperCase())}</div>
+              <div>
+                <strong>${escapeHtml(name)}</strong> ${isMe ? `<span class="pill">You</span>` : ""}
+                <div style="font-size: 0.8rem; color: var(--muted);">📍 ${escapeHtml(member.location || "Nigeria")}${member.bio ? ` • ${escapeHtml(member.bio)}` : ""}</div>
+              </div>
+            </div>
+            ${isMe ? "" : `
+              <button type="button" class="chip ${added ? "active" : ""}" onclick="toggleFriend('${member.id}', this)">
+                ${added ? "In Circle ✓" : "+ Add Friend"}
+              </button>
+            `}
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function toggleFriend(friendId, btn) {
+      if (!currentUser) {
+        openAuthModal("signup");
+        return;
+      }
+
+      if (myFriends.has(friendId)) {
+        await sb.from("friendships").delete().eq("user_id", currentUser.id).eq("friend_id", friendId);
+        myFriends.delete(friendId);
+        btn.classList.remove("active");
+        btn.textContent = "+ Add Friend";
+      } else {
+        await sb.from("friendships").insert({ user_id: currentUser.id, friend_id: friendId });
+        myFriends.add(friendId);
+        btn.classList.add("active");
+        btn.textContent = "In Circle ✓";
+      }
+      document.getElementById("circle-count").textContent = String(myFriends.size);
+    }
+
+    function switchRoom(room, btn) {
+      currentRoom = room;
+      document.querySelectorAll("#view-chat .chip").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      loadChat();
+    }
+
+    async function loadChat() {
+      const { data } = await sb
+        .from("chat_messages")
+        .select("*")
+        .eq("room_name", currentRoom)
+        .order("created_at", { ascending: true })
+        .limit(60);
+
+      const box = document.getElementById("chat-messages");
+      if (!data || data.length === 0) {
+        box.innerHTML = `<p style="color: var(--muted); font-size: 0.9rem;">Welcome to <strong>${escapeHtml(currentRoom)}</strong>! Send the first message below.</p>`;
+        return;
+      }
+
+      box.innerHTML = data.map(m => {
+        const isMine = currentUser && m.user_id === currentUser.id;
+        return `
+          <div class="msg ${isMine ? "mine" : ""}">
+            <div style="font-size: 0.75rem; color: var(--green-dark); font-weight: 700;">${escapeHtml(m.sender_name || "Member")}</div>
+            <div style="margin-top: 2px;">${escapeHtml(m.message || "")}</div>
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendChat() {
+      clearStatus("chat-status");
+      if (!currentUser) {
+        openAuthModal("signup");
+        return;
+      }
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const senderName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
+      input.value = "";
+      const { error } = await sb.from("chat_messages").insert({
+        user_id: currentUser.id,
+        sender_name: senderName,
+        room_name: currentRoom,
+        message: text
+      });
+
+      if (error) {
+        setStatus("chat-status", error.message, true);
+        return;
+      }
+      await loadChat();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+    }
+
+    init();
+  </script>
+</body>
+</html>
