@@ -658,27 +658,38 @@
       border: 1px solid var(--green-border);
     }
 
+    /* Clean Media Preview Without Raw Filenames Above Photos/Videos */
     .media-preview {
+      position: relative;
       margin-top: 10px;
-      padding: 10px;
       background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: 12px;
+      overflow: hidden;
       display: none;
     }
 
     .media-preview img,
     .media-preview video {
-      max-width: 100%;
-      max-height: 260px;
-      border-radius: 10px;
-      margin-top: 6px;
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
       display: block;
     }
 
-    .media-preview audio {
-      width: 100%;
-      margin-top: 6px;
+    .preview-remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.72);
+      color: #ffffff;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     /* Post Cards */
@@ -1072,7 +1083,7 @@
         </div>
 
         <div class="media-preview" id="media-preview">
-          <div id="media-preview-label" style="font-size: 0.8rem; font-weight: 700; color: var(--green);"></div>
+          <div id="media-preview-label" style="display: none; font-size: 0.8rem; font-weight: 700; color: var(--green);"></div>
           <div id="media-preview-content"></div>
         </div>
 
@@ -1575,16 +1586,21 @@
       selectedMediaType = mediaType;
       selectedPreviewUrl = URL.createObjectURL(file);
 
-      document.getElementById("clear-media-btn").style.display = "inline-block";
-      document.getElementById("media-preview-label").textContent = `Attached ${mediaType}: ${file.name}`;
+      const labelEl = document.getElementById("media-preview-label");
       const contentEl = document.getElementById("media-preview-content");
+      document.getElementById("clear-media-btn").style.display = "none";
 
       if (mediaType === "image") {
-        contentEl.innerHTML = `<img src="${selectedPreviewUrl}" alt="Preview" />`;
-      } else if (mediaType === "audio") {
-        contentEl.innerHTML = `<audio controls src="${selectedPreviewUrl}"></audio>`;
+        labelEl.style.display = "none";
+        contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove photo" onclick="clearSelectedMedia()">✕</button><img src="${selectedPreviewUrl}" alt="Preview" />`;
       } else if (mediaType === "video") {
-        contentEl.innerHTML = `<video controls src="${selectedPreviewUrl}"></video>`;
+        labelEl.style.display = "none";
+        contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove video" onclick="clearSelectedMedia()">✕</button><video controls src="${selectedPreviewUrl}"></video>`;
+      } else if (mediaType === "audio") {
+        labelEl.style.display = "block";
+        labelEl.style.padding = "10px 12px 0";
+        labelEl.textContent = "🎵 Voice / Audio Ready";
+        contentEl.innerHTML = `<button type="button" class="preview-remove-btn" aria-label="Remove audio" onclick="clearSelectedMedia()">✕</button><div style="padding: 8px 12px 12px;"><audio controls src="${selectedPreviewUrl}"></audio></div>`;
       }
       document.getElementById("media-preview").style.display = "block";
     }
@@ -1594,6 +1610,9 @@
       selectedFile = null;
       selectedMediaType = null;
       selectedPreviewUrl = null;
+      const labelEl = document.getElementById("media-preview-label");
+      labelEl.style.display = "none";
+      labelEl.textContent = "";
       document.getElementById("media-preview").style.display = "none";
       document.getElementById("media-preview-content").innerHTML = "";
       document.getElementById("clear-media-btn").style.display = "none";
