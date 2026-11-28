@@ -82,11 +82,7 @@
       50% { transform: scale(1.06); }
     }
 
-    .splash-dots {
-      display: flex;
-      gap: 6px;
-    }
-
+    .splash-dots { display: flex; gap: 6px; }
     .splash-dots span {
       width: 8px;
       height: 8px;
@@ -94,7 +90,6 @@
       background: var(--fb-green);
       animation: bounceDot 0.9s infinite alternate;
     }
-
     .splash-dots span:nth-child(2) { animation-delay: 0.2s; }
     .splash-dots span:nth-child(3) { animation-delay: 0.4s; }
 
@@ -138,20 +133,8 @@
       margin-bottom: 14px;
     }
 
-    .sk-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .sk-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
+    .sk-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .sk-circle { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
     .sk-line { height: 11px; margin-bottom: 8px; }
 
     .spinner {
@@ -233,7 +216,6 @@
       .fb-search { max-width: 170px; height: 36px; padding: 0 10px; }
     }
 
-    /* Center Icon Tabs with Bottom Active Indicator */
     .fb-nav-center {
       display: flex;
       align-items: stretch;
@@ -263,16 +245,8 @@
       transition: background 0.15s ease, color 0.15s ease;
     }
 
-    .fb-tab:hover {
-      background: var(--fb-hover);
-      color: var(--fb-text);
-    }
-
-    .fb-tab.active {
-      color: var(--fb-green);
-      background: transparent;
-    }
-
+    .fb-tab:hover { background: var(--fb-hover); color: var(--fb-text); }
+    .fb-tab.active { color: var(--fb-green); background: transparent; }
     .fb-tab.active::after {
       content: "";
       position: absolute;
@@ -387,18 +361,12 @@
     }
 
     @media (max-width: 1180px) {
-      .fb-shell {
-        grid-template-columns: 240px minmax(0, 1fr);
-        justify-content: stretch;
-      }
+      .fb-shell { grid-template-columns: 240px minmax(0, 1fr); justify-content: stretch; }
       .fb-right { display: none; }
     }
 
     @media (max-width: 820px) {
-      .fb-shell {
-        grid-template-columns: 1fr;
-        padding: 10px 10px;
-      }
+      .fb-shell { grid-template-columns: 1fr; padding: 10px 10px; }
       .fb-left { display: none; }
     }
 
@@ -437,18 +405,8 @@
       flex-shrink: 0;
     }
 
-    .fb-divider {
-      height: 1px;
-      background: var(--fb-divider);
-      margin: 10px 8px;
-    }
-
-    .fb-section-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--fb-secondary);
-      padding: 4px 10px 8px;
-    }
+    .fb-divider { height: 1px; background: var(--fb-divider); margin: 10px 8px; }
+    .fb-section-title { font-size: 0.95rem; font-weight: 700; color: var(--fb-secondary); padding: 4px 10px 8px; }
 
     .fb-card {
       background: var(--fb-card);
@@ -468,19 +426,37 @@
       box-shadow: var(--fb-shadow);
     }
 
-    .guest-banner h2 {
-      font-size: 1.25rem;
-      margin-bottom: 6px;
+    .guest-banner h2 { font-size: 1.25rem; margin-bottom: 6px; }
+    .guest-banner p { font-size: 0.9rem; opacity: 0.93; margin-bottom: 14px; }
+
+    /* ===========================
+       4. AVATARS (IMAGE + INITIAL FALLBACK)
+       =========================== */
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      overflow: hidden;
     }
 
-    .guest-banner p {
-      font-size: 0.9rem;
-      opacity: 0.93;
-      margin-bottom: 14px;
+    .avatar.sm { width: 32px; height: 32px; font-size: 0.85rem; }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* ===========================
-       4. FACEBOOK STORIES CAROUSEL
+       5. STORIES CAROUSEL
        =========================== */
     .stories-row {
       display: flex;
@@ -490,7 +466,6 @@
       margin-bottom: 14px;
       scrollbar-width: none;
     }
-
     .stories-row::-webkit-scrollbar { display: none; }
 
     .story-tile {
@@ -510,11 +485,7 @@
     }
 
     .story-tile:hover { transform: scale(1.02); }
-
-    .story-tile.active-story {
-      outline: 3px solid var(--fb-green-mid);
-      outline-offset: 2px;
-    }
+    .story-tile.active-story { outline: 3px solid var(--fb-green-mid); outline-offset: 2px; }
 
     .story-tile.create-tile {
       background: var(--fb-card);
@@ -583,28 +554,9 @@
     }
 
     /* ===========================
-       5. FACEBOOK "WHAT'S ON YOUR MIND?" COMPOSER
+       6. COMPOSER & FEED POSTS
        =========================== */
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 1rem;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-
-    .avatar.sm { width: 32px; height: 32px; font-size: 0.85rem; }
-
-    .composer-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .composer-row { display: flex; align-items: center; gap: 10px; }
 
     .composer-pill-input {
       flex: 1;
@@ -616,10 +568,7 @@
       color: var(--fb-text);
       outline: none;
     }
-
-    .composer-pill-input:focus {
-      background: #e4e6eb;
-    }
+    .composer-pill-input:focus { background: #e4e6eb; }
 
     .composer-actions-bar {
       display: grid;
@@ -643,16 +592,9 @@
       cursor: pointer;
       user-select: none;
     }
-
     .comp-media-btn:hover { background: var(--fb-hover); }
 
-    .composer-publish-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      align-items: center;
-    }
-
+    .composer-publish-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
     .composer-publish-row select {
       flex: 1;
       background: var(--fb-input);
@@ -665,7 +607,6 @@
       outline: none;
     }
 
-    /* Clean Borderless Media Preview (No Raw Filenames) */
     .media-preview {
       position: relative;
       margin-top: 10px;
@@ -704,9 +645,6 @@
       cursor: pointer;
     }
 
-    /* ===========================
-       6. FACEBOOK FEED POST CARDS
-       =========================== */
     .post-card {
       background: var(--fb-card);
       border-radius: var(--radius);
@@ -723,22 +661,9 @@
       gap: 10px;
     }
 
-    .post-author-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .post-author-name {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--fb-text);
-    }
-
-    .post-sub {
-      font-size: 0.78rem;
-      color: var(--fb-secondary);
-    }
+    .post-author-wrap { display: flex; align-items: center; gap: 10px; }
+    .post-author-name { font-weight: 700; font-size: 0.95rem; color: var(--fb-text); }
+    .post-sub { font-size: 0.78rem; color: var(--fb-secondary); }
 
     .space-badge {
       background: var(--fb-green-soft);
@@ -751,26 +676,9 @@
       white-space: nowrap;
     }
 
-    .post-text {
-      padding: 2px 16px 12px;
-      font-size: 0.95rem;
-      white-space: pre-line;
-      color: var(--fb-text);
-    }
-
-    .post-media-full img {
-      width: 100%;
-      max-height: 480px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .post-media-full video {
-      width: 100%;
-      max-height: 480px;
-      background: #000000;
-      display: block;
-    }
+    .post-text { padding: 2px 16px 12px; font-size: 0.95rem; white-space: pre-line; color: var(--fb-text); }
+    .post-media-full img { width: 100%; max-height: 480px; object-fit: cover; display: block; }
+    .post-media-full video { width: 100%; max-height: 480px; background: #000000; display: block; }
 
     .post-audio-box {
       margin: 0 16px 12px;
@@ -779,11 +687,7 @@
       border: 1px solid var(--fb-green-soft);
       border-radius: 10px;
     }
-
-    .post-audio-box audio {
-      width: 100%;
-      margin-top: 6px;
-    }
+    .post-audio-box audio { width: 100%; margin-top: 6px; }
 
     .post-stats {
       margin: 0 16px;
@@ -795,12 +699,7 @@
       color: var(--fb-secondary);
     }
 
-    .post-action-bar {
-      padding: 4px 12px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
+    .post-action-bar { padding: 4px 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
 
     .fb-action-btn {
       border: none;
@@ -816,17 +715,10 @@
       justify-content: center;
       gap: 6px;
     }
-
     .fb-action-btn:hover { background: var(--fb-hover); }
     .fb-action-btn.liked { color: var(--fb-green); font-weight: 700; }
 
-    /* Facebook Comment Thread */
-    .comments-section {
-      padding: 8px 16px 14px;
-      border-top: 1px solid var(--fb-border);
-      display: none;
-    }
-
+    .comments-section { padding: 8px 16px 14px; border-top: 1px solid var(--fb-border); display: none; }
     .fb-comment-bubble {
       background: var(--fb-input);
       border-radius: 16px;
@@ -836,13 +728,7 @@
       display: inline-block;
       max-width: 100%;
     }
-
-    .fb-comment-input-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
+    .fb-comment-input-row { display: flex; gap: 8px; margin-top: 8px; }
     .fb-comment-input-row input {
       flex: 1;
       background: var(--fb-input);
@@ -854,8 +740,103 @@
     }
 
     /* ===========================
-       7. BUTTONS, INPUTS, PROFILE & CHAT
+       7. FACEBOOK PROFILE WITH PHOTO & COVER UPLOAD
        =========================== */
+    .profile-cover-card {
+      background: var(--fb-card);
+      border-radius: var(--radius);
+      box-shadow: var(--fb-shadow);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .profile-cover-banner {
+      position: relative;
+      height: 175px;
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #22c55e 100%);
+      overflow: hidden;
+    }
+
+    .profile-cover-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-upload-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--fb-text);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cover-upload-btn:hover { background: #ffffff; }
+
+    .profile-header-body {
+      padding: 0 20px 18px;
+      position: relative;
+    }
+
+    .profile-avatar-wrap {
+      position: relative;
+      width: 108px;
+      height: 108px;
+      margin-top: -54px;
+    }
+
+    .profile-big-avatar {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
+      color: #ffffff;
+      border: 4px solid #ffffff;
+      font-size: 2.5rem;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+      overflow: hidden;
+    }
+
+    .profile-big-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-cam-btn {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--fb-input);
+      border: 2px solid #ffffff;
+      color: var(--fb-text);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-cam-btn:hover { background: #e4e6eb; }
+
+    /* Buttons, Forms, Directory & Chat */
     .btn {
       padding: 9px 16px;
       border: none;
@@ -865,7 +846,6 @@
       cursor: pointer;
       transition: background 0.15s ease;
     }
-
     .btn:disabled { opacity: 0.65; cursor: not-allowed; }
     .btn-green { background: var(--fb-green); color: #ffffff; }
     .btn-green:hover:not(:disabled) { background: var(--fb-green-dark); }
@@ -891,47 +871,8 @@
       color: var(--fb-text);
       outline: none;
     }
+    .fb-field:focus { background: #ffffff; border-color: var(--fb-green); }
 
-    .fb-field:focus {
-      background: #ffffff;
-      border-color: var(--fb-green);
-    }
-
-    /* Facebook-Style Profile Header Card */
-    .profile-cover-card {
-      background: var(--fb-card);
-      border-radius: var(--radius);
-      box-shadow: var(--fb-shadow);
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
-
-    .profile-cover-banner {
-      height: 150px;
-      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #22c55e 100%);
-    }
-
-    .profile-header-body {
-      padding: 0 20px 18px;
-      position: relative;
-    }
-
-    .profile-big-avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--fb-green), var(--fb-green-mid));
-      color: #ffffff;
-      border: 4px solid #ffffff;
-      font-size: 2.3rem;
-      font-weight: 900;
-      display: grid;
-      place-items: center;
-      margin-top: -48px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Friends & Directory Grid */
     .dir-row {
       display: flex;
       justify-content: space-between;
@@ -940,10 +881,8 @@
       padding: 10px 0;
       border-bottom: 1px solid var(--fb-border);
     }
-
     .dir-row:last-child { border-bottom: none; }
 
-    /* Messenger-Style Chat */
     .chat-box {
       height: 340px;
       overflow-y: auto;
@@ -965,12 +904,7 @@
       font-size: 0.92rem;
     }
 
-    .msg.mine {
-      align-self: flex-end;
-      background: var(--fb-green);
-      color: #ffffff;
-    }
-
+    .msg.mine { align-self: flex-end; background: var(--fb-green); color: #ffffff; }
     .msg.mine .msg-sender { color: rgba(255, 255, 255, 0.85); }
 
     /* Modals */
@@ -985,7 +919,6 @@
       justify-content: center;
       padding: 16px;
     }
-
     .modal-backdrop.open { display: flex; }
 
     .modal-card {
@@ -1024,11 +957,7 @@
       background: var(--fb-green-soft);
       color: var(--fb-green-dark);
     }
-
-    .status.err {
-      background: #fee2e2;
-      color: var(--fb-danger);
-    }
+    .status.err { background: #fee2e2; color: var(--fb-danger); }
   </style>
 </head>
 <body>
@@ -1244,25 +1173,37 @@
         </div>
       </div>
 
-      <!-- VIEW 5: FACEBOOK-STYLE PROFILE -->
+      <!-- VIEW 5: FACEBOOK-STYLE PROFILE WITH PHOTO & COVER UPLOAD -->
       <div id="view-profile" style="display: none;">
         <div class="profile-cover-card">
-          <div class="profile-cover-banner"></div>
+          <div class="profile-cover-banner" id="prof-cover-banner">
+            <label class="cover-upload-btn" id="cover-upload-label" style="display: none;">
+              📷 Edit Cover Photo
+              <input type="file" accept="image/*" hidden onchange="uploadProfilePhoto(event, 'cover')" />
+            </label>
+          </div>
           <div class="profile-header-body">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;">
               <div>
-                <div class="profile-big-avatar" id="prof-big-avatar">L</div>
+                <div class="profile-avatar-wrap">
+                  <div class="profile-big-avatar" id="prof-big-avatar">L</div>
+                  <label class="avatar-cam-btn" id="avatar-upload-label" title="Upload Profile Picture" style="display: none;">
+                    📷
+                    <input type="file" accept="image/*" hidden onchange="uploadProfilePhoto(event, 'avatar')" />
+                  </label>
+                </div>
                 <h2 id="prof-header-name" style="margin-top: 8px; font-size: 1.35rem;">Guest Visitor</h2>
                 <div id="prof-header-sub" style="font-size: 0.86rem; color: var(--fb-secondary);">Sign in to personalize your profile</div>
               </div>
               <button type="button" class="btn btn-gray" id="prof-signout-btn" style="display: none;" onclick="signOut()">Log Out</button>
             </div>
+            <div id="photo-upload-status" class="status"></div>
           </div>
         </div>
 
         <div class="fb-card" id="profile-guest-box">
           <p style="font-size: 0.9rem; color: var(--fb-secondary); margin-bottom: 12px;">
-            Log in or create a free LeafSocial account to edit your profile, post media, and connect with friends.
+            Log in or create a free LeafSocial account to upload your profile picture, edit your details, and connect with friends.
           </p>
           <button type="button" class="btn btn-green" onclick="openAuthModal('signup')">Create Account / Log In</button>
         </div>
@@ -1359,6 +1300,7 @@
     let currentSpace = "All Community";
     let currentRoom = "Circle Lounge";
     let allLoadedPosts = [];
+    let profileAvatarMap = {};
     let myFriends = new Set();
     let cheeredPosts = new Set();
     let selectedFile = null;
@@ -1376,6 +1318,13 @@
       bar.classList.remove("active");
       bar.classList.add("done");
       setTimeout(() => bar.classList.remove("done"), 300);
+    }
+
+    function renderAvatarContent(name, avatarUrl) {
+      if (avatarUrl) {
+        return `<img src="${escapeAttr(avatarUrl)}" alt="${escapeAttr(name || "Member")}" />`;
+      }
+      return escapeHtml((name || "M")[0].toUpperCase());
     }
 
     function renderFeedSkeletons(count = 3) {
@@ -1431,7 +1380,7 @@
       document.getElementById("policy-title").textContent = type;
       const bodyEl = document.getElementById("policy-body");
       if (type === "Privacy Policy") {
-        bodyEl.innerHTML = "<p>LeafSocial stores only the profile details, posts, media uploads, and messages you explicitly share. You can edit your profile anytime.</p>";
+        bodyEl.innerHTML = "<p>LeafSocial stores only the profile details, photos, posts, media uploads, and messages you explicitly share. You can edit your profile anytime.</p>";
       } else if (type === "Terms of Service") {
         bodyEl.innerHTML = "<p>Members agree to post respectful, lawful content and treat others kindly across all LeafSpaces and Messenger rooms.</p>";
       } else {
@@ -1469,12 +1418,21 @@
           await loadOrSyncProfile();
           setupAuthedUI();
         }
+        await loadAllProfileAvatars();
         await Promise.all([loadSpaces(), loadPosts(), loadSuggestedMembers()]);
         subscribeRealtime();
       } finally {
         const splash = document.getElementById("app-splash");
         if (splash) splash.classList.add("hidden");
       }
+    }
+
+    async function loadAllProfileAvatars() {
+      const { data } = await sb.from("profiles").select("id, avatar_url");
+      profileAvatarMap = {};
+      (data || []).forEach(p => {
+        if (p.avatar_url) profileAvatarMap[p.id] = p.avatar_url;
+      });
     }
 
     function subscribeRealtime() {
@@ -1499,7 +1457,9 @@
           full_name: meta.full_name || "Member",
           contact_identifier: meta.contact_identifier || currentUser.email,
           location: meta.location || "Lagos, Nigeria",
-          bio: "Connected on LeafSocial"
+          bio: "Connected on LeafSocial",
+          avatar_url: null,
+          cover_url: null
         };
         await sb.from("profiles").upsert(fresh);
         currentProfile = fresh;
@@ -1574,18 +1534,32 @@
 
       const displayName = currentProfile?.full_name || currentUser.user_metadata?.full_name || "Member";
       const displayLoc = currentProfile?.location || currentUser.user_metadata?.location || "Lagos, Nigeria";
+      const avatarUrl = currentProfile?.avatar_url || null;
+      const coverUrl = currentProfile?.cover_url || null;
       const firstName = displayName.split(" ")[0];
-      const initial = displayName[0].toUpperCase();
+      const avatarMarkup = renderAvatarContent(displayName, avatarUrl);
 
-      document.getElementById("header-avatar").textContent = initial;
+      document.getElementById("header-avatar").innerHTML = avatarMarkup;
       document.getElementById("header-user-name").textContent = firstName;
-      document.getElementById("left-avatar").textContent = initial;
+      document.getElementById("left-avatar").innerHTML = avatarMarkup;
       document.getElementById("left-profile-name").textContent = displayName;
-      document.getElementById("composer-avatar").textContent = initial;
+      document.getElementById("composer-avatar").innerHTML = avatarMarkup;
       document.getElementById("post-content").placeholder = `What's on your mind, ${firstName}?`;
 
-      // Profile View Sync
-      document.getElementById("prof-big-avatar").textContent = initial;
+      // Profile Cover & Avatar Sync
+      const coverBanner = document.getElementById("prof-cover-banner");
+      const existingCoverImg = coverBanner.querySelector("img");
+      if (existingCoverImg) existingCoverImg.remove();
+      if (coverUrl) {
+        const img = document.createElement("img");
+        img.src = coverUrl;
+        img.alt = "Cover Photo";
+        coverBanner.prepend(img);
+      }
+
+      document.getElementById("cover-upload-label").style.display = "inline-flex";
+      document.getElementById("avatar-upload-label").style.display = "grid";
+      document.getElementById("prof-big-avatar").innerHTML = avatarMarkup;
       document.getElementById("prof-header-name").textContent = displayName;
       document.getElementById("prof-header-sub").textContent = `📍 ${displayLoc} · ${myFriends.size} Friends`;
       document.getElementById("prof-signout-btn").style.display = "inline-block";
@@ -1595,6 +1569,47 @@
       document.getElementById("prof-location").value = displayLoc;
       document.getElementById("prof-bio").value = currentProfile?.bio || "";
       document.getElementById("prof-contact").value = currentProfile?.contact_identifier || currentUser.email || "";
+    }
+
+    async function uploadProfilePhoto(event, kind) {
+      const file = event.target.files?.[0];
+      if (!file || !currentUser) return;
+      clearStatus("photo-upload-status");
+      setStatus("photo-upload-status", kind === "avatar" ? "Uploading profile picture..." : "Uploading cover photo...", false);
+
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const filePath = `${currentUser.id}/${kind}-${Date.now()}.${ext}`;
+
+      const { error: uploadErr } = await sb.storage.from("media").upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true
+      });
+
+      if (uploadErr) {
+        setStatus("photo-upload-status", `Upload failed: ${uploadErr.message}`, true);
+        return;
+      }
+
+      const { data: pub } = sb.storage.from("media").getPublicUrl(filePath);
+      const publicUrl = pub?.publicUrl;
+      if (!publicUrl) return;
+
+      const patch = kind === "avatar" ? { avatar_url: publicUrl } : { cover_url: publicUrl };
+      const { error: dbErr } = await sb.from("profiles").update(patch).eq("id", currentUser.id);
+
+      if (dbErr) {
+        setStatus("photo-upload-status", dbErr.message, true);
+        return;
+      }
+
+      currentProfile = { ...currentProfile, ...patch };
+      if (kind === "avatar") {
+        profileAvatarMap[currentUser.id] = publicUrl;
+      }
+      setupAuthedUI();
+      setStatus("photo-upload-status", kind === "avatar" ? "Profile picture updated!" : "Cover photo updated!", false);
+      renderPostsArray(allLoadedPosts);
+      loadSuggestedMembers();
     }
 
     async function saveProfile(e) {
@@ -1615,7 +1630,9 @@
         full_name: fullName,
         location: locVal,
         bio: bioVal,
-        contact_identifier: document.getElementById("prof-contact").value
+        contact_identifier: document.getElementById("prof-contact").value,
+        avatar_url: currentProfile?.avatar_url || null,
+        cover_url: currentProfile?.cover_url || null
       });
 
       await sb.auth.updateUser({ data: { full_name: fullName, location: locVal } });
@@ -1836,6 +1853,7 @@
 
       list.innerHTML = posts.map(post => {
         const author = post.author_name || "Member";
+        const authorAvatar = profileAvatarMap[post.user_id] || null;
         const loc = post.author_location ? ` · 📍 ${escapeHtml(post.author_location)}` : "";
         const spaceTag = post.space_name || "All Community";
         const cheers = post.cheers_count || 0;
@@ -1846,7 +1864,7 @@
           <article class="post-card">
             <div class="post-top">
               <div class="post-author-wrap">
-                <div class="avatar">${escapeHtml(author[0].toUpperCase())}</div>
+                <div class="avatar">${renderAvatarContent(author, authorAvatar)}</div>
                 <div>
                   <div class="post-author-name">${escapeHtml(author)}</div>
                   <div class="post-sub">${escapeHtml(dateStr)}${loc}</div>
@@ -2053,7 +2071,7 @@
     }
 
     async function loadSuggestedMembers() {
-      const { data } = await sb.from("profiles").select("id, full_name, location").order("created_at", { ascending: false }).limit(8);
+      const { data } = await sb.from("profiles").select("id, full_name, location, avatar_url").order("created_at", { ascending: false }).limit(8);
       const box = document.getElementById("sidebar-members");
       if (!box || !data) return;
 
@@ -2061,7 +2079,7 @@
         const name = m.full_name || "Member";
         return `
           <div class="fb-shortcut" onclick="switchView('friends')">
-            <div class="avatar sm">${escapeHtml(name[0].toUpperCase())}</div>
+            <div class="avatar sm">${renderAvatarContent(name, m.avatar_url)}</div>
             <div>
               <div style="font-size: 0.88rem; font-weight: 600;">${escapeHtml(name)}</div>
               <div style="font-size: 0.74rem; color: var(--fb-secondary);">📍 ${escapeHtml(m.location || "Nigeria")}</div>
@@ -2093,7 +2111,7 @@
         return `
           <div class="dir-row">
             <div class="post-author-wrap">
-              <div class="avatar">${escapeHtml(name[0].toUpperCase())}</div>
+              <div class="avatar">${renderAvatarContent(name, member.avatar_url)}</div>
               <div>
                 <strong>${escapeHtml(name)}</strong> ${isMe ? `<span class="space-badge">You</span>` : ""}
                 <div style="font-size: 0.8rem; color: var(--fb-secondary);">📍 ${escapeHtml(member.location || "Nigeria")}</div>
